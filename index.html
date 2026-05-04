@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -7,484 +8,698 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Oswald:wght@300;400;500;600;700&display=swap');
 
-  :root {
-    --bg:           #0d0f0c;
-    --bg-grid:      #11140f;
-    --panel:        #161a14;
-    --panel-2:      #1c2118;
-    --border:       #2a3324;
-    --border-bright:#3d4a32;
-    --accent:       #4a5d38;
-    --olive:        #5a7042;
-    --olive-bright: #7a9456;
-    --text:         #b8c4a8;
-    --text-dim:     #6a7860;
-    --text-bright:  #d4e0c4;
-    --warn:         #d4a017;
+:root {
+–bg:           #0d0f0c;
+–bg-grid:      #11140f;
+–panel:        #161a14;
+–panel-2:      #1c2118;
+–border:       #2a3324;
+–border-bright:#3d4a32;
+–accent:       #4a5d38;
+–olive:        #5a7042;
+–olive-bright: #7a9456;
+–text:         #b8c4a8;
+–text-dim:     #6a7860;
+–text-bright:  #d4e0c4;
+–warn:         #d4a017;
 
-    --c-enemy:        #c8302a;
-    --c-enemy-s:      #8a3a2e;
-    --c-supply:       #b87a3a;
-    --c-supply-s:     #6a4820;
-    --c-note:         #5a8fb8;
-    --c-ping:         #ff3eb5;
-  }
+```
+--c-enemy:        #c8302a;
+--c-enemy-s:      #8a3a2e;
+--c-supply:       #b87a3a;
+--c-supply-s:     #6a4820;
+--c-note:         #5a8fb8;
+--c-ping:         #ff3eb5;
+--c-line:         #d4e0c4;
+```
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+}
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; overflow: hidden; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-  }
+body {
+background: var(–bg);
+color: var(–text);
+font-family: ‘JetBrains Mono’, monospace;
+display: flex;
+flex-direction: column;
+position: relative;
+}
 
-  body::after {
-    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,0,0.008) 2px, rgba(0,255,0,0.008) 4px);
-  }
-  body::before {
-    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9998;
-    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
-  }
+body::after {
+content: ‘’; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,0,0.008) 2px, rgba(0,255,0,0.008) 4px);
+}
+body::before {
+content: ‘’; position: fixed; inset: 0; pointer-events: none; z-index: 9998;
+background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
+}
 
-  /* ═══════════════ HEADER ═══════════════ */
-  header {
-    flex-shrink: 0;
-    background: linear-gradient(180deg, var(--panel-2) 0%, var(--panel) 100%);
-    border-bottom: 1px solid var(--border);
-    position: relative;
-  }
-  header::before {
-    content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--olive), transparent);
-  }
+/* ═══════════════ HEADER ═══════════════ */
+header {
+flex-shrink: 0;
+background: linear-gradient(180deg, var(–panel-2) 0%, var(–panel) 100%);
+border-bottom: 1px solid var(–border);
+position: relative;
+}
+header::before {
+content: ‘’; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+background: linear-gradient(90deg, transparent, var(–olive), transparent);
+}
 
-  .header-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 8px 16px; gap: 16px;
-  }
+.header-row {
+display: flex; align-items: center; justify-content: space-between;
+padding: 8px 16px; gap: 16px;
+}
 
-  .brand { display: flex; align-items: center; gap: 12px; }
-  .brand-mark {
-    width: 30px; height: 30px;
-    border: 1px solid var(--olive);
-    background: var(--bg);
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px;
-    color: var(--olive-bright); position: relative;
-  }
-  .brand-mark::before, .brand-mark::after {
-    content: ''; position: absolute; width: 5px; height: 5px; border: 1px solid var(--olive);
-  }
-  .brand-mark::before { top: -2px; left: -2px; border-right: none; border-bottom: none; }
-  .brand-mark::after { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-mark {
+width: 30px; height: 30px;
+border: 1px solid var(–olive);
+background: var(–bg);
+display: flex; align-items: center; justify-content: center;
+font-family: ‘Oswald’, sans-serif; font-weight: 700; font-size: 13px;
+color: var(–olive-bright); position: relative;
+}
+.brand-mark::before, .brand-mark::after {
+content: ‘’; position: absolute; width: 5px; height: 5px; border: 1px solid var(–olive);
+}
+.brand-mark::before { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+.brand-mark::after { bottom: -2px; right: -2px; border-left: none; border-top: none; }
 
-  .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
-  .brand-title {
-    font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 14px;
-    letter-spacing: 3px; color: var(--text-bright);
-  }
-  .brand-sub { font-size: 9px; letter-spacing: 2px; color: var(--text-dim); }
+.brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+.brand-title {
+font-family: ‘Oswald’, sans-serif; font-weight: 600; font-size: 14px;
+letter-spacing: 3px; color: var(–text-bright);
+}
+.brand-sub { font-size: 9px; letter-spacing: 2px; color: var(–text-dim); }
 
-  .header-status {
-    display: flex; gap: 14px; align-items: center; font-size: 10px; letter-spacing: 1.5px;
-  }
-  .stat-pill {
-    display: flex; align-items: center; gap: 6px;
-    padding: 4px 10px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-  }
-  .stat-pill .dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--olive-bright);
-    box-shadow: 0 0 6px var(--olive-bright);
-    animation: pulse 2s ease-in-out infinite;
-  }
-  .stat-pill.offline .dot { background: var(--c-enemy); box-shadow: 0 0 6px var(--c-enemy); animation: none; }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; } 50% { opacity: 0.4; }
-  }
+.header-status {
+display: flex; gap: 14px; align-items: center; font-size: 10px; letter-spacing: 1.5px;
+}
+.stat-pill {
+display: flex; align-items: center; gap: 6px;
+padding: 4px 10px;
+background: var(–bg);
+border: 1px solid var(–border);
+color: var(–text-dim);
+}
+.stat-pill .dot {
+width: 6px; height: 6px; border-radius: 50%;
+background: var(–olive-bright);
+box-shadow: 0 0 6px var(–olive-bright);
+animation: pulse 2s ease-in-out infinite;
+}
+.stat-pill.offline .dot { background: var(–c-enemy); box-shadow: 0 0 6px var(–c-enemy); animation: none; }
+@keyframes pulse {
+0%, 100% { opacity: 1; } 50% { opacity: 0.4; }
+}
 
-  .roster { display: flex; gap: 4px; }
-  .roster-slot {
-    width: 28px; height: 28px;
-    border: 1px solid var(--border);
-    background: var(--bg);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; font-weight: 700;
-    color: var(--text-dim);
-    position: relative;
-    cursor: default;
-  }
-  .roster-slot.active {
-    border-color: var(--player-color, var(--olive));
-    color: var(--player-color, var(--olive-bright));
-    background: rgba(0,0,0,0.4);
-  }
-  .roster-slot.me::after {
-    content: ''; position: absolute; bottom: -3px; left: 50%; transform: translateX(-50%);
-    width: 4px; height: 4px; background: var(--player-color, var(--olive-bright));
-    border-radius: 50%;
-  }
+.roster { display: flex; gap: 4px; }
+.roster-slot {
+width: 28px; height: 28px;
+border: 1px solid var(–border);
+background: var(–bg);
+display: flex; align-items: center; justify-content: center;
+font-size: 10px; font-weight: 700;
+color: var(–text-dim);
+position: relative;
+cursor: default;
+}
+.roster-slot.active {
+border-color: var(–player-color, var(–olive));
+color: var(–player-color, var(–olive-bright));
+background: rgba(0,0,0,0.4);
+}
+.roster-slot.me::after {
+content: ‘’; position: absolute; bottom: -3px; left: 50%; transform: translateX(-50%);
+width: 4px; height: 4px; background: var(–player-color, var(–olive-bright));
+border-radius: 50%;
+}
 
-  /* ═══════════════ TOOLBAR ═══════════════ */
-  .toolbar {
-    background: var(--panel);
-    border-bottom: 1px solid var(--border);
-    padding: 6px 12px;
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
+/* ═══════════════ TOOLBAR ═══════════════ */
+.toolbar {
+background: var(–panel);
+border-bottom: 1px solid var(–border);
+padding: 6px 12px;
+display: flex;
+gap: 6px;
+flex-wrap: wrap;
+align-items: center;
+}
 
-  .tool-group {
-    display: flex; gap: 2px; align-items: center;
-    padding: 0 8px;
-    border-right: 1px solid var(--border);
-  }
-  .tool-group:last-child { border-right: none; }
+.tool-group {
+display: flex; gap: 2px; align-items: center;
+padding: 0 8px;
+border-right: 1px solid var(–border);
+}
+.tool-group:last-child { border-right: none; }
 
-  .tool-label {
-    font-size: 8px; letter-spacing: 2px; color: var(--text-dim);
-    margin-right: 6px;
-  }
+.tool-label {
+font-size: 8px; letter-spacing: 2px; color: var(–text-dim);
+margin-right: 6px;
+}
 
-  .tool-btn {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: inherit;
-    font-size: 10px;
-    letter-spacing: 1px;
-    padding: 5px 9px;
-    cursor: pointer;
-    transition: all 0.12s;
-    display: inline-flex; align-items: center; gap: 5px;
-    position: relative;
-    text-transform: uppercase;
-  }
-  .tool-btn:hover {
-    border-color: var(--border-bright);
-    background: var(--panel-2);
-    color: var(--text-bright);
-  }
-  .tool-btn.active {
-    border-color: var(--olive-bright);
-    background: rgba(122,148,86,0.15);
-    color: var(--olive-bright);
-  }
-  .tool-btn.active::before {
-    content: ''; position: absolute; top: 1px; left: 1px;
-    width: 4px; height: 4px; background: var(--olive-bright);
-  }
-  .tool-btn .swatch {
-    width: 8px; height: 8px; display: inline-block;
-    border: 1px solid rgba(0,0,0,0.5);
-  }
-  .tool-btn.danger:hover {
-    border-color: var(--c-enemy);
-    color: var(--c-enemy);
-  }
+.tool-btn {
+background: var(–bg);
+border: 1px solid var(–border);
+color: var(–text);
+font-family: inherit;
+font-size: 10px;
+letter-spacing: 1px;
+padding: 5px 9px;
+cursor: pointer;
+transition: all 0.12s;
+display: inline-flex; align-items: center; gap: 5px;
+position: relative;
+text-transform: uppercase;
+}
+.tool-btn:hover {
+border-color: var(–border-bright);
+background: var(–panel-2);
+color: var(–text-bright);
+}
+.tool-btn.active {
+border-color: var(–olive-bright);
+background: rgba(122,148,86,0.15);
+color: var(–olive-bright);
+}
+.tool-btn.active::before {
+content: ‘’; position: absolute; top: 1px; left: 1px;
+width: 4px; height: 4px; background: var(–olive-bright);
+}
+.tool-btn .swatch {
+width: 8px; height: 8px; display: inline-block;
+border: 1px solid rgba(0,0,0,0.5);
+}
+.tool-btn.danger:hover {
+border-color: var(–c-enemy);
+color: var(–c-enemy);
+}
+.tool-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  /* ═══════════════ MAIN MAP AREA ═══════════════ */
-  main { flex: 1; display: flex; overflow: hidden; position: relative; }
+/* ═══════════════ MAP AREA ═══════════════ */
+main { flex: 1; display: flex; overflow: hidden; position: relative; }
 
-  .map-frame {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-    background:
-      linear-gradient(var(--bg-grid) 1px, transparent 1px) 0 0 / 40px 40px,
-      linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px) 0 0 / 40px 40px,
-      radial-gradient(ellipse at center, #131611 0%, #0a0c08 100%);
-    cursor: crosshair;
-  }
+.map-frame {
+flex: 1;
+position: relative;
+overflow: hidden;
+background:
+linear-gradient(var(–bg-grid) 1px, transparent 1px) 0 0 / 40px 40px,
+linear-gradient(90deg, var(–bg-grid) 1px, transparent 1px) 0 0 / 40px 40px,
+radial-gradient(ellipse at center, #131611 0%, #0a0c08 100%);
+cursor: crosshair;
+}
 
-  .corner {
-    position: absolute;
-    width: 18px; height: 18px;
-    border: 1px solid var(--olive);
-    pointer-events: none;
-    z-index: 5;
-    opacity: 0.5;
-  }
-  .corner.tl { top: 8px; left: 8px; border-right: none; border-bottom: none; }
-  .corner.tr { top: 8px; right: 8px; border-left: none; border-bottom: none; }
-  .corner.bl { bottom: 8px; left: 8px; border-right: none; border-top: none; }
-  .corner.br { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+.corner {
+position: absolute;
+width: 18px; height: 18px;
+border: 1px solid var(–olive);
+pointer-events: none;
+z-index: 5;
+opacity: 0.5;
+}
+.corner.tl { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+.corner.tr { top: 8px; right: 8px; border-left: none; border-bottom: none; }
+.corner.bl { bottom: 8px; left: 8px; border-right: none; border-top: none; }
+.corner.br { bottom: 8px; right: 8px; border-left: none; border-top: none; }
 
-  .map-coords {
-    position: absolute;
-    top: 12px; left: 36px;
-    font-size: 9px;
-    color: var(--text-dim);
-    letter-spacing: 1.5px;
-    pointer-events: none;
-    z-index: 5;
-  }
-  .map-coords-r {
-    position: absolute;
-    bottom: 12px; right: 36px;
-    font-size: 9px;
-    color: var(--text-dim);
-    letter-spacing: 1.5px;
-    pointer-events: none;
-    z-index: 5;
-    text-align: right;
-  }
+.map-coords {
+position: absolute;
+top: 12px; left: 36px;
+font-size: 9px;
+color: var(–text-dim);
+letter-spacing: 1.5px;
+pointer-events: none;
+z-index: 5;
+}
+.map-coords-r {
+position: absolute;
+bottom: 12px; right: 36px;
+font-size: 9px;
+color: var(–text-dim);
+letter-spacing: 1.5px;
+pointer-events: none;
+z-index: 5;
+text-align: right;
+}
 
-  .map-bg {
-    position: absolute; inset: 0;
-    background-size: contain; background-repeat: no-repeat; background-position: center;
-    pointer-events: none;
-    opacity: 0.95;
-  }
+/* Inner aspect-locked area: markers/lines/cursors are children of this */
+.map-inner {
+position: absolute;
+top: 50%; left: 50%;
+transform: translate(-50%, -50%);
+width: 100%; height: 100%;
+pointer-events: none;
+}
+.map-inner.has-image {
+width: auto; height: auto;
+max-width: 100%; max-height: 100%;
+}
+.map-img {
+display: block;
+max-width: 100%; max-height: 100%;
+width: auto; height: auto;
+opacity: 0.95;
+pointer-events: none;
+user-select: none;
+}
 
-  .map-empty {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-dim);
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-align: center;
-    pointer-events: none;
-    flex-direction: column;
-  }
-  .map-empty span { display: block; margin-top: 6px; font-size: 9px; opacity: 0.7; }
+.map-empty {
+position: absolute; inset: 0;
+display: flex; align-items: center; justify-content: center;
+color: var(–text-dim);
+font-size: 11px;
+letter-spacing: 3px;
+text-align: center;
+pointer-events: none;
+flex-direction: column;
+}
+.map-empty span { display: block; margin-top: 6px; font-size: 9px; opacity: 0.7; }
 
-  /* ═══════════════ MARKERS ═══════════════ */
-  .marker {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    cursor: pointer;
-    user-select: none;
-    z-index: 10;
-    transition: transform 0.1s;
-  }
-  .marker:hover { transform: translate(-50%, -50%) scale(1.4); z-index: 20; }
-  .marker:hover .marker-meta { opacity: 1; }
+/* SVG overlay for lines/arrows - covers same area as map-inner */
+.map-svg {
+position: absolute; inset: 0;
+width: 100%; height: 100%;
+pointer-events: none;
+overflow: visible;
+}
 
-  .nato {
-    width: 26px; height: 18px;
-    border: 1.5px solid;
-    background: rgba(0,0,0,0.55);
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-  }
-  .marker.enemy .nato, .marker.enemy-s .nato {
-    transform: rotate(45deg);
-    width: 20px; height: 20px;
-  }
-  .marker.enemy .nato { border-color: var(--c-enemy); color: var(--c-enemy); box-shadow: 0 0 6px rgba(200,48,42,0.5); }
-  .marker.enemy-s .nato { border-color: var(--c-enemy-s); color: var(--c-enemy-s); border-style: dashed; }
+/* Direction indicator preview while drawing */
+.preview-line {
+position: absolute; inset: 0;
+width: 100%; height: 100%;
+pointer-events: none;
+z-index: 50;
+}
 
-  .marker.enemy .nato-inner, .marker.enemy-s .nato-inner { transform: rotate(-45deg); }
+/* ═══════════════ MARKERS ═══════════════ */
+.marker {
+position: absolute;
+transform: translate(-50%, -50%);
+cursor: pointer;
+user-select: none;
+z-index: 10;
+transition: transform 0.1s;
+pointer-events: auto;
+}
+.marker:hover { transform: translate(-50%, -50%) scale(1.4); z-index: 20; }
+.marker:hover .marker-meta { opacity: 1; }
+.marker:hover .marker-delete { opacity: 1; }
 
-  .marker.supply .nato { border-color: var(--c-supply); color: var(--c-supply); box-shadow: 0 0 5px rgba(184,122,58,0.4); }
-  .marker.supply-s .nato { border-color: var(--c-supply-s); color: var(--c-supply-s); border-style: dashed; }
+.nato {
+width: 26px; height: 18px;
+border: 1.5px solid;
+background: rgba(0,0,0,0.55);
+display: flex; align-items: center; justify-content: center;
+position: relative;
+}
+.marker.enemy .nato, .marker.enemy-s .nato {
+transform: rotate(45deg);
+width: 20px; height: 20px;
+}
+.marker.enemy .nato { border-color: var(–c-enemy); color: var(–c-enemy); box-shadow: 0 0 6px rgba(200,48,42,0.5); }
+.marker.enemy-s .nato { border-color: var(–c-enemy-s); color: var(–c-enemy-s); border-style: dashed; }
 
-  .nato-inner {
-    width: 100%; height: 100%;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .nato svg { width: 100%; height: 100%; }
+.marker.enemy .nato-inner, .marker.enemy-s .nato-inner { transform: rotate(-45deg); }
 
-  .marker.note .nato {
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    border-color: var(--c-note);
-    color: var(--c-note);
-  }
+.marker.supply .nato { border-color: var(–c-supply); color: var(–c-supply); box-shadow: 0 0 5px rgba(184,122,58,0.4); }
+.marker.supply-s .nato { border-color: var(–c-supply-s); color: var(–c-supply-s); border-style: dashed; }
 
-  /* Author dot */
-  .marker-author {
-    position: absolute;
-    top: -3px; right: -3px;
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    border: 1px solid rgba(0,0,0,0.7);
-    z-index: 2;
-  }
+.nato-inner {
+width: 100%; height: 100%;
+display: flex; align-items: center; justify-content: center;
+}
+.nato svg { width: 100%; height: 100%; }
 
-  /* Tooltip */
-  .marker-meta {
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-    background: rgba(0,0,0,0.92);
-    border: 1px solid var(--border-bright);
-    color: var(--text-bright);
-    font-size: 9px;
-    letter-spacing: 1px;
-    padding: 3px 8px;
-    opacity: 0;
-    transition: opacity 0.15s;
-    pointer-events: none;
-    z-index: 30;
-  }
-  .marker-meta .author-tag {
-    color: var(--text-dim);
-    margin-left: 6px;
-    padding-left: 6px;
-    border-left: 1px solid var(--border);
-  }
+.marker.note .nato {
+width: 22px; height: 22px;
+border-radius: 50%;
+border-color: var(–c-note);
+color: var(–c-note);
+}
 
-  /* PING */
-  .ping {
-    position: absolute;
-    width: 40px; height: 40px;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: 15;
-  }
-  .ping::before, .ping::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border: 2px solid var(--c-ping);
-    border-radius: 50%;
-    animation: pingExpand 1.5s ease-out forwards;
-  }
-  .ping::after { animation-delay: 0.3s; }
-  @keyframes pingExpand {
-    0% { transform: scale(0.2); opacity: 1; }
-    100% { transform: scale(2.4); opacity: 0; }
-  }
+/* Player attribution dot (top right) */
+.marker-author {
+position: absolute;
+top: -3px; right: -3px;
+width: 7px; height: 7px;
+border-radius: 50%;
+border: 1px solid rgba(0,0,0,0.7);
+z-index: 2;
+}
 
-  /* CURSORS */
-  .cursor {
-    position: absolute;
-    pointer-events: none;
-    z-index: 100;
-    transition: left 0.06s linear, top 0.06s linear;
-  }
-  .cursor svg { display: block; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.7)); }
-  .cursor-label {
-    position: absolute;
-    top: 16px; left: 14px;
-    color: #0a0a0a;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    padding: 2px 6px;
-    white-space: nowrap;
-    text-transform: uppercase;
-  }
+/* Direction indicator arrow */
+.marker-direction {
+position: absolute;
+top: 50%; left: 50%;
+width: 0; height: 0;
+transform-origin: 0 0;
+pointer-events: none;
+}
+.marker-direction svg {
+position: absolute;
+width: 28px; height: 14px;
+/* anchor at the LEFT edge so length extends in direction */
+top: -7px; left: 0;
+overflow: visible;
+}
 
-  /* MODAL */
-  .modal-bg {
-    position: fixed; inset: 0;
-    background: rgba(5,7,5,0.85);
-    backdrop-filter: blur(4px);
-    z-index: 9000;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .modal {
-    background: var(--panel);
-    border: 1px solid var(--border-bright);
-    padding: 28px 32px;
-    width: 360px;
-    position: relative;
-    box-shadow: 0 0 40px rgba(0,0,0,0.8);
-  }
-  .modal::before {
-    content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--olive-bright), transparent);
-  }
-  .modal-corners > div {
-    position: absolute; width: 8px; height: 8px; border: 1px solid var(--olive);
-  }
-  .modal-corners .tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }
-  .modal-corners .tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
-  .modal-corners .bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
-  .modal-corners .br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+/* Delete X button */
+.marker-delete {
+position: absolute;
+top: -10px; left: -10px;
+width: 14px; height: 14px;
+background: var(–c-enemy);
+color: white;
+border: 1px solid #000;
+border-radius: 50%;
+font-size: 10px;
+line-height: 12px;
+text-align: center;
+cursor: pointer;
+opacity: 0;
+transition: opacity 0.15s;
+z-index: 25;
+font-family: sans-serif;
+font-weight: 700;
+}
+.marker-delete:hover { background: #ff5040; transform: scale(1.2); }
 
-  .modal-title {
-    font-family: 'Oswald', sans-serif;
-    font-weight: 600;
-    font-size: 16px;
-    letter-spacing: 4px;
-    color: var(--text-bright);
-    margin-bottom: 4px;
-  }
-  .modal-sub {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--text-dim);
-    margin-bottom: 20px;
-  }
-  .modal-input {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text-bright);
-    font-family: inherit;
-    font-size: 12px;
-    letter-spacing: 2px;
-    padding: 10px 12px;
-    text-transform: uppercase;
-    outline: none;
-  }
-  .modal-input:focus { border-color: var(--olive-bright); }
-  .modal-btn {
-    width: 100%;
-    margin-top: 14px;
-    background: var(--accent);
-    border: 1px solid var(--olive-bright);
-    color: var(--text-bright);
-    font-family: 'Oswald', sans-serif;
-    font-weight: 600;
-    font-size: 12px;
-    letter-spacing: 4px;
-    padding: 10px;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: all 0.15s;
-  }
-  .modal-btn:hover { background: var(--olive); color: #0a0a0a; }
-  .modal-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+/* Tooltip */
+.marker-meta {
+position: absolute;
+top: calc(100% + 10px);
+left: 50%;
+transform: translateX(-50%);
+white-space: nowrap;
+background: rgba(0,0,0,0.92);
+border: 1px solid var(–border-bright);
+color: var(–text-bright);
+font-size: 9px;
+letter-spacing: 1px;
+padding: 3px 8px;
+opacity: 0;
+transition: opacity 0.15s;
+pointer-events: none;
+z-index: 30;
+}
+.marker-meta .author-tag {
+color: var(–text-dim);
+margin-left: 6px;
+padding-left: 6px;
+border-left: 1px solid var(–border);
+}
 
-  .modal-error {
-    margin-top: 10px;
-    font-size: 9px;
-    letter-spacing: 1.5px;
-    color: var(--c-enemy);
-    min-height: 12px;
-  }
+/* PING */
+.ping {
+position: absolute;
+width: 40px; height: 40px;
+transform: translate(-50%, -50%);
+pointer-events: none;
+z-index: 15;
+}
+.ping::before, .ping::after {
+content: ‘’;
+position: absolute;
+inset: 0;
+border: 2px solid var(–c-ping);
+border-radius: 50%;
+animation: pingExpand 1.5s ease-out forwards;
+}
+.ping::after { animation-delay: 0.3s; }
+@keyframes pingExpand {
+0% { transform: scale(0.2); opacity: 1; }
+100% { transform: scale(2.4); opacity: 0; }
+}
 
-  #file-input { display: none; }
+/* CURSORS */
+.cursor {
+position: absolute;
+pointer-events: none;
+z-index: 100;
+transition: left 0.06s linear, top 0.06s linear;
+}
+.cursor svg { display: block; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.7)); }
+.cursor-label {
+position: absolute;
+top: 16px; left: 14px;
+color: #0a0a0a;
+font-size: 9px;
+font-weight: 700;
+letter-spacing: 1px;
+padding: 2px 6px;
+white-space: nowrap;
+text-transform: uppercase;
+}
 
-  .loading-overlay {
-    position: fixed; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--bg);
-    z-index: 10000;
-    flex-direction: column; gap: 12px;
-  }
-  .loading-overlay .lbl {
-    font-family: 'Oswald', sans-serif;
-    letter-spacing: 4px;
-    color: var(--text-dim);
-    font-size: 11px;
-  }
-  .spinner {
-    width: 24px; height: 24px;
-    border: 1.5px solid var(--border);
-    border-top-color: var(--olive-bright);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+/* Lines & Arrows (SVG) */
+.draw-line {
+cursor: pointer;
+pointer-events: stroke;
+stroke-width: 2;
+transition: stroke-width 0.1s;
+}
+.draw-line:hover { stroke-width: 4; }
+
+/* ═══════════════ MODAL (general) ═══════════════ */
+.modal-bg {
+position: fixed; inset: 0;
+background: rgba(5,7,5,0.85);
+backdrop-filter: blur(4px);
+z-index: 9000;
+display: flex; align-items: center; justify-content: center;
+padding: 20px;
+}
+.modal {
+background: var(–panel);
+border: 1px solid var(–border-bright);
+padding: 24px 28px;
+width: 100%;
+max-width: 480px;
+max-height: 80vh;
+overflow-y: auto;
+position: relative;
+box-shadow: 0 0 40px rgba(0,0,0,0.8);
+}
+.modal::before {
+content: ‘’; position: absolute; top: -1px; left: 0; right: 0; height: 1px;
+background: linear-gradient(90deg, transparent, var(–olive-bright), transparent);
+}
+.modal-corners > div {
+position: absolute; width: 8px; height: 8px; border: 1px solid var(–olive);
+}
+.modal-corners .tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+.modal-corners .tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
+.modal-corners .bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+.modal-corners .br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+.modal-title {
+font-family: ‘Oswald’, sans-serif;
+font-weight: 600;
+font-size: 16px;
+letter-spacing: 4px;
+color: var(–text-bright);
+margin-bottom: 4px;
+}
+.modal-sub {
+font-size: 9px;
+letter-spacing: 2px;
+color: var(–text-dim);
+margin-bottom: 20px;
+}
+.modal-input {
+width: 100%;
+background: var(–bg);
+border: 1px solid var(–border);
+color: var(–text-bright);
+font-family: inherit;
+font-size: 12px;
+letter-spacing: 2px;
+padding: 10px 12px;
+text-transform: uppercase;
+outline: none;
+}
+.modal-input:focus { border-color: var(–olive-bright); }
+.modal-btn {
+width: 100%;
+margin-top: 14px;
+background: var(–accent);
+border: 1px solid var(–olive-bright);
+color: var(–text-bright);
+font-family: ‘Oswald’, sans-serif;
+font-weight: 600;
+font-size: 12px;
+letter-spacing: 4px;
+padding: 10px;
+cursor: pointer;
+text-transform: uppercase;
+transition: all 0.15s;
+}
+.modal-btn:hover { background: var(–olive); color: #0a0a0a; }
+.modal-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.modal-btn.secondary {
+background: var(–bg);
+border: 1px solid var(–border);
+color: var(–text);
+}
+.modal-btn.secondary:hover { border-color: var(–border-bright); background: var(–panel-2); }
+
+.modal-error {
+margin-top: 10px;
+font-size: 9px;
+letter-spacing: 1.5px;
+color: var(–c-enemy);
+min-height: 12px;
+}
+
+.modal-close {
+position: absolute;
+top: 8px; right: 8px;
+width: 24px; height: 24px;
+background: transparent;
+border: 1px solid var(–border);
+color: var(–text-dim);
+cursor: pointer;
+font-family: sans-serif;
+font-size: 14px;
+line-height: 1;
+}
+.modal-close:hover { color: var(–text-bright); border-color: var(–border-bright); }
+
+/* Map manager list */
+.map-list {
+margin-top: 12px;
+border: 1px solid var(–border);
+background: var(–bg);
+max-height: 280px;
+overflow-y: auto;
+}
+.map-list-empty {
+padding: 24px;
+text-align: center;
+color: var(–text-dim);
+font-size: 10px;
+letter-spacing: 2px;
+}
+.map-item {
+display: flex; align-items: center; gap: 10px;
+padding: 8px 10px;
+border-bottom: 1px solid var(–border);
+}
+.map-item:last-child { border-bottom: none; }
+.map-item.active {
+background: rgba(122,148,86,0.1);
+border-left: 2px solid var(–olive-bright);
+}
+.map-item-thumb {
+width: 50px; height: 32px;
+background-size: cover; background-position: center;
+border: 1px solid var(–border);
+flex-shrink: 0;
+background-color: var(–bg);
+}
+.map-item-name {
+flex: 1;
+font-size: 11px;
+color: var(–text-bright);
+letter-spacing: 1px;
+text-transform: uppercase;
+background: transparent;
+border: 1px solid transparent;
+color: inherit;
+font-family: inherit;
+padding: 4px 6px;
+outline: none;
+min-width: 0;
+}
+.map-item-name:focus, .map-item-name:hover {
+border-color: var(–border);
+background: var(–panel);
+}
+.map-item-btn {
+background: var(–bg);
+border: 1px solid var(–border);
+color: var(–text);
+font-family: inherit;
+font-size: 9px;
+letter-spacing: 1px;
+padding: 4px 8px;
+cursor: pointer;
+text-transform: uppercase;
+}
+.map-item-btn:hover { border-color: var(–olive-bright); color: var(–olive-bright); }
+.map-item-btn.danger:hover { border-color: var(–c-enemy); color: var(–c-enemy); }
+.map-item-btn.active {
+background: var(–olive);
+color: #0a0a0a;
+border-color: var(–olive-bright);
+}
+
+.upload-area {
+margin-top: 14px;
+padding: 16px;
+border: 1px dashed var(–border-bright);
+text-align: center;
+background: var(–bg);
+}
+.upload-area-label {
+font-size: 10px;
+letter-spacing: 2px;
+color: var(–text-dim);
+text-transform: uppercase;
+margin-bottom: 8px;
+}
+
+#file-input { display: none; }
+
+.loading-overlay {
+position: fixed; inset: 0;
+display: flex; align-items: center; justify-content: center;
+background: var(–bg);
+z-index: 10000;
+flex-direction: column; gap: 12px;
+}
+.loading-overlay .lbl {
+font-family: ‘Oswald’, sans-serif;
+letter-spacing: 4px;
+color: var(–text-dim);
+font-size: 11px;
+}
+.spinner {
+width: 24px; height: 24px;
+border: 1.5px solid var(–border);
+border-top-color: var(–olive-bright);
+border-radius: 50%;
+animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Hint banner for two-step tools */
+.hint-banner {
+position: fixed;
+top: 100px; left: 50%;
+transform: translateX(-50%);
+background: rgba(0,0,0,0.92);
+border: 1px solid var(–olive-bright);
+color: var(–text-bright);
+padding: 8px 16px;
+font-size: 10px;
+letter-spacing: 2px;
+z-index: 500;
+text-transform: uppercase;
+animation: hintIn 0.2s ease-out;
+}
+@keyframes hintIn {
+from { opacity: 0; transform: translate(-50%, -8px); }
+to { opacity: 1; transform: translate(-50%, 0); }
+}
+.hint-banner .x { color: var(–text-dim); margin-left: 8px; cursor: pointer; }
+.hint-banner .x:hover { color: var(–c-enemy); }
 </style>
+
 </head>
 <body>
 
@@ -493,8 +708,10 @@
   <div class="lbl">CONNECTING TO COMMAND</div>
 </div>
 
+<!-- Name modal -->
+
 <div class="modal-bg" id="name-modal" style="display:none;">
-  <div class="modal">
+  <div class="modal" style="max-width:360px">
     <div class="modal-corners">
       <div class="tl"></div><div class="tr"></div><div class="bl"></div><div class="br"></div>
     </div>
@@ -503,6 +720,24 @@
     <input type="text" id="name-input" class="modal-input" maxlength="12" placeholder="ALPHA-1" autocomplete="off">
     <button class="modal-btn" id="name-submit">DEPLOY</button>
     <div class="modal-error" id="name-error"></div>
+  </div>
+</div>
+
+<!-- Map manager modal -->
+
+<div class="modal-bg" id="maps-modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-corners">
+      <div class="tl"></div><div class="tr"></div><div class="bl"></div><div class="br"></div>
+    </div>
+    <button class="modal-close" id="maps-close">×</button>
+    <div class="modal-title">MAP LIBRARY</div>
+    <div class="modal-sub">// MANAGE TACTICAL MAPS</div>
+    <div class="map-list" id="map-list"></div>
+    <div class="upload-area">
+      <div class="upload-area-label">UPLOAD NEW MAP (max 1.5 MB)</div>
+      <button class="modal-btn secondary" id="maps-upload">⤴ CHOOSE IMAGE</button>
+    </div>
   </div>
 </div>
 
@@ -536,6 +771,10 @@
     <button class="tool-btn" data-tool="enemy" data-unit="AA"><span class="swatch" style="background:var(--c-enemy)"></span>AA</button>
     <button class="tool-btn" data-tool="enemy" data-unit="AAINF"><span class="swatch" style="background:var(--c-enemy)"></span>AA-INF</button>
     <button class="tool-btn" data-tool="enemy" data-unit="FLAK"><span class="swatch" style="background:var(--c-enemy)"></span>FLAK</button>
+    <button class="tool-btn" data-tool="enemy" data-unit="REC"><span class="swatch" style="background:var(--c-enemy)"></span>REC</button>
+    <button class="tool-btn" data-tool="enemy" data-unit="HELI"><span class="swatch" style="background:var(--c-enemy)"></span>HELI</button>
+    <button class="tool-btn" data-tool="enemy" data-unit="MG"><span class="swatch" style="background:var(--c-enemy)"></span>MG</button>
+    <button class="tool-btn" data-tool="enemy" data-unit="SOF"><span class="swatch" style="background:var(--c-enemy)"></span>SOF</button>
   </div>
 
   <div class="tool-group">
@@ -545,12 +784,23 @@
     <button class="tool-btn" data-tool="enemy-s" data-unit="ART"><span class="swatch" style="background:var(--c-enemy-s)"></span>ART?</button>
     <button class="tool-btn" data-tool="enemy-s" data-unit="AT"><span class="swatch" style="background:var(--c-enemy-s)"></span>AT?</button>
     <button class="tool-btn" data-tool="enemy-s" data-unit="AA"><span class="swatch" style="background:var(--c-enemy-s)"></span>AA?</button>
+    <button class="tool-btn" data-tool="enemy-s" data-unit="REC"><span class="swatch" style="background:var(--c-enemy-s)"></span>REC?</button>
+    <button class="tool-btn" data-tool="enemy-s" data-unit="HELI"><span class="swatch" style="background:var(--c-enemy-s)"></span>HELI?</button>
+    <button class="tool-btn" data-tool="enemy-s" data-unit="MG"><span class="swatch" style="background:var(--c-enemy-s)"></span>MG?</button>
+    <button class="tool-btn" data-tool="enemy-s" data-unit="SOF"><span class="swatch" style="background:var(--c-enemy-s)"></span>SOF?</button>
   </div>
 
   <div class="tool-group">
     <span class="tool-label">SUPPLY</span>
     <button class="tool-btn" data-tool="supply" data-unit="SUP"><span class="swatch" style="background:var(--c-supply)"></span>SUPPLY</button>
     <button class="tool-btn" data-tool="supply-s" data-unit="SUP"><span class="swatch" style="background:var(--c-supply-s)"></span>SUPPLY?</button>
+  </div>
+
+  <div class="tool-group">
+    <span class="tool-label">DRAW</span>
+    <button class="tool-btn" data-tool="line"><span class="swatch" style="background:var(--c-line)"></span>LINE</button>
+    <button class="tool-btn" data-tool="arrow"><span class="swatch" style="background:var(--c-line);clip-path:polygon(0 30%,70% 30%,70% 0,100% 50%,70% 100%,70% 70%,0 70%)"></span>ARROW</button>
+    <button class="tool-btn" data-tool="direction" id="direction-btn">⟶ DIRECTION</button>
   </div>
 
   <div class="tool-group">
@@ -561,7 +811,8 @@
   </div>
 
   <div class="tool-group" style="margin-left:auto">
-    <button class="tool-btn" id="upload-btn">⤴ MAP IMG</button>
+    <button class="tool-btn" id="undo-btn" disabled>↶ UNDO</button>
+    <button class="tool-btn" id="maps-btn">🗺 MAPS</button>
     <button class="tool-btn danger" id="clear-mine">CLEAR MINE</button>
     <button class="tool-btn danger" id="clear-all">CLEAR ALL</button>
   </div>
@@ -577,10 +828,20 @@
     <div class="corner br"></div>
     <div class="map-coords">GRID 00.00 // 00.00</div>
     <div class="map-coords-r">SECTOR ALPHA<br>BROKEN ARROW</div>
-    <div class="map-bg" id="map-bg"></div>
+    <div class="map-inner" id="map-inner">
+      <img class="map-img" id="map-img" style="display:none" alt="">
+      <svg class="map-svg" id="map-svg" preserveAspectRatio="none" viewBox="0 0 1000 1000">
+        <defs>
+          <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5"
+                  markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
     <div class="map-empty" id="map-empty">
       // NO MAP LOADED //
-      <span>CLICK "MAP IMG" TO UPLOAD A SCREENSHOT</span>
+      <span>OPEN "MAPS" TO ADD A SCREENSHOT</span>
     </div>
   </div>
 </main>
@@ -589,7 +850,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
     getDatabase, ref, set, push, onValue, remove, onDisconnect,
-    get, serverTimestamp
+    get, serverTimestamp, update
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
   const firebaseConfig = {
@@ -608,38 +869,66 @@
   const ROOM = "main";
   const MAX_PLAYERS = 5;
   const PLAYER_COLORS = ['#5aaa5a','#5a8fb8','#d4a017','#b87acc','#e8872a'];
+  const UNDO_LIMIT = 10;
 
+  /* ═══════════════ NATO SYMBOLS ═══════════════ */
   const NATO_SYMBOLS = {
-    INF: `<svg viewBox="0 0 26 18"><line x1="3" y1="3" x2="23" y2="15" stroke="currentColor" stroke-width="1.5"/><line x1="23" y1="3" x2="3" y2="15" stroke="currentColor" stroke-width="1.5"/></svg>`,
-    ARM: `<svg viewBox="0 0 26 18"><ellipse cx="13" cy="9" rx="8" ry="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`,
-    ART: `<svg viewBox="0 0 26 18"><circle cx="13" cy="9" r="3" fill="currentColor"/></svg>`,
-    AT: `<svg viewBox="0 0 26 18"><line x1="3" y1="3" x2="23" y2="15" stroke="currentColor" stroke-width="1.5"/><line x1="23" y1="3" x2="3" y2="15" stroke="currentColor" stroke-width="1.5"/><polygon points="13,3 17,9 13,15 9,9" fill="currentColor"/></svg>`,
-    AA: `<svg viewBox="0 0 26 18"><path d="M 6 14 Q 13 2 20 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`,
+    INF:   `<svg viewBox="0 0 26 18"><line x1="3" y1="3" x2="23" y2="15" stroke="currentColor" stroke-width="1.5"/><line x1="23" y1="3" x2="3" y2="15" stroke="currentColor" stroke-width="1.5"/></svg>`,
+    ARM:   `<svg viewBox="0 0 26 18"><ellipse cx="13" cy="9" rx="8" ry="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`,
+    ART:   `<svg viewBox="0 0 26 18"><circle cx="13" cy="9" r="3" fill="currentColor"/></svg>`,
+    AT:    `<svg viewBox="0 0 26 18"><line x1="3" y1="3" x2="23" y2="15" stroke="currentColor" stroke-width="1.5"/><line x1="23" y1="3" x2="3" y2="15" stroke="currentColor" stroke-width="1.5"/><polygon points="13,3 17,9 13,15 9,9" fill="currentColor"/></svg>`,
+    AA:    `<svg viewBox="0 0 26 18"><path d="M 6 14 Q 13 2 20 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`,
     AAINF: `<svg viewBox="0 0 26 18"><line x1="3" y1="3" x2="23" y2="15" stroke="currentColor" stroke-width="1.2"/><line x1="23" y1="3" x2="3" y2="15" stroke="currentColor" stroke-width="1.2"/><path d="M 6 14 Q 13 4 20 14" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>`,
-    FLAK: `<svg viewBox="0 0 26 18"><path d="M 6 15 Q 13 1 20 15" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="13" cy="13" r="2" fill="currentColor"/></svg>`,
-    SUP: `<svg viewBox="0 0 26 18"><rect x="8" y="4" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="9" x2="18" y2="9" stroke="currentColor" stroke-width="1"/></svg>`,
-    N: `<svg viewBox="0 0 22 22"><text x="11" y="16" text-anchor="middle" fill="currentColor" font-family="Oswald, sans-serif" font-size="13" font-weight="700">i</text></svg>`
+    FLAK:  `<svg viewBox="0 0 26 18"><path d="M 6 15 Q 13 1 20 15" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="13" cy="13" r="2" fill="currentColor"/></svg>`,
+    SUP:   `<svg viewBox="0 0 26 18"><rect x="8" y="4" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="9" x2="18" y2="9" stroke="currentColor" stroke-width="1"/></svg>`,
+    N:     `<svg viewBox="0 0 22 22"><text x="11" y="16" text-anchor="middle" fill="currentColor" font-family="Oswald, sans-serif" font-size="13" font-weight="700">i</text></svg>`,
+    REC:   `<svg viewBox="0 0 26 18"><path d="M 4 14 L 13 4 L 22 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`,
+    HELI:  `<svg viewBox="0 0 26 18"><line x1="3" y1="6" x2="23" y2="6" stroke="currentColor" stroke-width="1.5"/><line x1="13" y1="6" x2="13" y2="14" stroke="currentColor" stroke-width="1.5"/><circle cx="13" cy="14" r="1.5" fill="currentColor"/></svg>`,
+    MG:    `<svg viewBox="0 0 26 18"><line x1="13" y1="3" x2="13" y2="15" stroke="currentColor" stroke-width="2"/><line x1="9" y1="6" x2="17" y2="6" stroke="currentColor" stroke-width="1.2"/><line x1="9" y1="9" x2="17" y2="9" stroke="currentColor" stroke-width="1.2"/><line x1="9" y1="12" x2="17" y2="12" stroke="currentColor" stroke-width="1.2"/></svg>`,
+    SOF:   `<svg viewBox="0 0 26 18"><line x1="3" y1="3" x2="23" y2="15" stroke="currentColor" stroke-width="1.5"/><line x1="23" y1="3" x2="3" y2="15" stroke="currentColor" stroke-width="1.5"/><circle cx="13" cy="9" r="3" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>`
   };
 
+  const UNIT_LABELS = {
+    INF:'INFANTRY',ARM:'ARMOR',ART:'ARTILLERY',AT:'ANTI-TANK',AA:'ANTI-AIR',
+    AAINF:'AA INF',FLAK:'FLAK',SUP:'SUPPLY',N:'NOTE',
+    REC:'RECON',HELI:'HELICOPTER',MG:'MG NEST',SOF:'SPECIAL OPS'
+  };
+
+  const TOOL_LABELS = {
+    'enemy':'HOSTILE','enemy-s':'HOSTILE (SUSP)','supply':'SUPPLY','supply-s':'SUPPLY (SUSP)','note':'NOTE'
+  };
+
+  /* ═══════════════ STATE ═══════════════ */
   let me = null;
   let players = {};
   let markers = {};
+  let lines = {};
+  let maps = {};        // { id: {name, data, addedBy, addedAt} }
+  let activeMapId = null;
   let currentTool = null;
   let currentUnit = null;
   let multiMode = false;
+  let undoStack = [];   // local only - records last actions for me
+  let pendingTwoStep = null; // { type: 'line'|'arrow'|'direction', firstPoint?, targetMarkerId? }
 
+  /* ═══════════════ DOM ═══════════════ */
   const $loading = document.getElementById('loading');
   const $nameModal = document.getElementById('name-modal');
   const $nameInput = document.getElementById('name-input');
   const $nameSubmit = document.getElementById('name-submit');
   const $nameError = document.getElementById('name-error');
   const $map = document.getElementById('map');
-  const $mapBg = document.getElementById('map-bg');
+  const $mapInner = document.getElementById('map-inner');
+  const $mapImg = document.getElementById('map-img');
   const $mapEmpty = document.getElementById('map-empty');
+  const $mapSvg = document.getElementById('map-svg');
   const $roster = document.getElementById('roster');
   const $connPill = document.getElementById('conn-pill');
   const $connText = document.getElementById('conn-text');
   const $fileInput = document.getElementById('file-input');
+  const $undoBtn = document.getElementById('undo-btn');
+  const $mapsModal = document.getElementById('maps-modal');
+  const $mapList = document.getElementById('map-list');
 
   for (let i = 0; i < MAX_PLAYERS; i++) {
     const slot = document.createElement('div');
@@ -649,16 +938,14 @@
     $roster.appendChild(slot);
   }
 
+  /* ═══════════════ JOIN ═══════════════ */
   function showNameModal() {
     $loading.style.display = 'none';
     $nameModal.style.display = 'flex';
     setTimeout(() => $nameInput.focus(), 100);
   }
-
   $nameSubmit.addEventListener('click', joinSession);
-  $nameInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') joinSession();
-  });
+  $nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') joinSession(); });
 
   async function joinSession() {
     const name = $nameInput.value.trim().toUpperCase();
@@ -668,7 +955,6 @@
     }
     $nameError.textContent = '';
     $nameSubmit.disabled = true;
-
     try {
       const playersSnap = await get(ref(db, `rooms/${ROOM}/players`));
       const current = playersSnap.val() || {};
@@ -679,7 +965,6 @@
         $nameSubmit.disabled = false;
         return;
       }
-
       let slot = -1;
       for (let i = 0; i < MAX_PLAYERS; i++) {
         if (!usedSlots.has(i)) { slot = i; break; }
@@ -689,15 +974,11 @@
         $nameSubmit.disabled = false;
         return;
       }
-
       const id = 'p_' + Math.random().toString(36).slice(2, 10);
       me = { id, name, color: PLAYER_COLORS[slot], slot };
 
       const playerRef = ref(db, `rooms/${ROOM}/players/${id}`);
-      await set(playerRef, {
-        name, color: me.color, slot,
-        joinedAt: serverTimestamp()
-      });
+      await set(playerRef, { name, color: me.color, slot, joinedAt: serverTimestamp() });
       onDisconnect(playerRef).remove();
       onDisconnect(ref(db, `rooms/${ROOM}/cursors/${id}`)).remove();
 
@@ -710,6 +991,7 @@
     }
   }
 
+  /* ═══════════════ FIREBASE LISTENERS ═══════════════ */
   function startListening() {
     onValue(ref(db, `rooms/${ROOM}/players`), snap => {
       players = snap.val() || {};
@@ -721,15 +1003,21 @@
       renderMarkers();
     });
 
-    onValue(ref(db, `rooms/${ROOM}/mapImage`), snap => {
-      const data = snap.val();
-      if (data) {
-        $mapBg.style.backgroundImage = `url(${data})`;
-        $mapEmpty.style.display = 'none';
-      } else {
-        $mapBg.style.backgroundImage = '';
-        $mapEmpty.style.display = 'flex';
-      }
+    onValue(ref(db, `rooms/${ROOM}/lines`), snap => {
+      lines = snap.val() || {};
+      renderLines();
+    });
+
+    onValue(ref(db, `rooms/${ROOM}/maps`), snap => {
+      maps = snap.val() || {};
+      renderMapList();
+      renderActiveMap();
+    });
+
+    onValue(ref(db, `rooms/${ROOM}/activeMapId`), snap => {
+      activeMapId = snap.val();
+      renderActiveMap();
+      renderMapList();
     });
 
     onValue(ref(db, `rooms/${ROOM}/pings`), snap => {
@@ -750,6 +1038,7 @@
     $connText.textContent = 'LIVE';
   }
 
+  /* ═══════════════ ROSTER ═══════════════ */
   function renderRoster() {
     const slots = $roster.querySelectorAll('.roster-slot');
     slots.forEach(s => {
@@ -758,7 +1047,6 @@
       s.textContent = parseInt(s.dataset.slot) + 1;
       s.title = '';
     });
-
     Object.entries(players).forEach(([id, p]) => {
       const slot = slots[p.slot];
       if (!slot) return;
@@ -770,8 +1058,123 @@
     });
   }
 
+  /* ═══════════════ MAPS ═══════════════ */
+  function renderActiveMap() {
+    if (activeMapId && maps[activeMapId]) {
+      const m = maps[activeMapId];
+      $mapImg.src = m.data;
+      $mapImg.style.display = 'block';
+      $mapImg.onload = () => {
+        $mapInner.classList.add('has-image');
+        renderMarkers();
+        renderLines();
+      };
+      $mapEmpty.style.display = 'none';
+    } else {
+      $mapImg.src = '';
+      $mapImg.style.display = 'none';
+      $mapInner.classList.remove('has-image');
+      $mapEmpty.style.display = 'flex';
+    }
+  }
+
+  function renderMapList() {
+    $mapList.innerHTML = '';
+    const entries = Object.entries(maps);
+    if (entries.length === 0) {
+      $mapList.innerHTML = '<div class="map-list-empty">// NO MAPS YET</div>';
+      return;
+    }
+    entries.sort((a,b) => (a[1].addedAt||0) - (b[1].addedAt||0));
+    entries.forEach(([id, m]) => {
+      const item = document.createElement('div');
+      item.className = 'map-item' + (id === activeMapId ? ' active' : '');
+
+      const thumb = document.createElement('div');
+      thumb.className = 'map-item-thumb';
+      thumb.style.backgroundImage = `url(${m.data})`;
+      item.appendChild(thumb);
+
+      const nameInput = document.createElement('input');
+      nameInput.className = 'map-item-name';
+      nameInput.value = m.name || 'UNNAMED';
+      nameInput.maxLength = 30;
+      nameInput.addEventListener('blur', () => {
+        const newName = nameInput.value.trim() || 'UNNAMED';
+        if (newName !== m.name) {
+          update(ref(db, `rooms/${ROOM}/maps/${id}`), { name: newName });
+        }
+      });
+      nameInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') nameInput.blur();
+      });
+      item.appendChild(nameInput);
+
+      const useBtn = document.createElement('button');
+      useBtn.className = 'map-item-btn' + (id === activeMapId ? ' active' : '');
+      useBtn.textContent = id === activeMapId ? 'ACTIVE' : 'USE';
+      useBtn.addEventListener('click', () => {
+        set(ref(db, `rooms/${ROOM}/activeMapId`), id);
+      });
+      item.appendChild(useBtn);
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'map-item-btn danger';
+      delBtn.textContent = 'DEL';
+      delBtn.addEventListener('click', () => {
+        if (!confirm(`Karte "${m.name}" löschen?`)) return;
+        remove(ref(db, `rooms/${ROOM}/maps/${id}`));
+        if (id === activeMapId) {
+          set(ref(db, `rooms/${ROOM}/activeMapId`), null);
+        }
+      });
+      item.appendChild(delBtn);
+
+      $mapList.appendChild(item);
+    });
+  }
+
+  document.getElementById('maps-btn').addEventListener('click', () => {
+    $mapsModal.style.display = 'flex';
+  });
+  document.getElementById('maps-close').addEventListener('click', () => {
+    $mapsModal.style.display = 'none';
+  });
+  $mapsModal.addEventListener('click', e => {
+    if (e.target === $mapsModal) $mapsModal.style.display = 'none';
+  });
+  document.getElementById('maps-upload').addEventListener('click', () => $fileInput.click());
+
+  $fileInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 1.5 * 1024 * 1024) {
+      alert('Bild ist zu groß (max ~1.5 MB). Bitte komprimieren oder verkleinern.');
+      $fileInput.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const id = 'm_' + Math.random().toString(36).slice(2, 10);
+      const baseName = file.name.replace(/\.[^.]+$/, '').slice(0, 30).toUpperCase() || 'MAP';
+      set(ref(db, `rooms/${ROOM}/maps/${id}`), {
+        name: baseName,
+        data: ev.target.result,
+        addedBy: me.name,
+        addedAt: Date.now()
+      });
+      // Auto-select if no map active
+      if (!activeMapId) {
+        set(ref(db, `rooms/${ROOM}/activeMapId`), id);
+      }
+    };
+    reader.readAsDataURL(file);
+    $fileInput.value = '';
+  });
+
+  /* ═══════════════ MARKERS ═══════════════ */
   function renderMarkers() {
-    $map.querySelectorAll('.marker').forEach(el => el.remove());
+    $mapInner.querySelectorAll('.marker').forEach(el => el.remove());
 
     Object.entries(markers).forEach(([id, m]) => {
       const el = document.createElement('div');
@@ -782,39 +1185,130 @@
 
       const nato = document.createElement('div');
       nato.className = 'nato';
-
       const inner = document.createElement('div');
       inner.className = 'nato-inner';
       inner.innerHTML = NATO_SYMBOLS[m.unit] || '';
       nato.appendChild(inner);
-
       el.appendChild(nato);
 
+      // Direction indicator
+      if (typeof m.direction === 'number') {
+        const dir = document.createElement('div');
+        dir.className = 'marker-direction';
+        dir.style.transform = `rotate(${m.direction}deg)`;
+        const color = m.tool === 'enemy' ? 'var(--c-enemy)' :
+                      m.tool === 'enemy-s' ? 'var(--c-enemy-s)' :
+                      m.tool === 'supply' ? 'var(--c-supply)' :
+                      m.tool === 'supply-s' ? 'var(--c-supply-s)' :
+                      'var(--c-note)';
+        dir.innerHTML = `
+          <svg viewBox="0 0 28 14">
+            <line x1="0" y1="7" x2="22" y2="7" stroke="${color}" stroke-width="2"/>
+            <polygon points="22,2 28,7 22,12" fill="${color}"/>
+          </svg>
+        `;
+        el.appendChild(dir);
+      }
+
+      // Author dot
       const author = document.createElement('div');
       author.className = 'marker-author';
       author.style.background = m.authorColor || '#888';
       el.appendChild(author);
 
+      // Delete X (visible on hover, only for own markers OR everyone if you prefer - making it for all)
+      const del = document.createElement('div');
+      del.className = 'marker-delete';
+      del.textContent = '×';
+      del.title = 'Marker löschen';
+      del.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        deleteMarker(id, m);
+      });
+      el.appendChild(del);
+
+      // Tooltip
       const meta = document.createElement('div');
       meta.className = 'marker-meta';
-      const labels = {
-        'enemy':'HOSTILE','enemy-s':'HOSTILE (SUSP)','supply':'SUPPLY','supply-s':'SUPPLY (SUSP)','note':'NOTE'
-      };
-      const unitLabels = {INF:'INFANTRY',ARM:'ARMOR',ART:'ARTILLERY',AT:'ANTI-TANK',AA:'ANTI-AIR',AAINF:'AA INF',FLAK:'FLAK',SUP:'SUPPLY',N:'NOTE'};
-      const label = m.text || `${labels[m.tool]||''} ${unitLabels[m.unit]||''}`.trim();
+      const label = m.text || `${TOOL_LABELS[m.tool]||''} ${UNIT_LABELS[m.unit]||''}`.trim();
       meta.innerHTML = `${label}<span class="author-tag">${m.authorName||''}</span>`;
       el.appendChild(meta);
 
+      // Right-click to delete
       el.addEventListener('contextmenu', e => {
-        e.preventDefault();
-        e.stopPropagation();
-        remove(ref(db, `rooms/${ROOM}/markers/${id}`));
+        e.preventDefault(); e.stopPropagation();
+        deleteMarker(id, m);
       });
 
-      $map.appendChild(el);
+      // Click on marker (for direction tool)
+      el.addEventListener('click', e => {
+        if (currentTool === 'direction') {
+          e.preventDefault(); e.stopPropagation();
+          handleDirectionClickOnMarker(id, m);
+        }
+      });
+
+      $mapInner.appendChild(el);
     });
   }
 
+  function deleteMarker(id, m) {
+    // Add to undo only if it's mine
+    if (m.authorId === me?.id) {
+      pushUndo({ type: 'delete-marker', data: { id, marker: { ...m } } });
+    }
+    remove(ref(db, `rooms/${ROOM}/markers/${id}`));
+  }
+
+  /* ═══════════════ LINES & ARROWS ═══════════════ */
+  function renderLines() {
+    // Remove existing line elements
+    $mapSvg.querySelectorAll('.draw-line').forEach(el => el.remove());
+
+    const rect = $mapInner.getBoundingClientRect();
+    if (rect.width === 0) return;
+
+    Object.entries(lines).forEach(([id, l]) => {
+      const ns = 'http://www.w3.org/2000/svg';
+      const line = document.createElementNS(ns, 'line');
+      line.setAttribute('class', 'draw-line');
+      line.setAttribute('x1', l.x1 * 1000);
+      line.setAttribute('y1', l.y1 * 1000);
+      line.setAttribute('x2', l.x2 * 1000);
+      line.setAttribute('y2', l.y2 * 1000);
+      line.setAttribute('stroke', l.color || '#d4e0c4');
+      line.style.color = l.color || '#d4e0c4';
+      if (l.type === 'arrow') {
+        line.setAttribute('marker-end', 'url(#arrowhead)');
+      }
+      line.dataset.id = id;
+      line.style.pointerEvents = 'stroke';
+      line.addEventListener('click', e => {
+        e.stopPropagation();
+        if (l.authorId === me?.id || confirm('Linie eines anderen Spielers löschen?')) {
+          if (l.authorId === me?.id) {
+            pushUndo({ type: 'delete-line', data: { id, line: { ...l } } });
+          }
+          remove(ref(db, `rooms/${ROOM}/lines/${id}`));
+        }
+      });
+      line.addEventListener('contextmenu', e => {
+        e.preventDefault(); e.stopPropagation();
+        if (l.authorId === me?.id) {
+          pushUndo({ type: 'delete-line', data: { id, line: { ...l } } });
+        }
+        remove(ref(db, `rooms/${ROOM}/lines/${id}`));
+      });
+      $mapSvg.appendChild(line);
+    });
+  }
+
+  // Set viewBox to 0 0 1000 1000 — we use percent-based coords (0-1) * 1000
+  $mapSvg.setAttribute('viewBox', '0 0 1000 1000');
+  $mapSvg.setAttribute('preserveAspectRatio', 'none');
+
+  /* ═══════════════ CURSORS ═══════════════ */
   const cursorEls = {};
   function renderCursors(cursors) {
     const seen = new Set();
@@ -834,12 +1328,11 @@
           </svg>
           <div class="cursor-label" style="background:${player.color}">${player.name}</div>
         `;
-        $map.appendChild(el);
+        $mapInner.appendChild(el);
         cursorEls[id] = el;
       }
-      const rect = $map.getBoundingClientRect();
-      el.style.left = (c.x * rect.width) + 'px';
-      el.style.top = (c.y * rect.height) + 'px';
+      el.style.left = (c.x * 100) + '%';
+      el.style.top = (c.y * 100) + '%';
     });
     Object.keys(cursorEls).forEach(id => {
       if (!seen.has(id)) {
@@ -849,14 +1342,28 @@
     });
   }
 
+  /* ═══════════════ TOOL SELECTION ═══════════════ */
   document.querySelectorAll('.tool-btn[data-tool]').forEach(btn => {
     btn.addEventListener('click', () => {
       const tool = btn.dataset.tool;
       const unit = btn.dataset.unit;
       if (currentTool === tool && currentUnit === unit) {
         currentTool = null; currentUnit = null;
+        clearHint();
+        cancelTwoStep();
       } else {
         currentTool = tool; currentUnit = unit;
+        // For two-step tools show hint
+        if (tool === 'line' || tool === 'arrow') {
+          showHint('Klick: 1. Punkt setzen, dann 2. Punkt');
+          pendingTwoStep = { type: tool };
+        } else if (tool === 'direction') {
+          showHint('Klick auf einen Marker, dann auf Karte für Richtung');
+          pendingTwoStep = { type: 'direction' };
+        } else {
+          clearHint();
+          pendingTwoStep = null;
+        }
       }
       document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
       if (currentTool) btn.classList.add('active');
@@ -871,21 +1378,38 @@
     $multiBtn.classList.toggle('active', multiMode);
   });
 
-  $map.addEventListener('click', e => {
-    if (!currentTool || !me) return;
-    if (e.target.closest('.marker')) return;
-    const rect = $map.getBoundingClientRect();
+  /* ═══════════════ MAP CLICK HANDLING ═══════════════ */
+  function clickPos(e) {
+    const rect = $mapInner.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width;
     const y = (e.clientY - rect.top) / rect.height;
+    return { x, y, inside: x >= 0 && x <= 1 && y >= 0 && y <= 1 };
+  }
+
+  $map.addEventListener('click', e => {
+    if (!currentTool || !me) return;
+    if (e.target.closest('.marker') && currentTool !== 'direction') return;
+    if (e.target.closest('.draw-line')) return;
+
+    const pos = clickPos(e);
+    if (!pos.inside) return;
+    const { x, y } = pos;
 
     if (currentTool === 'ping') {
       const pingRef = push(ref(db, `rooms/${ROOM}/pings`));
       set(pingRef, { x, y, t: Date.now(), authorName: me.name });
       spawnPing(x, y);
-      if (!multiMode) {
-        currentTool = null; currentUnit = null;
-        document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-      }
+      finishToolUse();
+      return;
+    }
+
+    if (currentTool === 'line' || currentTool === 'arrow') {
+      handleDrawClick(x, y);
+      return;
+    }
+
+    if (currentTool === 'direction') {
+      handleDirectionClickOnMap(x, y);
       return;
     }
 
@@ -896,7 +1420,8 @@
     }
 
     const mref = push(ref(db, `rooms/${ROOM}/markers`));
-    set(mref, {
+    const id = mref.key;
+    const data = {
       tool: currentTool,
       unit: currentUnit,
       x, y,
@@ -905,28 +1430,117 @@
       authorName: me.name,
       authorColor: me.color,
       createdAt: serverTimestamp()
-    });
+    };
+    set(mref, data);
+    pushUndo({ type: 'create-marker', data: { id } });
+    finishToolUse();
+  });
 
+  function finishToolUse() {
     if (!multiMode) {
       currentTool = null; currentUnit = null;
+      pendingTwoStep = null;
+      clearHint();
       document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+    }
+  }
+
+  function handleDrawClick(x, y) {
+    if (!pendingTwoStep) pendingTwoStep = { type: currentTool };
+    if (!pendingTwoStep.firstPoint) {
+      pendingTwoStep.firstPoint = { x, y };
+      showHint('OK — jetzt 2. Punkt setzen (ESC zum Abbrechen)');
+    } else {
+      const lref = push(ref(db, `rooms/${ROOM}/lines`));
+      const id = lref.key;
+      const data = {
+        type: pendingTwoStep.type,
+        x1: pendingTwoStep.firstPoint.x,
+        y1: pendingTwoStep.firstPoint.y,
+        x2: x, y2: y,
+        color: me.color,
+        authorId: me.id,
+        authorName: me.name,
+        createdAt: serverTimestamp()
+      };
+      set(lref, data);
+      pushUndo({ type: 'create-line', data: { id } });
+      pendingTwoStep.firstPoint = null;
+      if (multiMode) {
+        showHint('Multi-Mode: 1. Punkt setzen für nächste Linie');
+      } else {
+        finishToolUse();
+      }
+    }
+  }
+
+  function handleDirectionClickOnMarker(markerId, marker) {
+    if (currentTool !== 'direction') return;
+    if (!pendingTwoStep) pendingTwoStep = { type: 'direction' };
+    pendingTwoStep.targetMarkerId = markerId;
+    pendingTwoStep.targetMarker = marker;
+    showHint(`Marker ausgewählt — jetzt auf Karte klicken für Richtung (oder hier nochmal klicken für 'Richtung entfernen')`);
+    // If user clicks the same marker twice without choosing direction, remove direction
+    if (pendingTwoStep.lastMarkerId === markerId) {
+      update(ref(db, `rooms/${ROOM}/markers/${markerId}`), { direction: null });
+      pushUndo({ type: 'set-direction', data: { id: markerId, prev: marker.direction ?? null } });
+      pendingTwoStep.lastMarkerId = null;
+      pendingTwoStep.targetMarkerId = null;
+      finishToolUse();
+      return;
+    }
+    pendingTwoStep.lastMarkerId = markerId;
+  }
+
+  function handleDirectionClickOnMap(x, y) {
+    if (!pendingTwoStep || !pendingTwoStep.targetMarkerId) {
+      showHint('Erst auf einen Marker klicken!');
+      return;
+    }
+    const m = pendingTwoStep.targetMarker;
+    // angle in degrees from marker to click point
+    const dx = x - m.x;
+    const dy = y - m.y;
+    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+    const prev = m.direction ?? null;
+    update(ref(db, `rooms/${ROOM}/markers/${pendingTwoStep.targetMarkerId}`), { direction: angle });
+    pushUndo({ type: 'set-direction', data: { id: pendingTwoStep.targetMarkerId, prev } });
+    pendingTwoStep.targetMarkerId = null;
+    pendingTwoStep.lastMarkerId = null;
+    finishToolUse();
+  }
+
+  function cancelTwoStep() {
+    pendingTwoStep = null;
+  }
+
+  // ESC cancels two-step
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      cancelTwoStep();
+      currentTool = null; currentUnit = null;
+      document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+      clearHint();
+    }
+    // Ctrl+Z / Cmd+Z for undo
+    if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.target.matches('input,textarea')) {
+      e.preventDefault();
+      doUndo();
     }
   });
 
+  /* ═══════════════ MOUSE TRACK ═══════════════ */
   let lastCursorSent = 0;
   $map.addEventListener('mousemove', e => {
     if (!me) return;
     const now = Date.now();
     if (now - lastCursorSent < 60) return;
     lastCursorSent = now;
-    const rect = $map.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = (e.clientY - rect.top) / rect.height;
-    if (x < 0 || x > 1 || y < 0 || y > 1) return;
-    set(ref(db, `rooms/${ROOM}/cursors/${me.id}`), { x, y, t: now });
-
+    const pos = clickPos(e);
+    if (!pos.inside) return;
+    set(ref(db, `rooms/${ROOM}/cursors/${me.id}`), { x: pos.x, y: pos.y, t: now });
     document.querySelector('.map-coords').textContent =
-      `GRID ${(x*100).toFixed(2)} // ${(y*100).toFixed(2)}`;
+      `GRID ${(pos.x*100).toFixed(2)} // ${(pos.y*100).toFixed(2)}`;
   });
 
   $map.addEventListener('mouseleave', () => {
@@ -934,52 +1548,103 @@
     remove(ref(db, `rooms/${ROOM}/cursors/${me.id}`));
   });
 
+  /* ═══════════════ PING ═══════════════ */
   function spawnPing(x, y) {
     const el = document.createElement('div');
     el.className = 'ping';
     el.style.left = (x * 100) + '%';
     el.style.top = (y * 100) + '%';
-    $map.appendChild(el);
+    $mapInner.appendChild(el);
     setTimeout(() => el.remove(), 1600);
   }
 
-  document.getElementById('upload-btn').addEventListener('click', () => $fileInput.click());
-  $fileInput.addEventListener('change', e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (file.size > 1.5 * 1024 * 1024) {
-      alert('Bild ist zu groß (max ~1.5 MB). Bitte komprimieren oder verkleinern.');
-      $fileInput.value = '';
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = ev => {
-      set(ref(db, `rooms/${ROOM}/mapImage`), ev.target.result);
-    };
-    reader.readAsDataURL(file);
-    $fileInput.value = '';
-  });
-
-  document.getElementById('clear-mine').addEventListener('click', () => {
-    if (!confirm('Alle DEINE Marker löschen?')) return;
-    Object.entries(markers).forEach(([id, m]) => {
-      if (m.authorId === me?.id) {
-        remove(ref(db, `rooms/${ROOM}/markers/${id}`));
-      }
+  /* ═══════════════ HINT BANNER ═══════════════ */
+  let $hint = null;
+  function showHint(text) {
+    clearHint();
+    $hint = document.createElement('div');
+    $hint.className = 'hint-banner';
+    $hint.innerHTML = `${text} <span class="x" id="hint-x">×</span>`;
+    document.body.appendChild($hint);
+    $hint.querySelector('#hint-x').addEventListener('click', () => {
+      cancelTwoStep();
+      currentTool = null; currentUnit = null;
+      document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+      clearHint();
     });
+  }
+  function clearHint() {
+    if ($hint) { $hint.remove(); $hint = null; }
+  }
+
+  /* ═══════════════ UNDO ═══════════════ */
+  function pushUndo(action) {
+    undoStack.push(action);
+    if (undoStack.length > UNDO_LIMIT) undoStack.shift();
+    updateUndoBtn();
+  }
+
+  function updateUndoBtn() {
+    $undoBtn.disabled = undoStack.length === 0;
+    $undoBtn.textContent = `↶ UNDO (${undoStack.length})`;
+  }
+
+  async function doUndo() {
+    const action = undoStack.pop();
+    updateUndoBtn();
+    if (!action) return;
+
+    if (action.type === 'create-marker') {
+      remove(ref(db, `rooms/${ROOM}/markers/${action.data.id}`));
+    } else if (action.type === 'create-line') {
+      remove(ref(db, `rooms/${ROOM}/lines/${action.data.id}`));
+    } else if (action.type === 'delete-marker') {
+      // Restore the marker
+      await set(ref(db, `rooms/${ROOM}/markers/${action.data.id}`), action.data.marker);
+    } else if (action.type === 'delete-line') {
+      await set(ref(db, `rooms/${ROOM}/lines/${action.data.id}`), action.data.line);
+    } else if (action.type === 'set-direction') {
+      // Restore previous direction
+      await update(ref(db, `rooms/${ROOM}/markers/${action.data.id}`), { direction: action.data.prev });
+    }
+  }
+
+  $undoBtn.addEventListener('click', doUndo);
+  updateUndoBtn();
+
+  /* ═══════════════ CLEAR ═══════════════ */
+  document.getElementById('clear-mine').addEventListener('click', () => {
+    if (!confirm('Alle DEINE Marker und Linien löschen?')) return;
+    Object.entries(markers).forEach(([id, m]) => {
+      if (m.authorId === me?.id) remove(ref(db, `rooms/${ROOM}/markers/${id}`));
+    });
+    Object.entries(lines).forEach(([id, l]) => {
+      if (l.authorId === me?.id) remove(ref(db, `rooms/${ROOM}/lines/${id}`));
+    });
+    undoStack = [];
+    updateUndoBtn();
   });
 
   document.getElementById('clear-all').addEventListener('click', () => {
-    if (!confirm('ALLE Marker auf der Karte löschen (auch von anderen)?')) return;
+    if (!confirm('ALLE Marker und Linien löschen (auch von anderen)?')) return;
     set(ref(db, `rooms/${ROOM}/markers`), null);
+    set(ref(db, `rooms/${ROOM}/lines`), null);
+    undoStack = [];
+    updateUndoBtn();
   });
 
+  /* ═══════════════ INIT ═══════════════ */
   get(ref(db, `rooms/${ROOM}/players`))
     .then(() => showNameModal())
     .catch(err => {
       console.error('Firebase error:', err);
       $loading.querySelector('.lbl').textContent = 'CONNECTION FAILED // CHECK CONSOLE';
     });
+
+  // Re-render lines when window resizes (svg viewBox handles scale automatically but just in case)
+  window.addEventListener('resize', () => {
+    renderLines();
+  });
 
   window.addEventListener('beforeunload', () => {
     if (me) {
@@ -988,5 +1653,6 @@
     }
   });
 </script>
+
 </body>
 </html>
