@@ -5,24 +5,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BROKEN ARROW // TACTICAL OVERLAY</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:           #0d0f0c;
-    --bg-grid:      #11140f;
-    --panel:        #161a14;
-    --panel-2:      #1c2118;
-    --border:       #2a3324;
-    --border-bright:#3d4a32;
-    --accent:       #4a5d38;
-    --olive:        #5a7042;
-    --olive-bright: #7a9456;
-    --text:         #b8c4a8;
-    --text-dim:     #6a7860;
-    --text-bright:  #d4e0c4;
-    --warn:         #d4a017;
+  /* System font stacks - guaranteed to work without internet:
+     --font-display: condensed/impact-style for headlines
+     --font-mono: monospace for body/UI text */
+
+:root {
+–font-display: ‘Impact’, ‘Haettenschweiler’, ‘Arial Narrow Bold’, ‘Helvetica Neue Condensed Bold’, ‘Bebas Neue’, sans-serif;
+–font-mono: ‘SF Mono’, ‘Menlo’, ‘Monaco’, ‘Consolas’, ‘Liberation Mono’, ‘Courier New’, monospace;
+}
+
+:root {
+–bg:           #0d0f0c;
+–bg-grid:      #11140f;
+–panel:        #161a14;
+–panel-2:      #1c2118;
+–border:       #2a3324;
+–border-bright:#3d4a32;
+–accent:       #4a5d38;
+–olive:        #5a7042;
+–olive-bright: #7a9456;
+–text:         #b8c4a8;
+–text-dim:     #6a7860;
+–text-bright:  #d4e0c4;
+–warn:         #d4a017;
 
 ```
 --c-enemy:        #c8302a;
@@ -42,7 +48,7 @@
 body {
 background: var(–bg);
 color: var(–text);
-font-family: ‘JetBrains Mono’, ‘SF Mono’, ‘Menlo’, ‘Consolas’, ‘Courier New’, monospace;
+font-family: var(–font-mono);
 display: flex;
 flex-direction: column;
 position: relative;
@@ -60,8 +66,8 @@ background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55)
 /* ═══════════════ HEADER ═══════════════ */
 header {
 flex-shrink: 0;
-background: linear-gradient(180deg, var(–panel-2) 0%, var(–panel) 100%);
-border-bottom: 1px solid var(–border);
+background: linear-gradient(180deg, #20251c 0%, #161a14 100%);
+border-bottom: 1px solid var(–border-bright);
 position: relative;
 }
 header::before {
@@ -80,7 +86,7 @@ width: 30px; height: 30px;
 border: 1px solid var(–olive);
 background: var(–bg);
 display: flex; align-items: center; justify-content: center;
-font-family: ‘Oswald’, ‘Impact’, ‘Arial Narrow Bold’, sans-serif; font-weight: 700; font-size: 13px;
+font-family: var(–font-display); font-weight: 700; font-size: 13px;
 color: var(–olive-bright); position: relative;
 }
 .brand-mark::before, .brand-mark::after {
@@ -91,7 +97,7 @@ content: ‘’; position: absolute; width: 5px; height: 5px; border: 1px solid 
 
 .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
 .brand-title {
-font-family: ‘Oswald’, ‘Impact’, ‘Arial Narrow Bold’, sans-serif; font-weight: 700; font-size: 15px;
+font-family: var(–font-display); font-weight: 700; font-size: 15px;
 letter-spacing: 3px; color: #fff;
 }
 .brand-sub { font-size: 9px; letter-spacing: 2px; color: var(–olive-bright); font-weight: 500; }
@@ -142,9 +148,9 @@ border-radius: 50%;
 
 /* ═══════════════ TOOLBAR ═══════════════ */
 .toolbar {
-background: var(–panel);
-border-bottom: 1px solid var(–border);
-padding: 6px 12px;
+background: linear-gradient(180deg, #1a1f17 0%, #14180f 100%);
+border-bottom: 1px solid var(–border-bright);
+padding: 8px 12px;
 display: flex;
 gap: 6px;
 flex-wrap: wrap;
@@ -531,7 +537,7 @@ position: absolute; width: 8px; height: 8px; border: 1px solid var(–olive);
 .modal-corners .br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
 
 .modal-title {
-font-family: ‘Oswald’, ‘Impact’, ‘Arial Narrow Bold’, sans-serif;
+font-family: var(–font-display);
 font-weight: 600;
 font-size: 16px;
 letter-spacing: 4px;
@@ -563,7 +569,7 @@ margin-top: 14px;
 background: var(–accent);
 border: 1px solid var(–olive-bright);
 color: var(–text-bright);
-font-family: ‘Oswald’, ‘Impact’, ‘Arial Narrow Bold’, sans-serif;
+font-family: var(–font-display);
 font-weight: 600;
 font-size: 12px;
 letter-spacing: 4px;
@@ -697,7 +703,7 @@ z-index: 10000;
 flex-direction: column; gap: 12px;
 }
 .loading-overlay .lbl {
-font-family: ‘Oswald’, ‘Impact’, ‘Arial Narrow Bold’, sans-serif;
+font-family: var(–font-display);
 letter-spacing: 4px;
 color: var(–text-dim);
 font-size: 11px;
@@ -915,7 +921,7 @@ to { opacity: 1; transform: translate(-50%, 0); }
     AAINF: `<svg viewBox="0 0 26 18"><line x1="3" y1="3" x2="23" y2="15" stroke="currentColor" stroke-width="1.2"/><line x1="23" y1="3" x2="3" y2="15" stroke="currentColor" stroke-width="1.2"/><path d="M 6 14 Q 13 4 20 14" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>`,
     FLAK:  `<svg viewBox="0 0 26 18"><path d="M 6 15 Q 13 1 20 15" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="13" cy="13" r="2" fill="currentColor"/></svg>`,
     SUP:   `<svg viewBox="0 0 26 18"><rect x="8" y="4" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="9" x2="18" y2="9" stroke="currentColor" stroke-width="1"/></svg>`,
-    N:     `<svg viewBox="0 0 22 22"><text x="11" y="16" text-anchor="middle" fill="currentColor" font-family="Oswald, sans-serif" font-size="13" font-weight="700">i</text></svg>`,
+    N:     `<svg viewBox="0 0 22 22"><text x="11" y="16" text-anchor="middle" fill="currentColor" font-family="Impact, Arial Narrow Bold, sans-serif" font-size="14" font-weight="700">i</text></svg>`,
     REC:   `<svg viewBox="0 0 26 18"><path d="M 4 14 L 13 4 L 22 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`,
     HELI:  `<svg viewBox="0 0 26 18"><line x1="3" y1="6" x2="23" y2="6" stroke="currentColor" stroke-width="1.5"/><line x1="13" y1="6" x2="13" y2="14" stroke="currentColor" stroke-width="1.5"/><circle cx="13" cy="14" r="1.5" fill="currentColor"/></svg>`,
     MG:    `<svg viewBox="0 0 26 18"><line x1="13" y1="3" x2="13" y2="15" stroke="currentColor" stroke-width="2"/><line x1="9" y1="6" x2="17" y2="6" stroke="currentColor" stroke-width="1.2"/><line x1="9" y1="9" x2="17" y2="9" stroke="currentColor" stroke-width="1.2"/><line x1="9" y1="12" x2="17" y2="12" stroke="currentColor" stroke-width="1.2"/></svg>`,
