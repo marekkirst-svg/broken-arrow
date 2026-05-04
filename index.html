@@ -5,23 +5,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BROKEN ARROW // TACTICAL OVERLAY</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Oswald:wght@300;400;500;600;700&display=swap');
-
-:root {
-–bg:           #0d0f0c;
-–bg-grid:      #11140f;
-–panel:        #161a14;
-–panel-2:      #1c2118;
-–border:       #2a3324;
-–border-bright:#3d4a32;
-–accent:       #4a5d38;
-–olive:        #5a7042;
-–olive-bright: #7a9456;
-–text:         #b8c4a8;
-–text-dim:     #6a7860;
-–text-bright:  #d4e0c4;
-–warn:         #d4a017;
+  :root {
+    --bg:           #0d0f0c;
+    --bg-grid:      #11140f;
+    --panel:        #161a14;
+    --panel-2:      #1c2118;
+    --border:       #2a3324;
+    --border-bright:#3d4a32;
+    --accent:       #4a5d38;
+    --olive:        #5a7042;
+    --olive-bright: #7a9456;
+    --text:         #b8c4a8;
+    --text-dim:     #6a7860;
+    --text-bright:  #d4e0c4;
+    --warn:         #d4a017;
 
 ```
 --c-enemy:        #c8302a;
@@ -41,7 +42,7 @@
 body {
 background: var(–bg);
 color: var(–text);
-font-family: ‘JetBrains Mono’, monospace;
+font-family: ‘JetBrains Mono’, ‘SF Mono’, ‘Menlo’, ‘Consolas’, ‘Courier New’, monospace;
 display: flex;
 flex-direction: column;
 position: relative;
@@ -79,7 +80,7 @@ width: 30px; height: 30px;
 border: 1px solid var(–olive);
 background: var(–bg);
 display: flex; align-items: center; justify-content: center;
-font-family: ‘Oswald’, sans-serif; font-weight: 700; font-size: 13px;
+font-family: ‘Oswald’, ‘Impact’, ‘Arial Narrow Bold’, sans-serif; font-weight: 700; font-size: 13px;
 color: var(–olive-bright); position: relative;
 }
 .brand-mark::before, .brand-mark::after {
@@ -90,10 +91,10 @@ content: ‘’; position: absolute; width: 5px; height: 5px; border: 1px solid 
 
 .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
 .brand-title {
-font-family: ‘Oswald’, sans-serif; font-weight: 600; font-size: 14px;
-letter-spacing: 3px; color: var(–text-bright);
+font-family: ‘Oswald’, ‘Impact’, ‘Arial Narrow Bold’, sans-serif; font-weight: 700; font-size: 15px;
+letter-spacing: 3px; color: #fff;
 }
-.brand-sub { font-size: 9px; letter-spacing: 2px; color: var(–text-dim); }
+.brand-sub { font-size: 9px; letter-spacing: 2px; color: var(–olive-bright); font-weight: 500; }
 
 .header-status {
 display: flex; gap: 14px; align-items: center; font-size: 10px; letter-spacing: 1.5px;
@@ -102,8 +103,9 @@ display: flex; gap: 14px; align-items: center; font-size: 10px; letter-spacing: 
 display: flex; align-items: center; gap: 6px;
 padding: 4px 10px;
 background: var(–bg);
-border: 1px solid var(–border);
-color: var(–text-dim);
+border: 1px solid var(–border-bright);
+color: var(–text-bright);
+font-weight: 500;
 }
 .stat-pill .dot {
 width: 6px; height: 6px; border-radius: 50%;
@@ -157,14 +159,15 @@ border-right: 1px solid var(–border);
 .tool-group:last-child { border-right: none; }
 
 .tool-label {
-font-size: 8px; letter-spacing: 2px; color: var(–text-dim);
+font-size: 9px; letter-spacing: 2px; color: var(–olive-bright);
 margin-right: 6px;
+font-weight: 600;
 }
 
 .tool-btn {
 background: var(–bg);
-border: 1px solid var(–border);
-color: var(–text);
+border: 1px solid var(–border-bright);
+color: var(–text-bright);
 font-family: inherit;
 font-size: 10px;
 letter-spacing: 1px;
@@ -174,16 +177,18 @@ transition: all 0.12s;
 display: inline-flex; align-items: center; gap: 5px;
 position: relative;
 text-transform: uppercase;
+font-weight: 500;
 }
 .tool-btn:hover {
-border-color: var(–border-bright);
+border-color: var(–olive);
 background: var(–panel-2);
-color: var(–text-bright);
+color: #fff;
 }
 .tool-btn.active {
 border-color: var(–olive-bright);
-background: rgba(122,148,86,0.15);
-color: var(–olive-bright);
+background: rgba(122,148,86,0.25);
+color: #fff;
+box-shadow: 0 0 8px rgba(122,148,86,0.4);
 }
 .tool-btn.active::before {
 content: ‘’; position: absolute; top: 1px; left: 1px;
@@ -311,22 +316,50 @@ pointer-events: auto;
 
 .nato {
 width: 26px; height: 18px;
-border: 1.5px solid;
-background: rgba(0,0,0,0.55);
+border: 2px solid;
+background: rgba(0,0,0,0.85);
 display: flex; align-items: center; justify-content: center;
 position: relative;
 }
+/* Halo effect — soft outer glow that lifts marker off any background */
+.nato::after {
+content: ‘’;
+position: absolute;
+inset: -6px;
+border: 1px solid rgba(0,0,0,0.6);
+background: radial-gradient(circle, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 70%);
+z-index: -1;
+pointer-events: none;
+}
 .marker.enemy .nato, .marker.enemy-s .nato {
 transform: rotate(45deg);
-width: 20px; height: 20px;
+width: 22px; height: 22px;
 }
-.marker.enemy .nato { border-color: var(–c-enemy); color: var(–c-enemy); box-shadow: 0 0 6px rgba(200,48,42,0.5); }
-.marker.enemy-s .nato { border-color: var(–c-enemy-s); color: var(–c-enemy-s); border-style: dashed; }
+.marker.enemy .nato {
+border-color: var(–c-enemy);
+color: var(–c-enemy);
+box-shadow: 0 0 0 2px rgba(0,0,0,0.7), 0 0 14px rgba(200,48,42,0.85), 0 0 24px rgba(200,48,42,0.4);
+}
+.marker.enemy-s .nato {
+border-color: var(–c-enemy-s);
+color: var(–c-enemy-s);
+border-style: dashed;
+box-shadow: 0 0 0 2px rgba(0,0,0,0.7), 0 0 12px rgba(138,58,46,0.7);
+}
 
 .marker.enemy .nato-inner, .marker.enemy-s .nato-inner { transform: rotate(-45deg); }
 
-.marker.supply .nato { border-color: var(–c-supply); color: var(–c-supply); box-shadow: 0 0 5px rgba(184,122,58,0.4); }
-.marker.supply-s .nato { border-color: var(–c-supply-s); color: var(–c-supply-s); border-style: dashed; }
+.marker.supply .nato {
+border-color: var(–c-supply);
+color: var(–c-supply);
+box-shadow: 0 0 0 2px rgba(0,0,0,0.7), 0 0 12px rgba(184,122,58,0.85), 0 0 22px rgba(184,122,58,0.4);
+}
+.marker.supply-s .nato {
+border-color: var(–c-supply-s);
+color: var(–c-supply-s);
+border-style: dashed;
+box-shadow: 0 0 0 2px rgba(0,0,0,0.7), 0 0 10px rgba(106,72,32,0.7);
+}
 
 .nato-inner {
 width: 100%; height: 100%;
@@ -335,10 +368,11 @@ display: flex; align-items: center; justify-content: center;
 .nato svg { width: 100%; height: 100%; }
 
 .marker.note .nato {
-width: 22px; height: 22px;
+width: 24px; height: 24px;
 border-radius: 50%;
 border-color: var(–c-note);
 color: var(–c-note);
+box-shadow: 0 0 0 2px rgba(0,0,0,0.7), 0 0 12px rgba(90,143,184,0.85), 0 0 22px rgba(90,143,184,0.4);
 }
 
 /* Player attribution dot (top right) */
@@ -497,7 +531,7 @@ position: absolute; width: 8px; height: 8px; border: 1px solid var(–olive);
 .modal-corners .br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
 
 .modal-title {
-font-family: ‘Oswald’, sans-serif;
+font-family: ‘Oswald’, ‘Impact’, ‘Arial Narrow Bold’, sans-serif;
 font-weight: 600;
 font-size: 16px;
 letter-spacing: 4px;
@@ -529,7 +563,7 @@ margin-top: 14px;
 background: var(–accent);
 border: 1px solid var(–olive-bright);
 color: var(–text-bright);
-font-family: ‘Oswald’, sans-serif;
+font-family: ‘Oswald’, ‘Impact’, ‘Arial Narrow Bold’, sans-serif;
 font-weight: 600;
 font-size: 12px;
 letter-spacing: 4px;
@@ -663,7 +697,7 @@ z-index: 10000;
 flex-direction: column; gap: 12px;
 }
 .loading-overlay .lbl {
-font-family: ‘Oswald’, sans-serif;
+font-family: ‘Oswald’, ‘Impact’, ‘Arial Narrow Bold’, sans-serif;
 letter-spacing: 4px;
 color: var(–text-dim);
 font-size: 11px;
