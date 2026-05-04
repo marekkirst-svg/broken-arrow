@@ -66,13 +66,14 @@ background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55)
 /* ═══════════════ HEADER ═══════════════ */
 header {
 flex-shrink: 0;
-background: linear-gradient(180deg, #20251c 0%, #161a14 100%);
-border-bottom: 1px solid var(–border-bright);
+background: linear-gradient(180deg, #283222 0%, #1a2014 100%);
+border-bottom: 2px solid var(–olive);
 position: relative;
+box-shadow: 0 2px 12px rgba(0,0,0,0.6);
 }
 header::before {
-content: ‘’; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
-background: linear-gradient(90deg, transparent, var(–olive), transparent);
+content: ‘’; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px;
+background: linear-gradient(90deg, transparent 5%, var(–olive-bright) 50%, transparent 95%);
 }
 
 .header-row {
@@ -82,25 +83,28 @@ padding: 8px 16px; gap: 16px;
 
 .brand { display: flex; align-items: center; gap: 12px; }
 .brand-mark {
-width: 30px; height: 30px;
-border: 1px solid var(–olive);
-background: var(–bg);
+width: 36px; height: 36px;
+border: 2px solid var(–olive-bright);
+background: linear-gradient(135deg, #1a2014 0%, #283222 100%);
 display: flex; align-items: center; justify-content: center;
-font-family: var(–font-display); font-weight: 700; font-size: 13px;
+font-family: var(–font-display); font-weight: 700; font-size: 14px;
 color: var(–olive-bright); position: relative;
+box-shadow: inset 0 0 8px rgba(0,0,0,0.5), 0 0 8px rgba(122,148,86,0.3);
+text-shadow: 0 0 6px rgba(122,148,86,0.6);
 }
 .brand-mark::before, .brand-mark::after {
-content: ‘’; position: absolute; width: 5px; height: 5px; border: 1px solid var(–olive);
+content: ‘’; position: absolute; width: 6px; height: 6px; border: 1px solid var(–olive-bright);
 }
 .brand-mark::before { top: -2px; left: -2px; border-right: none; border-bottom: none; }
 .brand-mark::after { bottom: -2px; right: -2px; border-left: none; border-top: none; }
 
-.brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+.brand-text { display: flex; flex-direction: column; line-height: 1.1; gap: 2px; }
 .brand-title {
-font-family: var(–font-display); font-weight: 700; font-size: 15px;
-letter-spacing: 3px; color: #fff;
+font-family: var(–font-display); font-weight: 700; font-size: 18px;
+letter-spacing: 4px; color: #fff;
+text-shadow: 0 0 8px rgba(122,148,86,0.5), 0 1px 2px rgba(0,0,0,0.8);
 }
-.brand-sub { font-size: 9px; letter-spacing: 2px; color: var(–olive-bright); font-weight: 500; }
+.brand-sub { font-size: 9px; letter-spacing: 2.5px; color: var(–olive-bright); font-weight: 600; }
 
 .header-status {
 display: flex; gap: 14px; align-items: center; font-size: 10px; letter-spacing: 1.5px;
@@ -126,24 +130,28 @@ animation: pulse 2s ease-in-out infinite;
 
 .roster { display: flex; gap: 4px; }
 .roster-slot {
-width: 28px; height: 28px;
-border: 1px solid var(–border);
-background: var(–bg);
+width: 32px; height: 32px;
+border: 1px solid var(–olive);
+background: linear-gradient(180deg, #1a2014 0%, #0a0c08 100%);
 display: flex; align-items: center; justify-content: center;
-font-size: 10px; font-weight: 700;
+font-size: 11px; font-weight: 700;
 color: var(–text-dim);
 position: relative;
 cursor: default;
+font-family: var(–font-display);
+letter-spacing: 1px;
 }
 .roster-slot.active {
 border-color: var(–player-color, var(–olive));
 color: var(–player-color, var(–olive-bright));
-background: rgba(0,0,0,0.4);
+background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%);
+box-shadow: 0 0 8px var(–player-color, var(–olive-bright));
 }
 .roster-slot.me::after {
-content: ‘’; position: absolute; bottom: -3px; left: 50%; transform: translateX(-50%);
-width: 4px; height: 4px; background: var(–player-color, var(–olive-bright));
+content: ‘’; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+width: 5px; height: 5px; background: var(–player-color, var(–olive-bright));
 border-radius: 50%;
+box-shadow: 0 0 4px var(–player-color, var(–olive-bright));
 }
 
 /* ═══════════════ TOOLBAR ═══════════════ */
@@ -157,58 +165,164 @@ flex-wrap: wrap;
 align-items: center;
 }
 
-.tool-group {
-display: flex; gap: 2px; align-items: center;
-padding: 0 8px;
-border-right: 1px solid var(–border);
+/* ═══════════════ TOOLBAR ═══════════════ */
+.toolbar {
+background: linear-gradient(180deg, #1f2519 0%, #161a14 100%);
+border-bottom: 2px solid var(–olive);
+padding: 10px 12px;
+display: flex;
+gap: 8px;
+flex-wrap: wrap;
+align-items: center;
+box-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
-.tool-group:last-child { border-right: none; }
+
+.tool-group {
+display: flex; gap: 3px; align-items: center;
+padding: 4px 10px;
+border-right: 1px solid var(–border-bright);
+background: rgba(0,0,0,0.25);
+}
+.tool-group:last-child { border-right: none; background: transparent; }
 
 .tool-label {
-font-size: 9px; letter-spacing: 2px; color: var(–olive-bright);
-margin-right: 6px;
-font-weight: 600;
+font-family: var(–font-display);
+font-size: 11px; letter-spacing: 2.5px; color: var(–olive-bright);
+margin-right: 8px;
+font-weight: 700;
+text-shadow: 0 0 8px rgba(122,148,86,0.4);
 }
 
+/* Base button - filled olive look */
 .tool-btn {
-background: var(–bg);
-border: 1px solid var(–border-bright);
+background: linear-gradient(180deg, #2a3324 0%, #1f2519 100%);
+border: 1px solid var(–olive);
 color: var(–text-bright);
 font-family: inherit;
 font-size: 10px;
 letter-spacing: 1px;
-padding: 5px 9px;
+padding: 6px 10px;
 cursor: pointer;
 transition: all 0.12s;
 display: inline-flex; align-items: center; gap: 5px;
 position: relative;
 text-transform: uppercase;
-font-weight: 500;
+font-weight: 600;
 }
 .tool-btn:hover {
-border-color: var(–olive);
-background: var(–panel-2);
+background: linear-gradient(180deg, #3a4530 0%, #2a3324 100%);
+border-color: var(–olive-bright);
 color: #fff;
+box-shadow: 0 0 6px rgba(122,148,86,0.5);
 }
 .tool-btn.active {
-border-color: var(–olive-bright);
-background: rgba(122,148,86,0.25);
-color: #fff;
-box-shadow: 0 0 8px rgba(122,148,86,0.4);
+background: linear-gradient(180deg, var(–olive-bright) 0%, var(–olive) 100%);
+border-color: #d4e0c4;
+color: #0a0a0a;
+box-shadow: 0 0 12px rgba(122,148,86,0.7), inset 0 1px 0 rgba(255,255,255,0.2);
+text-shadow: none;
+font-weight: 700;
 }
 .tool-btn.active::before {
-content: ‘’; position: absolute; top: 1px; left: 1px;
-width: 4px; height: 4px; background: var(–olive-bright);
+content: ‘’; position: absolute; top: 2px; left: 2px;
+width: 3px; height: 3px; background: #0a0a0a;
 }
+
+/* Hostile section - red tint */
+.tool-group.hostile-group {
+background: linear-gradient(180deg, rgba(200,48,42,0.08), rgba(200,48,42,0.03));
+border-right: 1px solid rgba(200,48,42,0.4);
+}
+.tool-group.hostile-group .tool-label { color: #e8453d; text-shadow: 0 0 8px rgba(200,48,42,0.4); }
+.tool-group.hostile-group .tool-btn {
+background: linear-gradient(180deg, #3a1815 0%, #281010 100%);
+border-color: #6a2018;
+color: #f0d0cc;
+}
+.tool-group.hostile-group .tool-btn:hover {
+background: linear-gradient(180deg, #5a201a 0%, #3a1510 100%);
+border-color: var(–c-enemy);
+color: #fff;
+box-shadow: 0 0 8px rgba(200,48,42,0.5);
+}
+.tool-group.hostile-group .tool-btn.active {
+background: linear-gradient(180deg, var(–c-enemy) 0%, #8a2018 100%);
+border-color: #ff6058;
+color: #fff;
+box-shadow: 0 0 12px rgba(232,69,61,0.8);
+text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+}
+
+/* Suspect section - dark red/dashed */
+.tool-group.suspect-group {
+background: linear-gradient(180deg, rgba(138,58,46,0.08), rgba(138,58,46,0.03));
+border-right: 1px solid rgba(138,58,46,0.4);
+}
+.tool-group.suspect-group .tool-label { color: #b86a5a; }
+.tool-group.suspect-group .tool-btn {
+background: linear-gradient(180deg, #2a1815 0%, #1a0e0c 100%);
+border: 1px dashed #6a3a30;
+color: #d0a098;
+}
+.tool-group.suspect-group .tool-btn:hover {
+border-color: var(–c-enemy-s);
+color: #fff;
+}
+.tool-group.suspect-group .tool-btn.active {
+background: linear-gradient(180deg, var(–c-enemy-s) 0%, #5a201a 100%);
+border-style: solid;
+color: #fff;
+}
+
+/* Supply section - amber */
+.tool-group.supply-group {
+background: linear-gradient(180deg, rgba(184,122,58,0.08), rgba(184,122,58,0.03));
+border-right: 1px solid rgba(184,122,58,0.4);
+}
+.tool-group.supply-group .tool-label { color: #e0a060; text-shadow: 0 0 8px rgba(184,122,58,0.4); }
+.tool-group.supply-group .tool-btn {
+background: linear-gradient(180deg, #3a2a18 0%, #281e10 100%);
+border-color: #6a4a20;
+color: #f0d8b8;
+}
+.tool-group.supply-group .tool-btn:hover {
+border-color: var(–c-supply);
+box-shadow: 0 0 8px rgba(184,122,58,0.5);
+color: #fff;
+}
+.tool-group.supply-group .tool-btn.active {
+background: linear-gradient(180deg, var(–c-supply) 0%, #8a5a30 100%);
+color: #fff;
+box-shadow: 0 0 10px rgba(184,122,58,0.7);
+}
+
+/* Draw section - cool/neutral olive */
+.tool-group.draw-group {
+background: linear-gradient(180deg, rgba(122,148,86,0.05), rgba(122,148,86,0.02));
+}
+.tool-group.draw-group .tool-label { color: #b8c4a8; }
+
+/* Other section */
+.tool-group.other-group .tool-label { color: var(–olive-bright); }
+
 .tool-btn .swatch {
-width: 8px; height: 8px; display: inline-block;
-border: 1px solid rgba(0,0,0,0.5);
+width: 10px; height: 10px; display: inline-block;
+border: 1px solid rgba(0,0,0,0.6);
+box-shadow: 0 0 0 1px rgba(255,255,255,0.1);
+}
+.tool-btn.danger {
+background: linear-gradient(180deg, #2a1010 0%, #1a0808 100%);
+border-color: #4a1a18;
+color: #d09080;
 }
 .tool-btn.danger:hover {
+background: linear-gradient(180deg, #4a1818 0%, #2a0e0e 100%);
 border-color: var(–c-enemy);
-color: var(–c-enemy);
+color: #fff;
+box-shadow: 0 0 8px rgba(200,48,42,0.4);
 }
-.tool-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.tool-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.tool-btn:disabled:hover { background: linear-gradient(180deg, #2a3324 0%, #1f2519 100%); }
 
 /* ═══════════════ MAP AREA ═══════════════ */
 main { flex: 1; display: flex; overflow: hidden; position: relative; }
@@ -802,7 +916,7 @@ to { opacity: 1; transform: translate(-50%, 0); }
 
 <div class="toolbar">
 
-  <div class="tool-group">
+  <div class="tool-group hostile-group">
     <span class="tool-label">HOSTILE</span>
     <button class="tool-btn" data-tool="enemy" data-unit="INF"><span class="swatch" style="background:var(--c-enemy)"></span>INF</button>
     <button class="tool-btn" data-tool="enemy" data-unit="ARM"><span class="swatch" style="background:var(--c-enemy)"></span>ARM</button>
@@ -817,7 +931,7 @@ to { opacity: 1; transform: translate(-50%, 0); }
     <button class="tool-btn" data-tool="enemy" data-unit="SOF"><span class="swatch" style="background:var(--c-enemy)"></span>SOF</button>
   </div>
 
-  <div class="tool-group">
+  <div class="tool-group suspect-group">
     <span class="tool-label">SUSPECT</span>
     <button class="tool-btn" data-tool="enemy-s" data-unit="INF"><span class="swatch" style="background:var(--c-enemy-s)"></span>INF?</button>
     <button class="tool-btn" data-tool="enemy-s" data-unit="ARM"><span class="swatch" style="background:var(--c-enemy-s)"></span>ARM?</button>
@@ -830,20 +944,20 @@ to { opacity: 1; transform: translate(-50%, 0); }
     <button class="tool-btn" data-tool="enemy-s" data-unit="SOF"><span class="swatch" style="background:var(--c-enemy-s)"></span>SOF?</button>
   </div>
 
-  <div class="tool-group">
+  <div class="tool-group supply-group">
     <span class="tool-label">SUPPLY</span>
     <button class="tool-btn" data-tool="supply" data-unit="SUP"><span class="swatch" style="background:var(--c-supply)"></span>SUPPLY</button>
     <button class="tool-btn" data-tool="supply-s" data-unit="SUP"><span class="swatch" style="background:var(--c-supply-s)"></span>SUPPLY?</button>
   </div>
 
-  <div class="tool-group">
+  <div class="tool-group draw-group">
     <span class="tool-label">DRAW</span>
     <button class="tool-btn" data-tool="line"><span class="swatch" style="background:var(--c-line)"></span>LINE</button>
     <button class="tool-btn" data-tool="arrow"><span class="swatch" style="background:var(--c-line);clip-path:polygon(0 30%,70% 30%,70% 0,100% 50%,70% 100%,70% 70%,0 70%)"></span>ARROW</button>
     <button class="tool-btn" data-tool="direction" id="direction-btn">⟶ DIRECTION</button>
   </div>
 
-  <div class="tool-group">
+  <div class="tool-group other-group">
     <span class="tool-label">OTHER</span>
     <button class="tool-btn" data-tool="note" data-unit="N"><span class="swatch" style="background:var(--c-note)"></span>NOTE</button>
     <button class="tool-btn" data-tool="ping"><span class="swatch" style="background:var(--c-ping)"></span>PING</button>
