@@ -1,859 +1,224 @@
 <!DOCTYPE html>
-
 <html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BROKEN ARROW // TACTICAL OVERLAY</title>
+<title>BROKEN ARROW // TACTICAL MAP</title>
 <style>
-  /* System font stacks - guaranteed to work without internet:
-     --font-display: condensed/impact-style for headlines
-     --font-mono: monospace for body/UI text */
-
-:root {
-–font-display: ‘Impact’, ‘Haettenschweiler’, ‘Arial Narrow Bold’, ‘Helvetica Neue Condensed Bold’, ‘Bebas Neue’, sans-serif;
-–font-mono: ‘SF Mono’, ‘Menlo’, ‘Monaco’, ‘Consolas’, ‘Liberation Mono’, ‘Courier New’, monospace;
-}
-
-:root {
-–bg:           #0d0f0c;
-–bg-grid:      #11140f;
-–panel:        #161a14;
-–panel-2:      #1c2118;
-–border:       #2a3324;
-–border-bright:#3d4a32;
-–accent:       #4a5d38;
-–olive:        #5a7042;
-–olive-bright: #7a9456;
-–text:         #b8c4a8;
-–text-dim:     #6a7860;
-–text-bright:  #d4e0c4;
-–warn:         #d4a017;
-
-```
---c-enemy:        #c8302a;
---c-enemy-s:      #8a3a2e;
---c-supply:       #b87a3a;
---c-supply-s:     #6a4820;
---c-note:         #5a8fb8;
---c-ping:         #ff3eb5;
---c-line:         #d4e0c4;
-```
-
-}
-
-- { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --font-display: 'Impact', 'Haettenschweiler', 'Arial Narrow Bold', 'Helvetica Neue Condensed Bold', sans-serif;
+    --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --bg-app:        #2a3038;
+    --bg-toolbar:    #f5f5f0;
+    --bg-toolbar-2:  #e8e8e0;
+    --bg-section:    #ffffff;
+    --bg-map:        #b8c4a8;
+    --border:        #c0c0b0;
+    --border-strong: #888880;
+    --text:          #2a2a2a;
+    --text-dim:      #6a6a6a;
+    --text-strong:   #000;
+    --friend:        #80b8e8;
+    --friend-dark:   #2a78c8;
+    --friend-fill:   #b0d4f0;
+    --hostile:       #e84038;
+    --hostile-dark:  #a8201a;
+    --hostile-fill:  #f4a098;
+    --supply:        #e8a040;
+    --supply-dark:   #a87020;
+    --note:          #5a8fb8;
+    --ping:          #ff3eb5;
+    --header-bg:     #1a2014;
+    --header-accent: #7a9456;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; overflow: hidden; }
-
-body {
-background: var(–bg);
-color: var(–text);
-font-family: var(–font-mono);
-display: flex;
-flex-direction: column;
-position: relative;
-}
-
-body::after {
-content: ‘’; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
-background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,0,0.008) 2px, rgba(0,255,0,0.008) 4px);
-}
-body::before {
-content: ‘’; position: fixed; inset: 0; pointer-events: none; z-index: 9998;
-background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
-}
-
-/* ═══════════════ HEADER ═══════════════ */
-header {
-flex-shrink: 0;
-background: linear-gradient(180deg, #283222 0%, #1a2014 100%);
-border-bottom: 2px solid var(–olive);
-position: relative;
-box-shadow: 0 2px 12px rgba(0,0,0,0.6);
-}
-header::before {
-content: ‘’; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px;
-background: linear-gradient(90deg, transparent 5%, var(–olive-bright) 50%, transparent 95%);
-}
-
-.header-row {
-display: flex; align-items: center; justify-content: space-between;
-padding: 8px 16px; gap: 16px;
-}
-
-.brand { display: flex; align-items: center; gap: 12px; }
-.brand-mark {
-width: 36px; height: 36px;
-border: 2px solid var(–olive-bright);
-background: linear-gradient(135deg, #1a2014 0%, #283222 100%);
-display: flex; align-items: center; justify-content: center;
-font-family: var(–font-display); font-weight: 700; font-size: 14px;
-color: var(–olive-bright); position: relative;
-box-shadow: inset 0 0 8px rgba(0,0,0,0.5), 0 0 8px rgba(122,148,86,0.3);
-text-shadow: 0 0 6px rgba(122,148,86,0.6);
-}
-.brand-mark::before, .brand-mark::after {
-content: ‘’; position: absolute; width: 6px; height: 6px; border: 1px solid var(–olive-bright);
-}
-.brand-mark::before { top: -2px; left: -2px; border-right: none; border-bottom: none; }
-.brand-mark::after { bottom: -2px; right: -2px; border-left: none; border-top: none; }
-
-.brand-text { display: flex; flex-direction: column; line-height: 1.1; gap: 2px; }
-.brand-title {
-font-family: var(–font-display); font-weight: 700; font-size: 18px;
-letter-spacing: 4px; color: #fff;
-text-shadow: 0 0 8px rgba(122,148,86,0.5), 0 1px 2px rgba(0,0,0,0.8);
-}
-.brand-sub { font-size: 9px; letter-spacing: 2.5px; color: var(–olive-bright); font-weight: 600; }
-
-.header-status {
-display: flex; gap: 14px; align-items: center; font-size: 10px; letter-spacing: 1.5px;
-}
-.stat-pill {
-display: flex; align-items: center; gap: 6px;
-padding: 4px 10px;
-background: var(–bg);
-border: 1px solid var(–border-bright);
-color: var(–text-bright);
-font-weight: 500;
-}
-.stat-pill .dot {
-width: 6px; height: 6px; border-radius: 50%;
-background: var(–olive-bright);
-box-shadow: 0 0 6px var(–olive-bright);
-animation: pulse 2s ease-in-out infinite;
-}
-.stat-pill.offline .dot { background: var(–c-enemy); box-shadow: 0 0 6px var(–c-enemy); animation: none; }
-@keyframes pulse {
-0%, 100% { opacity: 1; } 50% { opacity: 0.4; }
-}
-
-.roster { display: flex; gap: 4px; }
-.roster-slot {
-width: 32px; height: 32px;
-border: 1px solid var(–olive);
-background: linear-gradient(180deg, #1a2014 0%, #0a0c08 100%);
-display: flex; align-items: center; justify-content: center;
-font-size: 11px; font-weight: 700;
-color: var(–text-dim);
-position: relative;
-cursor: default;
-font-family: var(–font-display);
-letter-spacing: 1px;
-}
-.roster-slot.active {
-border-color: var(–player-color, var(–olive));
-color: var(–player-color, var(–olive-bright));
-background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%);
-box-shadow: 0 0 8px var(–player-color, var(–olive-bright));
-}
-.roster-slot.me::after {
-content: ‘’; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
-width: 5px; height: 5px; background: var(–player-color, var(–olive-bright));
-border-radius: 50%;
-box-shadow: 0 0 4px var(–player-color, var(–olive-bright));
-}
-
-/* ═══════════════ TOOLBAR ═══════════════ */
-.toolbar {
-background: linear-gradient(180deg, #1a1f17 0%, #14180f 100%);
-border-bottom: 1px solid var(–border-bright);
-padding: 8px 12px;
-display: flex;
-gap: 6px;
-flex-wrap: wrap;
-align-items: center;
-}
-
-/* ═══════════════ TOOLBAR ═══════════════ */
-.toolbar {
-background: linear-gradient(180deg, #1f2519 0%, #161a14 100%);
-border-bottom: 2px solid var(–olive);
-padding: 10px 12px;
-display: flex;
-gap: 8px;
-flex-wrap: wrap;
-align-items: center;
-box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-}
-
-.tool-group {
-display: flex; gap: 3px; align-items: center;
-padding: 4px 10px;
-border-right: 1px solid var(–border-bright);
-background: rgba(0,0,0,0.25);
-}
-.tool-group:last-child { border-right: none; background: transparent; }
-
-.tool-label {
-font-family: var(–font-display);
-font-size: 11px; letter-spacing: 2.5px; color: var(–olive-bright);
-margin-right: 8px;
-font-weight: 700;
-text-shadow: 0 0 8px rgba(122,148,86,0.4);
-}
-
-/* Base button - filled olive look */
-.tool-btn {
-background: linear-gradient(180deg, #2a3324 0%, #1f2519 100%);
-border: 1px solid var(–olive);
-color: var(–text-bright);
-font-family: inherit;
-font-size: 10px;
-letter-spacing: 1px;
-padding: 6px 10px;
-cursor: pointer;
-transition: all 0.12s;
-display: inline-flex; align-items: center; gap: 5px;
-position: relative;
-text-transform: uppercase;
-font-weight: 600;
-}
-.tool-btn:hover {
-background: linear-gradient(180deg, #3a4530 0%, #2a3324 100%);
-border-color: var(–olive-bright);
-color: #fff;
-box-shadow: 0 0 6px rgba(122,148,86,0.5);
-}
-.tool-btn.active {
-background: linear-gradient(180deg, var(–olive-bright) 0%, var(–olive) 100%);
-border-color: #d4e0c4;
-color: #0a0a0a;
-box-shadow: 0 0 12px rgba(122,148,86,0.7), inset 0 1px 0 rgba(255,255,255,0.2);
-text-shadow: none;
-font-weight: 700;
-}
-.tool-btn.active::before {
-content: ‘’; position: absolute; top: 2px; left: 2px;
-width: 3px; height: 3px; background: #0a0a0a;
-}
-
-/* Hostile section - red tint */
-.tool-group.hostile-group {
-background: linear-gradient(180deg, rgba(200,48,42,0.08), rgba(200,48,42,0.03));
-border-right: 1px solid rgba(200,48,42,0.4);
-}
-.tool-group.hostile-group .tool-label { color: #e8453d; text-shadow: 0 0 8px rgba(200,48,42,0.4); }
-.tool-group.hostile-group .tool-btn {
-background: linear-gradient(180deg, #3a1815 0%, #281010 100%);
-border-color: #6a2018;
-color: #f0d0cc;
-}
-.tool-group.hostile-group .tool-btn:hover {
-background: linear-gradient(180deg, #5a201a 0%, #3a1510 100%);
-border-color: var(–c-enemy);
-color: #fff;
-box-shadow: 0 0 8px rgba(200,48,42,0.5);
-}
-.tool-group.hostile-group .tool-btn.active {
-background: linear-gradient(180deg, var(–c-enemy) 0%, #8a2018 100%);
-border-color: #ff6058;
-color: #fff;
-box-shadow: 0 0 12px rgba(232,69,61,0.8);
-text-shadow: 0 1px 2px rgba(0,0,0,0.6);
-}
-
-/* Suspect section - dark red/dashed */
-.tool-group.suspect-group {
-background: linear-gradient(180deg, rgba(138,58,46,0.08), rgba(138,58,46,0.03));
-border-right: 1px solid rgba(138,58,46,0.4);
-}
-.tool-group.suspect-group .tool-label { color: #b86a5a; }
-.tool-group.suspect-group .tool-btn {
-background: linear-gradient(180deg, #2a1815 0%, #1a0e0c 100%);
-border: 1px dashed #6a3a30;
-color: #d0a098;
-}
-.tool-group.suspect-group .tool-btn:hover {
-border-color: var(–c-enemy-s);
-color: #fff;
-}
-.tool-group.suspect-group .tool-btn.active {
-background: linear-gradient(180deg, var(–c-enemy-s) 0%, #5a201a 100%);
-border-style: solid;
-color: #fff;
-}
-
-/* Supply section - amber */
-.tool-group.supply-group {
-background: linear-gradient(180deg, rgba(184,122,58,0.08), rgba(184,122,58,0.03));
-border-right: 1px solid rgba(184,122,58,0.4);
-}
-.tool-group.supply-group .tool-label { color: #e0a060; text-shadow: 0 0 8px rgba(184,122,58,0.4); }
-.tool-group.supply-group .tool-btn {
-background: linear-gradient(180deg, #3a2a18 0%, #281e10 100%);
-border-color: #6a4a20;
-color: #f0d8b8;
-}
-.tool-group.supply-group .tool-btn:hover {
-border-color: var(–c-supply);
-box-shadow: 0 0 8px rgba(184,122,58,0.5);
-color: #fff;
-}
-.tool-group.supply-group .tool-btn.active {
-background: linear-gradient(180deg, var(–c-supply) 0%, #8a5a30 100%);
-color: #fff;
-box-shadow: 0 0 10px rgba(184,122,58,0.7);
-}
-
-/* Draw section - cool/neutral olive */
-.tool-group.draw-group {
-background: linear-gradient(180deg, rgba(122,148,86,0.05), rgba(122,148,86,0.02));
-}
-.tool-group.draw-group .tool-label { color: #b8c4a8; }
-
-/* Other section */
-.tool-group.other-group .tool-label { color: var(–olive-bright); }
-
-.tool-btn .swatch {
-width: 10px; height: 10px; display: inline-block;
-border: 1px solid rgba(0,0,0,0.6);
-box-shadow: 0 0 0 1px rgba(255,255,255,0.1);
-}
-.tool-btn.danger {
-background: linear-gradient(180deg, #2a1010 0%, #1a0808 100%);
-border-color: #4a1a18;
-color: #d09080;
-}
-.tool-btn.danger:hover {
-background: linear-gradient(180deg, #4a1818 0%, #2a0e0e 100%);
-border-color: var(–c-enemy);
-color: #fff;
-box-shadow: 0 0 8px rgba(200,48,42,0.4);
-}
-.tool-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-.tool-btn:disabled:hover { background: linear-gradient(180deg, #2a3324 0%, #1f2519 100%); }
-
-/* ═══════════════ MAP AREA ═══════════════ */
-main { flex: 1; display: flex; overflow: hidden; position: relative; }
-
-.map-frame {
-flex: 1;
-position: relative;
-overflow: hidden;
-background:
-linear-gradient(var(–bg-grid) 1px, transparent 1px) 0 0 / 40px 40px,
-linear-gradient(90deg, var(–bg-grid) 1px, transparent 1px) 0 0 / 40px 40px,
-radial-gradient(ellipse at center, #131611 0%, #0a0c08 100%);
-cursor: crosshair;
-}
-
-.corner {
-position: absolute;
-width: 18px; height: 18px;
-border: 1px solid var(–olive);
-pointer-events: none;
-z-index: 5;
-opacity: 0.5;
-}
-.corner.tl { top: 8px; left: 8px; border-right: none; border-bottom: none; }
-.corner.tr { top: 8px; right: 8px; border-left: none; border-bottom: none; }
-.corner.bl { bottom: 8px; left: 8px; border-right: none; border-top: none; }
-.corner.br { bottom: 8px; right: 8px; border-left: none; border-top: none; }
-
-.map-coords {
-position: absolute;
-top: 12px; left: 36px;
-font-size: 9px;
-color: var(–text-dim);
-letter-spacing: 1.5px;
-pointer-events: none;
-z-index: 5;
-}
-.map-coords-r {
-position: absolute;
-bottom: 12px; right: 36px;
-font-size: 9px;
-color: var(–text-dim);
-letter-spacing: 1.5px;
-pointer-events: none;
-z-index: 5;
-text-align: right;
-}
-
-/* Inner aspect-locked area: markers/lines/cursors are children of this */
-.map-inner {
-position: absolute;
-top: 50%; left: 50%;
-transform: translate(-50%, -50%);
-width: 100%; height: 100%;
-pointer-events: none;
-}
-.map-inner.has-image {
-width: auto; height: auto;
-max-width: 100%; max-height: 100%;
-}
-.map-img {
-display: block;
-max-width: 100%; max-height: 100%;
-width: auto; height: auto;
-opacity: 0.95;
-pointer-events: none;
-user-select: none;
-}
-
-.map-empty {
-position: absolute; inset: 0;
-display: flex; align-items: center; justify-content: center;
-color: var(–text-dim);
-font-size: 11px;
-letter-spacing: 3px;
-text-align: center;
-pointer-events: none;
-flex-direction: column;
-}
-.map-empty span { display: block; margin-top: 6px; font-size: 9px; opacity: 0.7; }
-
-/* SVG overlay for lines/arrows - covers same area as map-inner */
-.map-svg {
-position: absolute; inset: 0;
-width: 100%; height: 100%;
-pointer-events: none;
-overflow: visible;
-}
-
-/* Direction indicator preview while drawing */
-.preview-line {
-position: absolute; inset: 0;
-width: 100%; height: 100%;
-pointer-events: none;
-z-index: 50;
-}
-
-/* ═══════════════ MARKERS ═══════════════ */
-.marker {
-position: absolute;
-transform: translate(-50%, -50%);
-cursor: pointer;
-user-select: none;
-z-index: 10;
-transition: transform 0.1s;
-pointer-events: auto;
-}
-.marker:hover { transform: translate(-50%, -50%) scale(1.4); z-index: 20; }
-.marker:hover .marker-meta { opacity: 1; }
-.marker:hover .marker-delete { opacity: 1; }
-
-.nato {
-width: 26px; height: 18px;
-border: 2px solid;
-background: rgba(0,0,0,0.85);
-display: flex; align-items: center; justify-content: center;
-position: relative;
-}
-/* Halo effect — soft outer glow that lifts marker off any background */
-.nato::after {
-content: ‘’;
-position: absolute;
-inset: -6px;
-border: 1px solid rgba(0,0,0,0.6);
-background: radial-gradient(circle, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 70%);
-z-index: -1;
-pointer-events: none;
-}
-.marker.enemy .nato, .marker.enemy-s .nato {
-transform: rotate(45deg);
-width: 22px; height: 22px;
-}
-.marker.enemy .nato {
-border-color: var(–c-enemy);
-color: var(–c-enemy);
-box-shadow: 0 0 0 2px rgba(0,0,0,0.7), 0 0 14px rgba(200,48,42,0.85), 0 0 24px rgba(200,48,42,0.4);
-}
-.marker.enemy-s .nato {
-border-color: var(–c-enemy-s);
-color: var(–c-enemy-s);
-border-style: dashed;
-box-shadow: 0 0 0 2px rgba(0,0,0,0.7), 0 0 12px rgba(138,58,46,0.7);
-}
-
-.marker.enemy .nato-inner, .marker.enemy-s .nato-inner { transform: rotate(-45deg); }
-
-.marker.supply .nato {
-border-color: var(–c-supply);
-color: var(–c-supply);
-box-shadow: 0 0 0 2px rgba(0,0,0,0.7), 0 0 12px rgba(184,122,58,0.85), 0 0 22px rgba(184,122,58,0.4);
-}
-.marker.supply-s .nato {
-border-color: var(–c-supply-s);
-color: var(–c-supply-s);
-border-style: dashed;
-box-shadow: 0 0 0 2px rgba(0,0,0,0.7), 0 0 10px rgba(106,72,32,0.7);
-}
-
-.nato-inner {
-width: 100%; height: 100%;
-display: flex; align-items: center; justify-content: center;
-}
-.nato svg { width: 100%; height: 100%; }
-
-.marker.note .nato {
-width: 24px; height: 24px;
-border-radius: 50%;
-border-color: var(–c-note);
-color: var(–c-note);
-box-shadow: 0 0 0 2px rgba(0,0,0,0.7), 0 0 12px rgba(90,143,184,0.85), 0 0 22px rgba(90,143,184,0.4);
-}
-
-/* Player attribution dot (top right) */
-.marker-author {
-position: absolute;
-top: -3px; right: -3px;
-width: 7px; height: 7px;
-border-radius: 50%;
-border: 1px solid rgba(0,0,0,0.7);
-z-index: 2;
-}
-
-/* Direction indicator arrow */
-.marker-direction {
-position: absolute;
-top: 50%; left: 50%;
-width: 0; height: 0;
-transform-origin: 0 0;
-pointer-events: none;
-}
-.marker-direction svg {
-position: absolute;
-width: 28px; height: 14px;
-/* anchor at the LEFT edge so length extends in direction */
-top: -7px; left: 0;
-overflow: visible;
-}
-
-/* Delete X button */
-.marker-delete {
-position: absolute;
-top: -10px; left: -10px;
-width: 14px; height: 14px;
-background: var(–c-enemy);
-color: white;
-border: 1px solid #000;
-border-radius: 50%;
-font-size: 10px;
-line-height: 12px;
-text-align: center;
-cursor: pointer;
-opacity: 0;
-transition: opacity 0.15s;
-z-index: 25;
-font-family: sans-serif;
-font-weight: 700;
-}
-.marker-delete:hover { background: #ff5040; transform: scale(1.2); }
-
-/* Tooltip */
-.marker-meta {
-position: absolute;
-top: calc(100% + 10px);
-left: 50%;
-transform: translateX(-50%);
-white-space: nowrap;
-background: rgba(0,0,0,0.92);
-border: 1px solid var(–border-bright);
-color: var(–text-bright);
-font-size: 9px;
-letter-spacing: 1px;
-padding: 3px 8px;
-opacity: 0;
-transition: opacity 0.15s;
-pointer-events: none;
-z-index: 30;
-}
-.marker-meta .author-tag {
-color: var(–text-dim);
-margin-left: 6px;
-padding-left: 6px;
-border-left: 1px solid var(–border);
-}
-
-/* PING */
-.ping {
-position: absolute;
-width: 40px; height: 40px;
-transform: translate(-50%, -50%);
-pointer-events: none;
-z-index: 15;
-}
-.ping::before, .ping::after {
-content: ‘’;
-position: absolute;
-inset: 0;
-border: 2px solid var(–c-ping);
-border-radius: 50%;
-animation: pingExpand 1.5s ease-out forwards;
-}
-.ping::after { animation-delay: 0.3s; }
-@keyframes pingExpand {
-0% { transform: scale(0.2); opacity: 1; }
-100% { transform: scale(2.4); opacity: 0; }
-}
-
-/* CURSORS */
-.cursor {
-position: absolute;
-pointer-events: none;
-z-index: 100;
-transition: left 0.06s linear, top 0.06s linear;
-}
-.cursor svg { display: block; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.7)); }
-.cursor-label {
-position: absolute;
-top: 16px; left: 14px;
-color: #0a0a0a;
-font-size: 9px;
-font-weight: 700;
-letter-spacing: 1px;
-padding: 2px 6px;
-white-space: nowrap;
-text-transform: uppercase;
-}
-
-/* Lines & Arrows (SVG) */
-.draw-line {
-cursor: pointer;
-pointer-events: stroke;
-stroke-width: 2;
-transition: stroke-width 0.1s;
-}
-.draw-line:hover { stroke-width: 4; }
-
-/* ═══════════════ MODAL (general) ═══════════════ */
-.modal-bg {
-position: fixed; inset: 0;
-background: rgba(5,7,5,0.85);
-backdrop-filter: blur(4px);
-z-index: 9000;
-display: flex; align-items: center; justify-content: center;
-padding: 20px;
-}
-.modal {
-background: var(–panel);
-border: 1px solid var(–border-bright);
-padding: 24px 28px;
-width: 100%;
-max-width: 480px;
-max-height: 80vh;
-overflow-y: auto;
-position: relative;
-box-shadow: 0 0 40px rgba(0,0,0,0.8);
-}
-.modal::before {
-content: ‘’; position: absolute; top: -1px; left: 0; right: 0; height: 1px;
-background: linear-gradient(90deg, transparent, var(–olive-bright), transparent);
-}
-.modal-corners > div {
-position: absolute; width: 8px; height: 8px; border: 1px solid var(–olive);
-}
-.modal-corners .tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }
-.modal-corners .tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
-.modal-corners .bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
-.modal-corners .br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
-
-.modal-title {
-font-family: var(–font-display);
-font-weight: 600;
-font-size: 16px;
-letter-spacing: 4px;
-color: var(–text-bright);
-margin-bottom: 4px;
-}
-.modal-sub {
-font-size: 9px;
-letter-spacing: 2px;
-color: var(–text-dim);
-margin-bottom: 20px;
-}
-.modal-input {
-width: 100%;
-background: var(–bg);
-border: 1px solid var(–border);
-color: var(–text-bright);
-font-family: inherit;
-font-size: 12px;
-letter-spacing: 2px;
-padding: 10px 12px;
-text-transform: uppercase;
-outline: none;
-}
-.modal-input:focus { border-color: var(–olive-bright); }
-.modal-btn {
-width: 100%;
-margin-top: 14px;
-background: var(–accent);
-border: 1px solid var(–olive-bright);
-color: var(–text-bright);
-font-family: var(–font-display);
-font-weight: 600;
-font-size: 12px;
-letter-spacing: 4px;
-padding: 10px;
-cursor: pointer;
-text-transform: uppercase;
-transition: all 0.15s;
-}
-.modal-btn:hover { background: var(–olive); color: #0a0a0a; }
-.modal-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.modal-btn.secondary {
-background: var(–bg);
-border: 1px solid var(–border);
-color: var(–text);
-}
-.modal-btn.secondary:hover { border-color: var(–border-bright); background: var(–panel-2); }
-
-.modal-error {
-margin-top: 10px;
-font-size: 9px;
-letter-spacing: 1.5px;
-color: var(–c-enemy);
-min-height: 12px;
-}
-
-.modal-close {
-position: absolute;
-top: 8px; right: 8px;
-width: 24px; height: 24px;
-background: transparent;
-border: 1px solid var(–border);
-color: var(–text-dim);
-cursor: pointer;
-font-family: sans-serif;
-font-size: 14px;
-line-height: 1;
-}
-.modal-close:hover { color: var(–text-bright); border-color: var(–border-bright); }
-
-/* Map manager list */
-.map-list {
-margin-top: 12px;
-border: 1px solid var(–border);
-background: var(–bg);
-max-height: 280px;
-overflow-y: auto;
-}
-.map-list-empty {
-padding: 24px;
-text-align: center;
-color: var(–text-dim);
-font-size: 10px;
-letter-spacing: 2px;
-}
-.map-item {
-display: flex; align-items: center; gap: 10px;
-padding: 8px 10px;
-border-bottom: 1px solid var(–border);
-}
-.map-item:last-child { border-bottom: none; }
-.map-item.active {
-background: rgba(122,148,86,0.1);
-border-left: 2px solid var(–olive-bright);
-}
-.map-item-thumb {
-width: 50px; height: 32px;
-background-size: cover; background-position: center;
-border: 1px solid var(–border);
-flex-shrink: 0;
-background-color: var(–bg);
-}
-.map-item-name {
-flex: 1;
-font-size: 11px;
-color: var(–text-bright);
-letter-spacing: 1px;
-text-transform: uppercase;
-background: transparent;
-border: 1px solid transparent;
-color: inherit;
-font-family: inherit;
-padding: 4px 6px;
-outline: none;
-min-width: 0;
-}
-.map-item-name:focus, .map-item-name:hover {
-border-color: var(–border);
-background: var(–panel);
-}
-.map-item-btn {
-background: var(–bg);
-border: 1px solid var(–border);
-color: var(–text);
-font-family: inherit;
-font-size: 9px;
-letter-spacing: 1px;
-padding: 4px 8px;
-cursor: pointer;
-text-transform: uppercase;
-}
-.map-item-btn:hover { border-color: var(–olive-bright); color: var(–olive-bright); }
-.map-item-btn.danger:hover { border-color: var(–c-enemy); color: var(–c-enemy); }
-.map-item-btn.active {
-background: var(–olive);
-color: #0a0a0a;
-border-color: var(–olive-bright);
-}
-
-.upload-area {
-margin-top: 14px;
-padding: 16px;
-border: 1px dashed var(–border-bright);
-text-align: center;
-background: var(–bg);
-}
-.upload-area-label {
-font-size: 10px;
-letter-spacing: 2px;
-color: var(–text-dim);
-text-transform: uppercase;
-margin-bottom: 8px;
-}
-
-#file-input { display: none; }
-
-.loading-overlay {
-position: fixed; inset: 0;
-display: flex; align-items: center; justify-content: center;
-background: var(–bg);
-z-index: 10000;
-flex-direction: column; gap: 12px;
-}
-.loading-overlay .lbl {
-font-family: var(–font-display);
-letter-spacing: 4px;
-color: var(–text-dim);
-font-size: 11px;
-}
-.spinner {
-width: 24px; height: 24px;
-border: 1.5px solid var(–border);
-border-top-color: var(–olive-bright);
-border-radius: 50%;
-animation: spin 0.8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* Hint banner for two-step tools */
-.hint-banner {
-position: fixed;
-top: 100px; left: 50%;
-transform: translateX(-50%);
-background: rgba(0,0,0,0.92);
-border: 1px solid var(–olive-bright);
-color: var(–text-bright);
-padding: 8px 16px;
-font-size: 10px;
-letter-spacing: 2px;
-z-index: 500;
-text-transform: uppercase;
-animation: hintIn 0.2s ease-out;
-}
-@keyframes hintIn {
-from { opacity: 0; transform: translate(-50%, -8px); }
-to { opacity: 1; transform: translate(-50%, 0); }
-}
-.hint-banner .x { color: var(–text-dim); margin-left: 8px; cursor: pointer; }
-.hint-banner .x:hover { color: var(–c-enemy); }
+  body {
+    background: var(--bg-app);
+    color: var(--text);
+    font-family: var(--font-ui);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    font-size: 13px;
+  }
+  header {
+    flex-shrink: 0;
+    background: linear-gradient(180deg, #2a3422 0%, #1a2014 100%);
+    border-bottom: 2px solid var(--header-accent);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    z-index: 100;
+  }
+  .header-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; gap: 16px; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-mark {
+    width: 36px; height: 36px;
+    border: 2px solid var(--header-accent);
+    background: linear-gradient(135deg, #1a2014 0%, #283222 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 700; font-size: 14px;
+    color: var(--header-accent); position: relative;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.5);
+    text-shadow: 0 0 6px rgba(122,148,86,0.6);
+    letter-spacing: 1px;
+  }
+  .brand-mark::before, .brand-mark::after { content: ''; position: absolute; width: 6px; height: 6px; border: 1px solid var(--header-accent); }
+  .brand-mark::before { top: -3px; left: -3px; border-right: none; border-bottom: none; }
+  .brand-mark::after { bottom: -3px; right: -3px; border-left: none; border-top: none; }
+  .brand-text { display: flex; flex-direction: column; line-height: 1.1; gap: 2px; }
+  .brand-title { font-family: var(--font-display); font-weight: 700; font-size: 18px; letter-spacing: 4px; color: #fff; text-shadow: 0 0 8px rgba(122,148,86,0.5); }
+  .brand-sub { font-size: 9px; letter-spacing: 2.5px; color: var(--header-accent); font-weight: 600; }
+  .header-status { display: flex; gap: 10px; align-items: center; }
+  .stat-pill { display: flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--header-accent); color: #fff; font-size: 10px; letter-spacing: 1.5px; font-weight: 600; }
+  .stat-pill .dot { width: 7px; height: 7px; border-radius: 50%; background: #7ad858; box-shadow: 0 0 6px #7ad858; animation: pulse 2s ease-in-out infinite; }
+  .stat-pill.offline .dot { background: var(--hostile); box-shadow: 0 0 6px var(--hostile); animation: none; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .roster { display: flex; gap: 4px; }
+  .roster-slot { width: 32px; height: 32px; border: 1.5px solid #444a3a; background: linear-gradient(180deg, #2a3022 0%, #14180c 100%); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.3); position: relative; cursor: default; font-family: var(--font-display); letter-spacing: 1px; }
+  .roster-slot.active { border-color: var(--player-color, var(--header-accent)); color: var(--player-color, #fff); box-shadow: 0 0 8px var(--player-color, var(--header-accent)); }
+  .roster-slot.me::after { content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); width: 5px; height: 5px; background: var(--player-color, var(--header-accent)); border-radius: 50%; box-shadow: 0 0 4px var(--player-color, var(--header-accent)); }
+  .toolbar {
+    background: linear-gradient(180deg, #f5f5f0 0%, #e8e8e0 100%);
+    border-bottom: 1px solid var(--border-strong);
+    padding: 8px 12px;
+    display: flex;
+    gap: 0;
+    flex-wrap: wrap;
+    align-items: stretch;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+  .tool-group { display: flex; gap: 3px; align-items: center; padding: 4px 12px; border-right: 1px solid var(--border); flex-shrink: 0; }
+  .tool-group:last-of-type { border-right: none; }
+  .tool-label { font-family: var(--font-display); font-size: 11px; letter-spacing: 2px; margin-right: 8px; font-weight: 700; color: var(--text-dim); }
+  .tool-group.friendly-group .tool-label { color: var(--friend-dark); }
+  .tool-group.hostile-group .tool-label { color: var(--hostile-dark); }
+  .tool-group.supply-group .tool-label { color: var(--supply-dark); }
+  .tool-btn {
+    background: #fff;
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: all 0.1s;
+    display: inline-flex; align-items: center; gap: 6px;
+    position: relative;
+    text-transform: uppercase;
+    font-weight: 600;
+    border-radius: 2px;
+    min-height: 30px;
+  }
+  .tool-btn:hover { background: #f0f0e8; border-color: #555; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+  .tool-btn.active { background: #2a3422; color: #fff; border-color: #1a2014; box-shadow: inset 0 1px 3px rgba(0,0,0,0.4); }
+  .tool-group.friendly-group .tool-btn:hover { border-color: var(--friend-dark); background: #e8f0f8; }
+  .tool-group.friendly-group .tool-btn.active { background: var(--friend-dark); color: #fff; border-color: #1a4080; }
+  .tool-group.hostile-group .tool-btn:hover { border-color: var(--hostile-dark); background: #f8e8e8; }
+  .tool-group.hostile-group .tool-btn.active { background: var(--hostile-dark); color: #fff; border-color: #701810; }
+  .tool-group.suspect-group .tool-btn { border-style: dashed; }
+  .tool-group.supply-group .tool-btn:hover { border-color: var(--supply-dark); background: #f8efdc; }
+  .tool-group.supply-group .tool-btn.active { background: var(--supply-dark); color: #fff; }
+  .tool-btn .swatch { width: 16px; height: 12px; display: inline-block; border: 1.5px solid; flex-shrink: 0; }
+  .tool-btn .swatch.friend { background: var(--friend); border-color: var(--friend-dark); }
+  .tool-btn .swatch.hostile { background: var(--hostile); border-color: var(--hostile-dark); transform: rotate(45deg); width: 12px; height: 12px; }
+  .tool-btn .swatch.hostile-s { background: transparent; border-color: var(--hostile-dark); border-style: dashed; transform: rotate(45deg); width: 12px; height: 12px; }
+  .tool-btn .swatch.supply { background: var(--supply); border-color: var(--supply-dark); }
+  .tool-btn .swatch.supply-s { background: transparent; border-color: var(--supply-dark); border-style: dashed; }
+  .tool-btn.danger { color: var(--hostile-dark); border-color: #c8a098; }
+  .tool-btn.danger:hover { background: #fde8e6; border-color: var(--hostile); }
+  .tool-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  main { flex: 1; display: flex; overflow: hidden; position: relative; }
+  .map-frame { flex: 1; position: relative; overflow: hidden; background: #4a5a44; cursor: crosshair; }
+  .map-coords { position: absolute; top: 10px; left: 14px; font-size: 11px; color: #fff; background: rgba(0,0,0,0.75); letter-spacing: 1.5px; pointer-events: none; z-index: 5; padding: 4px 10px; font-family: var(--font-display); font-weight: 700; border-radius: 2px; }
+  .map-coords-r { position: absolute; bottom: 10px; right: 14px; font-size: 11px; color: #fff; background: rgba(0,0,0,0.75); letter-spacing: 1.5px; pointer-events: none; z-index: 5; padding: 4px 10px; font-family: var(--font-display); font-weight: 700; text-align: right; border-radius: 2px; }
+  .map-inner { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; pointer-events: none; }
+  .map-inner.has-image { width: auto; height: auto; max-width: 100%; max-height: 100%; }
+  .map-img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; pointer-events: none; user-select: none; }
+  .map-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.7); font-size: 13px; letter-spacing: 3px; text-align: center; pointer-events: none; flex-direction: column; font-family: var(--font-display); font-weight: 700; }
+  .map-empty span { display: block; margin-top: 8px; font-size: 10px; opacity: 0.7; letter-spacing: 2px; }
+  .map-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+  .marker { position: absolute; transform: translate(-50%, -50%); cursor: pointer; user-select: none; z-index: 10; pointer-events: auto; }
+  .marker:hover { z-index: 20; }
+  .marker:hover .marker-meta { opacity: 1; }
+  .marker:hover .marker-delete { opacity: 1; }
+  .nato-shape {
+    width: 44px; height: 28px;
+    border: 2.5px solid;
+    background: rgba(255,255,255,0.92);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.5);
+    transition: transform 0.1s;
+  }
+  .marker:hover .nato-shape { transform: scale(1.18); }
+  .marker.friend .nato-shape { border-color: var(--friend-dark); background: var(--friend-fill); }
+  .marker.friend-s .nato-shape { border-color: var(--friend-dark); border-style: dashed; background: rgba(176,212,240,0.5); }
+  .marker.hostile .nato-shape, .marker.hostile-s .nato-shape { width: 32px; height: 32px; transform: rotate(45deg); }
+  .marker:hover.hostile .nato-shape, .marker:hover.hostile-s .nato-shape { transform: rotate(45deg) scale(1.18); }
+  .marker.hostile .nato-shape { border-color: var(--hostile-dark); background: var(--hostile-fill); }
+  .marker.hostile-s .nato-shape { border-color: var(--hostile-dark); border-style: dashed; background: rgba(244,160,152,0.5); }
+  .marker.hostile .nato-inner, .marker.hostile-s .nato-inner { transform: rotate(-45deg); }
+  .marker.supply .nato-shape { border-color: var(--supply-dark); background: #f8e0b0; }
+  .marker.supply-s .nato-shape { border-color: var(--supply-dark); border-style: dashed; background: rgba(248,224,176,0.6); }
+  .nato-inner { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+  .nato-inner svg { width: 90%; height: 90%; }
+  .marker.note .nato-shape { width: 28px; height: 28px; border-radius: 50%; border-color: var(--note); background: rgba(255,255,255,0.95); }
+  .marker-author { position: absolute; bottom: -3px; right: -3px; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #fff; z-index: 2; box-shadow: 0 0 0 1px rgba(0,0,0,0.5); }
+  .marker-direction { position: absolute; top: 50%; left: 50%; width: 0; height: 0; transform-origin: 0 0; pointer-events: none; z-index: 1; }
+  .marker-direction svg { position: absolute; width: 36px; height: 14px; top: -7px; left: 8px; overflow: visible; }
+  .marker-delete { position: absolute; top: -10px; left: -10px; width: 18px; height: 18px; background: var(--hostile); color: white; border: 2px solid #fff; border-radius: 50%; font-size: 12px; line-height: 14px; text-align: center; cursor: pointer; opacity: 0; transition: opacity 0.15s; z-index: 25; font-family: sans-serif; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+  .marker-delete:hover { background: #ff5040; transform: scale(1.15); }
+  .marker-meta { position: absolute; top: calc(100% + 12px); left: 50%; transform: translateX(-50%); white-space: nowrap; background: rgba(20,20,20,0.95); border: 1px solid #555; color: #fff; font-size: 10px; letter-spacing: 1px; padding: 4px 8px; opacity: 0; transition: opacity 0.15s; pointer-events: none; z-index: 30; border-radius: 2px; font-family: var(--font-display); font-weight: 600; }
+  .marker-meta .author-tag { color: #aaa; margin-left: 8px; padding-left: 8px; border-left: 1px solid #555; }
+  .ping { position: absolute; width: 50px; height: 50px; transform: translate(-50%, -50%); pointer-events: none; z-index: 15; }
+  .ping::before, .ping::after { content: ''; position: absolute; inset: 0; border: 3px solid var(--ping); border-radius: 50%; animation: pingExpand 1.5s ease-out forwards; }
+  .ping::after { animation-delay: 0.3s; }
+  @keyframes pingExpand { 0% { transform: scale(0.2); opacity: 1; } 100% { transform: scale(2.4); opacity: 0; } }
+  .cursor { position: absolute; pointer-events: none; z-index: 100; transition: left 0.06s linear, top 0.06s linear; }
+  .cursor svg { display: block; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.7)); }
+  .cursor-label { position: absolute; top: 18px; left: 14px; color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 3px 7px; white-space: nowrap; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+  .draw-line { cursor: pointer; pointer-events: stroke; stroke-width: 3; transition: stroke-width 0.1s; }
+  .draw-line:hover { stroke-width: 5; }
+  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 9000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .modal { background: #fff; border: 1px solid #888; padding: 28px 32px; width: 100%; max-width: 480px; max-height: 80vh; overflow-y: auto; position: relative; box-shadow: 0 8px 40px rgba(0,0,0,0.5); border-radius: 4px; }
+  .modal-title { font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: 3px; color: var(--text-strong); margin-bottom: 4px; }
+  .modal-sub { font-size: 11px; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 20px; font-weight: 600; text-transform: uppercase; }
+  .modal-input { width: 100%; background: #fff; border: 1.5px solid var(--border-strong); color: var(--text-strong); font-family: var(--font-ui); font-size: 14px; letter-spacing: 1px; padding: 10px 12px; text-transform: uppercase; outline: none; border-radius: 3px; font-weight: 600; }
+  .modal-input:focus { border-color: var(--header-accent); }
+  .modal-btn { width: 100%; margin-top: 14px; background: var(--header-bg); border: 1px solid var(--header-accent); color: #fff; font-family: var(--font-display); font-weight: 700; font-size: 14px; letter-spacing: 4px; padding: 12px; cursor: pointer; text-transform: uppercase; transition: all 0.15s; border-radius: 3px; }
+  .modal-btn:hover { background: var(--header-accent); color: #fff; }
+  .modal-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .modal-btn.secondary { background: #fff; border: 1.5px solid var(--border-strong); color: var(--text); }
+  .modal-btn.secondary:hover { border-color: var(--text-strong); background: #f0f0e8; color: var(--text-strong); }
+  .modal-error { margin-top: 10px; font-size: 11px; letter-spacing: 1px; color: var(--hostile-dark); min-height: 12px; font-weight: 600; }
+  .modal-close { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; background: transparent; border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; font-size: 16px; line-height: 1; border-radius: 3px; }
+  .modal-close:hover { color: var(--text-strong); border-color: var(--text-strong); background: #f0f0e8; }
+  .map-list { margin-top: 12px; border: 1px solid var(--border); background: #fafaf5; max-height: 280px; overflow-y: auto; border-radius: 3px; }
+  .map-list-empty { padding: 24px; text-align: center; color: var(--text-dim); font-size: 11px; letter-spacing: 2px; font-weight: 600; }
+  .map-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  .map-item:last-child { border-bottom: none; }
+  .map-item.active { background: #fff8e0; border-left: 3px solid var(--header-accent); }
+  .map-item-thumb { width: 56px; height: 36px; background-size: cover; background-position: center; border: 1px solid var(--border-strong); flex-shrink: 0; background-color: #f0f0e8; }
+  .map-item-name { flex: 1; font-size: 12px; color: var(--text-strong); letter-spacing: 1px; text-transform: uppercase; background: transparent; border: 1px solid transparent; font-family: var(--font-ui); padding: 4px 6px; outline: none; min-width: 0; font-weight: 600; }
+  .map-item-name:focus, .map-item-name:hover { border-color: var(--border); background: #fff; }
+  .map-item-btn { background: #fff; border: 1px solid var(--border-strong); color: var(--text); font-family: var(--font-ui); font-size: 10px; letter-spacing: 1px; padding: 5px 9px; cursor: pointer; text-transform: uppercase; border-radius: 2px; font-weight: 600; }
+  .map-item-btn:hover { border-color: var(--text-strong); }
+  .map-item-btn.danger:hover { border-color: var(--hostile); color: var(--hostile-dark); }
+  .map-item-btn.active { background: var(--header-bg); color: #fff; border-color: var(--header-accent); }
+  .upload-area { margin-top: 14px; padding: 16px; border: 1.5px dashed var(--border-strong); text-align: center; background: #fafaf5; border-radius: 3px; }
+  .upload-area-label { font-size: 11px; letter-spacing: 1.5px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
+  #file-input { display: none; }
+  .loading-overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: var(--bg-app); z-index: 10000; flex-direction: column; gap: 14px; }
+  .loading-overlay .lbl { font-family: var(--font-display); letter-spacing: 4px; color: rgba(255,255,255,0.7); font-size: 12px; }
+  .spinner { width: 28px; height: 28px; border: 2px solid rgba(255,255,255,0.2); border-top-color: var(--header-accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .hint-banner { position: fixed; top: 110px; left: 50%; transform: translateX(-50%); background: rgba(20,20,20,0.95); border: 1px solid var(--header-accent); color: #fff; padding: 10px 18px; font-size: 11px; letter-spacing: 1.5px; z-index: 500; text-transform: uppercase; animation: hintIn 0.2s ease-out; border-radius: 3px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+  @keyframes hintIn { from { opacity: 0; transform: translate(-50%, -8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+  .hint-banner .x { color: #aaa; margin-left: 12px; cursor: pointer; }
+  .hint-banner .x:hover { color: var(--hostile); }
 </style>
-
 </head>
 <body>
 
@@ -862,34 +227,24 @@ to { opacity: 1; transform: translate(-50%, 0); }
   <div class="lbl">CONNECTING TO COMMAND</div>
 </div>
 
-<!-- Name modal -->
-
 <div class="modal-bg" id="name-modal" style="display:none;">
-  <div class="modal" style="max-width:360px">
-    <div class="modal-corners">
-      <div class="tl"></div><div class="tr"></div><div class="bl"></div><div class="br"></div>
-    </div>
+  <div class="modal" style="max-width:380px">
     <div class="modal-title">IDENTIFY</div>
-    <div class="modal-sub">// CALL SIGN REQUIRED</div>
+    <div class="modal-sub">Call Sign Required</div>
     <input type="text" id="name-input" class="modal-input" maxlength="12" placeholder="ALPHA-1" autocomplete="off">
     <button class="modal-btn" id="name-submit">DEPLOY</button>
     <div class="modal-error" id="name-error"></div>
   </div>
 </div>
 
-<!-- Map manager modal -->
-
 <div class="modal-bg" id="maps-modal" style="display:none;">
   <div class="modal">
-    <div class="modal-corners">
-      <div class="tl"></div><div class="tr"></div><div class="bl"></div><div class="br"></div>
-    </div>
     <button class="modal-close" id="maps-close">×</button>
     <div class="modal-title">MAP LIBRARY</div>
-    <div class="modal-sub">// MANAGE TACTICAL MAPS</div>
+    <div class="modal-sub">Manage Tactical Maps</div>
     <div class="map-list" id="map-list"></div>
     <div class="upload-area">
-      <div class="upload-area-label">UPLOAD NEW MAP (max 1.5 MB)</div>
+      <div class="upload-area-label">Upload New Map (max 1.5 MB)</div>
       <button class="modal-btn secondary" id="maps-upload">⤴ CHOOSE IMAGE</button>
     </div>
   </div>
@@ -916,51 +271,64 @@ to { opacity: 1; transform: translate(-50%, 0); }
 
 <div class="toolbar">
 
-  <div class="tool-group hostile-group">
-    <span class="tool-label">HOSTILE</span>
-    <button class="tool-btn" data-tool="enemy" data-unit="INF"><span class="swatch" style="background:var(--c-enemy)"></span>INF</button>
-    <button class="tool-btn" data-tool="enemy" data-unit="ARM"><span class="swatch" style="background:var(--c-enemy)"></span>ARM</button>
-    <button class="tool-btn" data-tool="enemy" data-unit="ART"><span class="swatch" style="background:var(--c-enemy)"></span>ART</button>
-    <button class="tool-btn" data-tool="enemy" data-unit="AT"><span class="swatch" style="background:var(--c-enemy)"></span>AT</button>
-    <button class="tool-btn" data-tool="enemy" data-unit="AA"><span class="swatch" style="background:var(--c-enemy)"></span>AA</button>
-    <button class="tool-btn" data-tool="enemy" data-unit="AAINF"><span class="swatch" style="background:var(--c-enemy)"></span>AA-INF</button>
-    <button class="tool-btn" data-tool="enemy" data-unit="FLAK"><span class="swatch" style="background:var(--c-enemy)"></span>FLAK</button>
-    <button class="tool-btn" data-tool="enemy" data-unit="REC"><span class="swatch" style="background:var(--c-enemy)"></span>REC</button>
-    <button class="tool-btn" data-tool="enemy" data-unit="HELI"><span class="swatch" style="background:var(--c-enemy)"></span>HELI</button>
-    <button class="tool-btn" data-tool="enemy" data-unit="MG"><span class="swatch" style="background:var(--c-enemy)"></span>MG</button>
-    <button class="tool-btn" data-tool="enemy" data-unit="SOF"><span class="swatch" style="background:var(--c-enemy)"></span>SOF</button>
+  <div class="tool-group friendly-group">
+    <span class="tool-label">FRIENDLY</span>
+    <button class="tool-btn" data-tool="friend" data-unit="INF"><span class="swatch friend"></span>INF</button>
+    <button class="tool-btn" data-tool="friend" data-unit="ARM"><span class="swatch friend"></span>ARM</button>
+    <button class="tool-btn" data-tool="friend" data-unit="ART"><span class="swatch friend"></span>ART</button>
+    <button class="tool-btn" data-tool="friend" data-unit="AT"><span class="swatch friend"></span>AT</button>
+    <button class="tool-btn" data-tool="friend" data-unit="AA"><span class="swatch friend"></span>AA</button>
+    <button class="tool-btn" data-tool="friend" data-unit="REC"><span class="swatch friend"></span>REC</button>
+    <button class="tool-btn" data-tool="friend" data-unit="HELI"><span class="swatch friend"></span>HELI</button>
+    <button class="tool-btn" data-tool="friend" data-unit="MG"><span class="swatch friend"></span>MG</button>
+    <button class="tool-btn" data-tool="friend" data-unit="SOF"><span class="swatch friend"></span>SOF</button>
   </div>
 
-  <div class="tool-group suspect-group">
+  <div class="tool-group hostile-group">
+    <span class="tool-label">HOSTILE</span>
+    <button class="tool-btn" data-tool="hostile" data-unit="INF"><span class="swatch hostile"></span>INF</button>
+    <button class="tool-btn" data-tool="hostile" data-unit="ARM"><span class="swatch hostile"></span>ARM</button>
+    <button class="tool-btn" data-tool="hostile" data-unit="ART"><span class="swatch hostile"></span>ART</button>
+    <button class="tool-btn" data-tool="hostile" data-unit="AT"><span class="swatch hostile"></span>AT</button>
+    <button class="tool-btn" data-tool="hostile" data-unit="AA"><span class="swatch hostile"></span>AA</button>
+    <button class="tool-btn" data-tool="hostile" data-unit="AAINF"><span class="swatch hostile"></span>AA-INF</button>
+    <button class="tool-btn" data-tool="hostile" data-unit="FLAK"><span class="swatch hostile"></span>FLAK</button>
+    <button class="tool-btn" data-tool="hostile" data-unit="REC"><span class="swatch hostile"></span>REC</button>
+    <button class="tool-btn" data-tool="hostile" data-unit="HELI"><span class="swatch hostile"></span>HELI</button>
+    <button class="tool-btn" data-tool="hostile" data-unit="MG"><span class="swatch hostile"></span>MG</button>
+    <button class="tool-btn" data-tool="hostile" data-unit="SOF"><span class="swatch hostile"></span>SOF</button>
+  </div>
+
+  <div class="tool-group hostile-group suspect-group">
     <span class="tool-label">SUSPECT</span>
-    <button class="tool-btn" data-tool="enemy-s" data-unit="INF"><span class="swatch" style="background:var(--c-enemy-s)"></span>INF?</button>
-    <button class="tool-btn" data-tool="enemy-s" data-unit="ARM"><span class="swatch" style="background:var(--c-enemy-s)"></span>ARM?</button>
-    <button class="tool-btn" data-tool="enemy-s" data-unit="ART"><span class="swatch" style="background:var(--c-enemy-s)"></span>ART?</button>
-    <button class="tool-btn" data-tool="enemy-s" data-unit="AT"><span class="swatch" style="background:var(--c-enemy-s)"></span>AT?</button>
-    <button class="tool-btn" data-tool="enemy-s" data-unit="AA"><span class="swatch" style="background:var(--c-enemy-s)"></span>AA?</button>
-    <button class="tool-btn" data-tool="enemy-s" data-unit="REC"><span class="swatch" style="background:var(--c-enemy-s)"></span>REC?</button>
-    <button class="tool-btn" data-tool="enemy-s" data-unit="HELI"><span class="swatch" style="background:var(--c-enemy-s)"></span>HELI?</button>
-    <button class="tool-btn" data-tool="enemy-s" data-unit="MG"><span class="swatch" style="background:var(--c-enemy-s)"></span>MG?</button>
-    <button class="tool-btn" data-tool="enemy-s" data-unit="SOF"><span class="swatch" style="background:var(--c-enemy-s)"></span>SOF?</button>
+    <button class="tool-btn" data-tool="hostile-s" data-unit="INF"><span class="swatch hostile-s"></span>INF?</button>
+    <button class="tool-btn" data-tool="hostile-s" data-unit="ARM"><span class="swatch hostile-s"></span>ARM?</button>
+    <button class="tool-btn" data-tool="hostile-s" data-unit="ART"><span class="swatch hostile-s"></span>ART?</button>
+    <button class="tool-btn" data-tool="hostile-s" data-unit="AT"><span class="swatch hostile-s"></span>AT?</button>
+    <button class="tool-btn" data-tool="hostile-s" data-unit="AA"><span class="swatch hostile-s"></span>AA?</button>
+    <button class="tool-btn" data-tool="hostile-s" data-unit="REC"><span class="swatch hostile-s"></span>REC?</button>
+    <button class="tool-btn" data-tool="hostile-s" data-unit="HELI"><span class="swatch hostile-s"></span>HELI?</button>
+    <button class="tool-btn" data-tool="hostile-s" data-unit="MG"><span class="swatch hostile-s"></span>MG?</button>
+    <button class="tool-btn" data-tool="hostile-s" data-unit="SOF"><span class="swatch hostile-s"></span>SOF?</button>
   </div>
 
   <div class="tool-group supply-group">
     <span class="tool-label">SUPPLY</span>
-    <button class="tool-btn" data-tool="supply" data-unit="SUP"><span class="swatch" style="background:var(--c-supply)"></span>SUPPLY</button>
-    <button class="tool-btn" data-tool="supply-s" data-unit="SUP"><span class="swatch" style="background:var(--c-supply-s)"></span>SUPPLY?</button>
+    <button class="tool-btn" data-tool="supply" data-unit="SUP"><span class="swatch supply"></span>SUPPLY</button>
+    <button class="tool-btn" data-tool="supply-s" data-unit="SUP"><span class="swatch supply-s"></span>SUPPLY?</button>
   </div>
 
-  <div class="tool-group draw-group">
+  <div class="tool-group">
     <span class="tool-label">DRAW</span>
-    <button class="tool-btn" data-tool="line"><span class="swatch" style="background:var(--c-line)"></span>LINE</button>
-    <button class="tool-btn" data-tool="arrow"><span class="swatch" style="background:var(--c-line);clip-path:polygon(0 30%,70% 30%,70% 0,100% 50%,70% 100%,70% 70%,0 70%)"></span>ARROW</button>
-    <button class="tool-btn" data-tool="direction" id="direction-btn">⟶ DIRECTION</button>
+    <button class="tool-btn" data-tool="line">─ LINE</button>
+    <button class="tool-btn" data-tool="arrow">→ ARROW</button>
+    <button class="tool-btn" data-tool="direction">⟶ DIR</button>
   </div>
 
-  <div class="tool-group other-group">
+  <div class="tool-group">
     <span class="tool-label">OTHER</span>
-    <button class="tool-btn" data-tool="note" data-unit="N"><span class="swatch" style="background:var(--c-note)"></span>NOTE</button>
-    <button class="tool-btn" data-tool="ping"><span class="swatch" style="background:var(--c-ping)"></span>PING</button>
+    <button class="tool-btn" data-tool="note" data-unit="N">📝 NOTE</button>
+    <button class="tool-btn" data-tool="ping">⊙ PING</button>
     <button class="tool-btn" id="multi-btn">MULTI: OFF</button>
   </div>
 
@@ -976,18 +344,13 @@ to { opacity: 1; transform: translate(-50%, 0); }
 
 <main>
   <div class="map-frame" id="map">
-    <div class="corner tl"></div>
-    <div class="corner tr"></div>
-    <div class="corner bl"></div>
-    <div class="corner br"></div>
     <div class="map-coords">GRID 00.00 // 00.00</div>
     <div class="map-coords-r">SECTOR ALPHA<br>BROKEN ARROW</div>
     <div class="map-inner" id="map-inner">
       <img class="map-img" id="map-img" style="display:none" alt="">
       <svg class="map-svg" id="map-svg" preserveAspectRatio="none" viewBox="0 0 1000 1000">
         <defs>
-          <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5"
-                  markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
             <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
           </marker>
         </defs>
@@ -999,7 +362,6 @@ to { opacity: 1; transform: translate(-50%, 0); }
     </div>
   </div>
 </main>
-
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
@@ -1025,21 +387,20 @@ to { opacity: 1; transform: translate(-50%, 0); }
   const PLAYER_COLORS = ['#5aaa5a','#5a8fb8','#d4a017','#b87acc','#e8872a'];
   const UNDO_LIMIT = 10;
 
-  /* ═══════════════ NATO SYMBOLS ═══════════════ */
   const NATO_SYMBOLS = {
-    INF:   `<svg viewBox="0 0 26 18"><line x1="3" y1="3" x2="23" y2="15" stroke="currentColor" stroke-width="1.5"/><line x1="23" y1="3" x2="3" y2="15" stroke="currentColor" stroke-width="1.5"/></svg>`,
-    ARM:   `<svg viewBox="0 0 26 18"><ellipse cx="13" cy="9" rx="8" ry="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`,
-    ART:   `<svg viewBox="0 0 26 18"><circle cx="13" cy="9" r="3" fill="currentColor"/></svg>`,
-    AT:    `<svg viewBox="0 0 26 18"><line x1="3" y1="3" x2="23" y2="15" stroke="currentColor" stroke-width="1.5"/><line x1="23" y1="3" x2="3" y2="15" stroke="currentColor" stroke-width="1.5"/><polygon points="13,3 17,9 13,15 9,9" fill="currentColor"/></svg>`,
-    AA:    `<svg viewBox="0 0 26 18"><path d="M 6 14 Q 13 2 20 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`,
-    AAINF: `<svg viewBox="0 0 26 18"><line x1="3" y1="3" x2="23" y2="15" stroke="currentColor" stroke-width="1.2"/><line x1="23" y1="3" x2="3" y2="15" stroke="currentColor" stroke-width="1.2"/><path d="M 6 14 Q 13 4 20 14" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>`,
-    FLAK:  `<svg viewBox="0 0 26 18"><path d="M 6 15 Q 13 1 20 15" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="13" cy="13" r="2" fill="currentColor"/></svg>`,
-    SUP:   `<svg viewBox="0 0 26 18"><rect x="8" y="4" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="9" x2="18" y2="9" stroke="currentColor" stroke-width="1"/></svg>`,
-    N:     `<svg viewBox="0 0 22 22"><text x="11" y="16" text-anchor="middle" fill="currentColor" font-family="Impact, Arial Narrow Bold, sans-serif" font-size="14" font-weight="700">i</text></svg>`,
-    REC:   `<svg viewBox="0 0 26 18"><path d="M 4 14 L 13 4 L 22 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`,
-    HELI:  `<svg viewBox="0 0 26 18"><line x1="3" y1="6" x2="23" y2="6" stroke="currentColor" stroke-width="1.5"/><line x1="13" y1="6" x2="13" y2="14" stroke="currentColor" stroke-width="1.5"/><circle cx="13" cy="14" r="1.5" fill="currentColor"/></svg>`,
-    MG:    `<svg viewBox="0 0 26 18"><line x1="13" y1="3" x2="13" y2="15" stroke="currentColor" stroke-width="2"/><line x1="9" y1="6" x2="17" y2="6" stroke="currentColor" stroke-width="1.2"/><line x1="9" y1="9" x2="17" y2="9" stroke="currentColor" stroke-width="1.2"/><line x1="9" y1="12" x2="17" y2="12" stroke="currentColor" stroke-width="1.2"/></svg>`,
-    SOF:   `<svg viewBox="0 0 26 18"><line x1="3" y1="3" x2="23" y2="15" stroke="currentColor" stroke-width="1.5"/><line x1="23" y1="3" x2="3" y2="15" stroke="currentColor" stroke-width="1.5"/><circle cx="13" cy="9" r="3" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>`
+    INF:   `<svg viewBox="0 0 44 28"><line x1="4" y1="4" x2="40" y2="24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="4" x2="4" y2="24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+    ARM:   `<svg viewBox="0 0 44 28"><ellipse cx="22" cy="14" rx="14" ry="7" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>`,
+    ART:   `<svg viewBox="0 0 44 28"><circle cx="22" cy="14" r="5" fill="currentColor"/></svg>`,
+    AT:    `<svg viewBox="0 0 44 28"><line x1="4" y1="4" x2="40" y2="24" stroke="currentColor" stroke-width="2.2"/><line x1="40" y1="4" x2="4" y2="24" stroke="currentColor" stroke-width="2.2"/><polygon points="22,4 30,14 22,24 14,14" fill="currentColor"/></svg>`,
+    AA:    `<svg viewBox="0 0 44 28"><path d="M 8 22 Q 22 2 36 22" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>`,
+    AAINF: `<svg viewBox="0 0 44 28"><line x1="4" y1="4" x2="40" y2="24" stroke="currentColor" stroke-width="2"/><line x1="40" y1="4" x2="4" y2="24" stroke="currentColor" stroke-width="2"/><path d="M 10 22 Q 22 6 34 22" fill="none" stroke="currentColor" stroke-width="2"/></svg>`,
+    FLAK:  `<svg viewBox="0 0 44 28"><path d="M 8 24 Q 22 -2 36 24" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="22" cy="22" r="3" fill="currentColor"/></svg>`,
+    SUP:   `<svg viewBox="0 0 44 28"><rect x="14" y="6" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="14" y1="14" x2="30" y2="14" stroke="currentColor" stroke-width="1.8"/></svg>`,
+    N:     `<svg viewBox="0 0 28 28"><text x="14" y="20" text-anchor="middle" fill="currentColor" font-family="Impact, sans-serif" font-size="18" font-weight="700">i</text></svg>`,
+    REC:   `<svg viewBox="0 0 44 28"><path d="M 6 22 L 22 6 L 38 22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>`,
+    HELI:  `<svg viewBox="0 0 44 28"><line x1="6" y1="9" x2="38" y2="9" stroke="currentColor" stroke-width="2.5"/><line x1="22" y1="9" x2="22" y2="22" stroke="currentColor" stroke-width="2.5"/><circle cx="22" cy="22" r="2.5" fill="currentColor"/></svg>`,
+    MG:    `<svg viewBox="0 0 44 28"><line x1="22" y1="4" x2="22" y2="24" stroke="currentColor" stroke-width="3"/><line x1="14" y1="9" x2="30" y2="9" stroke="currentColor" stroke-width="2"/><line x1="14" y1="14" x2="30" y2="14" stroke="currentColor" stroke-width="2"/><line x1="14" y1="19" x2="30" y2="19" stroke="currentColor" stroke-width="2"/></svg>`,
+    SOF:   `<svg viewBox="0 0 44 28"><line x1="4" y1="4" x2="40" y2="24" stroke="currentColor" stroke-width="2.5"/><line x1="40" y1="4" x2="4" y2="24" stroke="currentColor" stroke-width="2.5"/><circle cx="22" cy="14" r="5" fill="none" stroke="currentColor" stroke-width="2"/></svg>`
   };
 
   const UNIT_LABELS = {
@@ -1049,23 +410,24 @@ to { opacity: 1; transform: translate(-50%, 0); }
   };
 
   const TOOL_LABELS = {
-    'enemy':'HOSTILE','enemy-s':'HOSTILE (SUSP)','supply':'SUPPLY','supply-s':'SUPPLY (SUSP)','note':'NOTE'
+    'friend':'FRIENDLY','friend-s':'FRIENDLY (SUSP)',
+    'hostile':'HOSTILE','hostile-s':'HOSTILE (SUSP)',
+    'supply':'SUPPLY','supply-s':'SUPPLY (SUSP)',
+    'note':'NOTE'
   };
 
-  /* ═══════════════ STATE ═══════════════ */
   let me = null;
   let players = {};
   let markers = {};
   let lines = {};
-  let maps = {};        // { id: {name, data, addedBy, addedAt} }
+  let maps = {};
   let activeMapId = null;
   let currentTool = null;
   let currentUnit = null;
   let multiMode = false;
-  let undoStack = [];   // local only - records last actions for me
-  let pendingTwoStep = null; // { type: 'line'|'arrow'|'direction', firstPoint?, targetMarkerId? }
+  let undoStack = [];
+  let pendingTwoStep = null;
 
-  /* ═══════════════ DOM ═══════════════ */
   const $loading = document.getElementById('loading');
   const $nameModal = document.getElementById('name-modal');
   const $nameInput = document.getElementById('name-input');
@@ -1092,7 +454,6 @@ to { opacity: 1; transform: translate(-50%, 0); }
     $roster.appendChild(slot);
   }
 
-  /* ═══════════════ JOIN ═══════════════ */
   function showNameModal() {
     $loading.style.display = 'none';
     $nameModal.style.display = 'flex';
@@ -1103,39 +464,25 @@ to { opacity: 1; transform: translate(-50%, 0); }
 
   async function joinSession() {
     const name = $nameInput.value.trim().toUpperCase();
-    if (!name || name.length < 2) {
-      $nameError.textContent = '// CALL SIGN INVALID';
-      return;
-    }
+    if (!name || name.length < 2) { $nameError.textContent = '// CALL SIGN INVALID'; return; }
     $nameError.textContent = '';
     $nameSubmit.disabled = true;
     try {
       const playersSnap = await get(ref(db, `rooms/${ROOM}/players`));
       const current = playersSnap.val() || {};
       const usedSlots = new Set(Object.values(current).map(p => p.slot));
-
       if (Object.keys(current).length >= MAX_PLAYERS) {
-        $nameError.textContent = '// SESSION FULL (5/5)';
-        $nameSubmit.disabled = false;
-        return;
+        $nameError.textContent = '// SESSION FULL (5/5)'; $nameSubmit.disabled = false; return;
       }
       let slot = -1;
-      for (let i = 0; i < MAX_PLAYERS; i++) {
-        if (!usedSlots.has(i)) { slot = i; break; }
-      }
-      if (slot === -1) {
-        $nameError.textContent = '// NO SLOTS';
-        $nameSubmit.disabled = false;
-        return;
-      }
+      for (let i = 0; i < MAX_PLAYERS; i++) { if (!usedSlots.has(i)) { slot = i; break; } }
+      if (slot === -1) { $nameError.textContent = '// NO SLOTS'; $nameSubmit.disabled = false; return; }
       const id = 'p_' + Math.random().toString(36).slice(2, 10);
       me = { id, name, color: PLAYER_COLORS[slot], slot };
-
       const playerRef = ref(db, `rooms/${ROOM}/players/${id}`);
       await set(playerRef, { name, color: me.color, slot, joinedAt: serverTimestamp() });
       onDisconnect(playerRef).remove();
       onDisconnect(ref(db, `rooms/${ROOM}/cursors/${id}`)).remove();
-
       $nameModal.style.display = 'none';
       startListening();
     } catch (err) {
@@ -1145,54 +492,23 @@ to { opacity: 1; transform: translate(-50%, 0); }
     }
   }
 
-  /* ═══════════════ FIREBASE LISTENERS ═══════════════ */
   function startListening() {
-    onValue(ref(db, `rooms/${ROOM}/players`), snap => {
-      players = snap.val() || {};
-      renderRoster();
-    });
-
-    onValue(ref(db, `rooms/${ROOM}/markers`), snap => {
-      markers = snap.val() || {};
-      renderMarkers();
-    });
-
-    onValue(ref(db, `rooms/${ROOM}/lines`), snap => {
-      lines = snap.val() || {};
-      renderLines();
-    });
-
-    onValue(ref(db, `rooms/${ROOM}/maps`), snap => {
-      maps = snap.val() || {};
-      renderMapList();
-      renderActiveMap();
-    });
-
-    onValue(ref(db, `rooms/${ROOM}/activeMapId`), snap => {
-      activeMapId = snap.val();
-      renderActiveMap();
-      renderMapList();
-    });
-
+    onValue(ref(db, `rooms/${ROOM}/players`), snap => { players = snap.val() || {}; renderRoster(); });
+    onValue(ref(db, `rooms/${ROOM}/markers`), snap => { markers = snap.val() || {}; renderMarkers(); });
+    onValue(ref(db, `rooms/${ROOM}/lines`), snap => { lines = snap.val() || {}; renderLines(); });
+    onValue(ref(db, `rooms/${ROOM}/maps`), snap => { maps = snap.val() || {}; renderMapList(); renderActiveMap(); });
+    onValue(ref(db, `rooms/${ROOM}/activeMapId`), snap => { activeMapId = snap.val(); renderActiveMap(); renderMapList(); });
     onValue(ref(db, `rooms/${ROOM}/pings`), snap => {
       const pings = snap.val() || {};
       Object.entries(pings).forEach(([id, p]) => {
-        if (Date.now() - p.t < 2000) {
-          spawnPing(p.x, p.y);
-          remove(ref(db, `rooms/${ROOM}/pings/${id}`));
-        }
+        if (Date.now() - p.t < 2000) { spawnPing(p.x, p.y); remove(ref(db, `rooms/${ROOM}/pings/${id}`)); }
       });
     });
-
-    onValue(ref(db, `rooms/${ROOM}/cursors`), snap => {
-      renderCursors(snap.val() || {});
-    });
-
+    onValue(ref(db, `rooms/${ROOM}/cursors`), snap => { renderCursors(snap.val() || {}); });
     $connPill.classList.remove('offline');
     $connText.textContent = 'LIVE';
   }
 
-  /* ═══════════════ ROSTER ═══════════════ */
   function renderRoster() {
     const slots = $roster.querySelectorAll('.roster-slot');
     slots.forEach(s => {
@@ -1212,7 +528,6 @@ to { opacity: 1; transform: translate(-50%, 0); }
     });
   }
 
-  /* ═══════════════ MAPS ═══════════════ */
   function renderActiveMap() {
     if (activeMapId && maps[activeMapId]) {
       const m = maps[activeMapId];
@@ -1231,79 +546,56 @@ to { opacity: 1; transform: translate(-50%, 0); }
       $mapEmpty.style.display = 'flex';
     }
   }
-
   function renderMapList() {
     $mapList.innerHTML = '';
     const entries = Object.entries(maps);
-    if (entries.length === 0) {
-      $mapList.innerHTML = '<div class="map-list-empty">// NO MAPS YET</div>';
-      return;
-    }
+    if (entries.length === 0) { $mapList.innerHTML = '<div class="map-list-empty">// NO MAPS YET</div>'; return; }
     entries.sort((a,b) => (a[1].addedAt||0) - (b[1].addedAt||0));
     entries.forEach(([id, m]) => {
       const item = document.createElement('div');
       item.className = 'map-item' + (id === activeMapId ? ' active' : '');
-
       const thumb = document.createElement('div');
       thumb.className = 'map-item-thumb';
       thumb.style.backgroundImage = `url(${m.data})`;
       item.appendChild(thumb);
-
       const nameInput = document.createElement('input');
       nameInput.className = 'map-item-name';
       nameInput.value = m.name || 'UNNAMED';
       nameInput.maxLength = 30;
       nameInput.addEventListener('blur', () => {
         const newName = nameInput.value.trim() || 'UNNAMED';
-        if (newName !== m.name) {
-          update(ref(db, `rooms/${ROOM}/maps/${id}`), { name: newName });
-        }
+        if (newName !== m.name) update(ref(db, `rooms/${ROOM}/maps/${id}`), { name: newName });
       });
-      nameInput.addEventListener('keydown', e => {
-        if (e.key === 'Enter') nameInput.blur();
-      });
+      nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') nameInput.blur(); });
       item.appendChild(nameInput);
-
       const useBtn = document.createElement('button');
       useBtn.className = 'map-item-btn' + (id === activeMapId ? ' active' : '');
       useBtn.textContent = id === activeMapId ? 'ACTIVE' : 'USE';
-      useBtn.addEventListener('click', () => {
-        set(ref(db, `rooms/${ROOM}/activeMapId`), id);
-      });
+      useBtn.addEventListener('click', () => set(ref(db, `rooms/${ROOM}/activeMapId`), id));
       item.appendChild(useBtn);
-
       const delBtn = document.createElement('button');
       delBtn.className = 'map-item-btn danger';
       delBtn.textContent = 'DEL';
       delBtn.addEventListener('click', () => {
         if (!confirm(`Karte "${m.name}" löschen?`)) return;
         remove(ref(db, `rooms/${ROOM}/maps/${id}`));
-        if (id === activeMapId) {
-          set(ref(db, `rooms/${ROOM}/activeMapId`), null);
-        }
+        if (id === activeMapId) set(ref(db, `rooms/${ROOM}/activeMapId`), null);
       });
       item.appendChild(delBtn);
-
       $mapList.appendChild(item);
     });
   }
 
-  document.getElementById('maps-btn').addEventListener('click', () => {
-    $mapsModal.style.display = 'flex';
-  });
-  document.getElementById('maps-close').addEventListener('click', () => {
-    $mapsModal.style.display = 'none';
-  });
-  $mapsModal.addEventListener('click', e => {
-    if (e.target === $mapsModal) $mapsModal.style.display = 'none';
-  });
+  document.getElementById('maps-btn').addEventListener('click', () => { $mapsModal.style.display = 'flex'; });
+  document.getElementById('maps-close').addEventListener('click', () => { $mapsModal.style.display = 'none'; });
+  $mapsModal.addEventListener('click', e => { if (e.target === $mapsModal) $mapsModal.style.display = 'none'; });
   document.getElementById('maps-upload').addEventListener('click', () => $fileInput.click());
 
   $fileInput.addEventListener('change', e => {
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > 1.5 * 1024 * 1024) {
-      alert('Bild ist zu groß (max ~1.5 MB). Bitte komprimieren oder verkleinern.');
+      alert('Bild ist zu groß (max ~1.5 MB).');
       $fileInput.value = '';
       return;
     }
@@ -1311,25 +603,15 @@ to { opacity: 1; transform: translate(-50%, 0); }
     reader.onload = ev => {
       const id = 'm_' + Math.random().toString(36).slice(2, 10);
       const baseName = file.name.replace(/\.[^.]+$/, '').slice(0, 30).toUpperCase() || 'MAP';
-      set(ref(db, `rooms/${ROOM}/maps/${id}`), {
-        name: baseName,
-        data: ev.target.result,
-        addedBy: me.name,
-        addedAt: Date.now()
-      });
-      // Auto-select if no map active
-      if (!activeMapId) {
-        set(ref(db, `rooms/${ROOM}/activeMapId`), id);
-      }
+      set(ref(db, `rooms/${ROOM}/maps/${id}`), { name: baseName, data: ev.target.result, addedBy: me.name, addedAt: Date.now() });
+      if (!activeMapId) set(ref(db, `rooms/${ROOM}/activeMapId`), id);
     };
     reader.readAsDataURL(file);
     $fileInput.value = '';
   });
 
-  /* ═══════════════ MARKERS ═══════════════ */
   function renderMarkers() {
     $mapInner.querySelectorAll('.marker').forEach(el => el.remove());
-
     Object.entries(markers).forEach(([id, m]) => {
       const el = document.createElement('div');
       el.className = `marker ${m.tool}`;
@@ -1337,70 +619,49 @@ to { opacity: 1; transform: translate(-50%, 0); }
       el.style.top = (m.y * 100) + '%';
       el.dataset.id = id;
 
-      const nato = document.createElement('div');
-      nato.className = 'nato';
+      const shape = document.createElement('div');
+      shape.className = 'nato-shape';
       const inner = document.createElement('div');
       inner.className = 'nato-inner';
       inner.innerHTML = NATO_SYMBOLS[m.unit] || '';
-      nato.appendChild(inner);
-      el.appendChild(nato);
+      shape.appendChild(inner);
+      el.appendChild(shape);
 
-      // Direction indicator
       if (typeof m.direction === 'number') {
         const dir = document.createElement('div');
         dir.className = 'marker-direction';
         dir.style.transform = `rotate(${m.direction}deg)`;
-        const color = m.tool === 'enemy' ? 'var(--c-enemy)' :
-                      m.tool === 'enemy-s' ? 'var(--c-enemy-s)' :
-                      m.tool === 'supply' ? 'var(--c-supply)' :
-                      m.tool === 'supply-s' ? 'var(--c-supply-s)' :
-                      'var(--c-note)';
-        dir.innerHTML = `
-          <svg viewBox="0 0 28 14">
-            <line x1="0" y1="7" x2="22" y2="7" stroke="${color}" stroke-width="2"/>
-            <polygon points="22,2 28,7 22,12" fill="${color}"/>
-          </svg>
-        `;
+        const color = m.tool === 'hostile' ? 'var(--hostile-dark)' :
+                      m.tool === 'hostile-s' ? 'var(--hostile-dark)' :
+                      m.tool === 'friend' ? 'var(--friend-dark)' :
+                      m.tool === 'friend-s' ? 'var(--friend-dark)' :
+                      m.tool === 'supply' ? 'var(--supply-dark)' :
+                      m.tool === 'supply-s' ? 'var(--supply-dark)' : 'var(--note)';
+        dir.innerHTML = `<svg viewBox="0 0 36 14"><line x1="0" y1="7" x2="28" y2="7" stroke="${color}" stroke-width="3"/><polygon points="28,2 36,7 28,12" fill="${color}"/></svg>`;
         el.appendChild(dir);
       }
 
-      // Author dot
       const author = document.createElement('div');
       author.className = 'marker-author';
       author.style.background = m.authorColor || '#888';
       el.appendChild(author);
 
-      // Delete X (visible on hover, only for own markers OR everyone if you prefer - making it for all)
       const del = document.createElement('div');
       del.className = 'marker-delete';
       del.textContent = '×';
       del.title = 'Marker löschen';
-      del.addEventListener('click', e => {
-        e.preventDefault();
-        e.stopPropagation();
-        deleteMarker(id, m);
-      });
+      del.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); deleteMarker(id, m); });
       el.appendChild(del);
 
-      // Tooltip
       const meta = document.createElement('div');
       meta.className = 'marker-meta';
       const label = m.text || `${TOOL_LABELS[m.tool]||''} ${UNIT_LABELS[m.unit]||''}`.trim();
       meta.innerHTML = `${label}<span class="author-tag">${m.authorName||''}</span>`;
       el.appendChild(meta);
 
-      // Right-click to delete
-      el.addEventListener('contextmenu', e => {
-        e.preventDefault(); e.stopPropagation();
-        deleteMarker(id, m);
-      });
-
-      // Click on marker (for direction tool)
+      el.addEventListener('contextmenu', e => { e.preventDefault(); e.stopPropagation(); deleteMarker(id, m); });
       el.addEventListener('click', e => {
-        if (currentTool === 'direction') {
-          e.preventDefault(); e.stopPropagation();
-          handleDirectionClickOnMarker(id, m);
-        }
+        if (currentTool === 'direction') { e.preventDefault(); e.stopPropagation(); handleDirectionClickOnMarker(id, m); }
       });
 
       $mapInner.appendChild(el);
@@ -1408,21 +669,16 @@ to { opacity: 1; transform: translate(-50%, 0); }
   }
 
   function deleteMarker(id, m) {
-    // Add to undo only if it's mine
     if (m.authorId === me?.id) {
       pushUndo({ type: 'delete-marker', data: { id, marker: { ...m } } });
     }
     remove(ref(db, `rooms/${ROOM}/markers/${id}`));
   }
 
-  /* ═══════════════ LINES & ARROWS ═══════════════ */
   function renderLines() {
-    // Remove existing line elements
     $mapSvg.querySelectorAll('.draw-line').forEach(el => el.remove());
-
     const rect = $mapInner.getBoundingClientRect();
     if (rect.width === 0) return;
-
     Object.entries(lines).forEach(([id, l]) => {
       const ns = 'http://www.w3.org/2000/svg';
       const line = document.createElementNS(ns, 'line');
@@ -1431,38 +687,29 @@ to { opacity: 1; transform: translate(-50%, 0); }
       line.setAttribute('y1', l.y1 * 1000);
       line.setAttribute('x2', l.x2 * 1000);
       line.setAttribute('y2', l.y2 * 1000);
-      line.setAttribute('stroke', l.color || '#d4e0c4');
-      line.style.color = l.color || '#d4e0c4';
-      if (l.type === 'arrow') {
-        line.setAttribute('marker-end', 'url(#arrowhead)');
-      }
+      line.setAttribute('stroke', l.color || '#2a2a2a');
+      line.style.color = l.color || '#2a2a2a';
+      if (l.type === 'arrow') line.setAttribute('marker-end', 'url(#arrowhead)');
       line.dataset.id = id;
       line.style.pointerEvents = 'stroke';
       line.addEventListener('click', e => {
         e.stopPropagation();
         if (l.authorId === me?.id || confirm('Linie eines anderen Spielers löschen?')) {
-          if (l.authorId === me?.id) {
-            pushUndo({ type: 'delete-line', data: { id, line: { ...l } } });
-          }
+          if (l.authorId === me?.id) pushUndo({ type: 'delete-line', data: { id, line: { ...l } } });
           remove(ref(db, `rooms/${ROOM}/lines/${id}`));
         }
       });
       line.addEventListener('contextmenu', e => {
         e.preventDefault(); e.stopPropagation();
-        if (l.authorId === me?.id) {
-          pushUndo({ type: 'delete-line', data: { id, line: { ...l } } });
-        }
+        if (l.authorId === me?.id) pushUndo({ type: 'delete-line', data: { id, line: { ...l } } });
         remove(ref(db, `rooms/${ROOM}/lines/${id}`));
       });
       $mapSvg.appendChild(line);
     });
   }
 
-  // Set viewBox to 0 0 1000 1000 — we use percent-based coords (0-1) * 1000
   $mapSvg.setAttribute('viewBox', '0 0 1000 1000');
   $mapSvg.setAttribute('preserveAspectRatio', 'none');
-
-  /* ═══════════════ CURSORS ═══════════════ */
   const cursorEls = {};
   function renderCursors(cursors) {
     const seen = new Set();
@@ -1475,13 +722,7 @@ to { opacity: 1; transform: translate(-50%, 0); }
       if (!el) {
         el = document.createElement('div');
         el.className = 'cursor';
-        el.innerHTML = `
-          <svg width="16" height="18" viewBox="0 0 16 18">
-            <path d="M1 1 L1 14 L5 11 L7 16 L9 15 L7 10 L13 10 Z"
-              fill="${player.color}" stroke="#000" stroke-width="0.8"/>
-          </svg>
-          <div class="cursor-label" style="background:${player.color}">${player.name}</div>
-        `;
+        el.innerHTML = `<svg width="16" height="18" viewBox="0 0 16 18"><path d="M1 1 L1 14 L5 11 L7 16 L9 15 L7 10 L13 10 Z" fill="${player.color}" stroke="#000" stroke-width="0.8"/></svg><div class="cursor-label" style="background:${player.color}">${player.name}</div>`;
         $mapInner.appendChild(el);
         cursorEls[id] = el;
       }
@@ -1489,14 +730,10 @@ to { opacity: 1; transform: translate(-50%, 0); }
       el.style.top = (c.y * 100) + '%';
     });
     Object.keys(cursorEls).forEach(id => {
-      if (!seen.has(id)) {
-        cursorEls[id].remove();
-        delete cursorEls[id];
-      }
+      if (!seen.has(id)) { cursorEls[id].remove(); delete cursorEls[id]; }
     });
   }
 
-  /* ═══════════════ TOOL SELECTION ═══════════════ */
   document.querySelectorAll('.tool-btn[data-tool]').forEach(btn => {
     btn.addEventListener('click', () => {
       const tool = btn.dataset.tool;
@@ -1507,7 +744,6 @@ to { opacity: 1; transform: translate(-50%, 0); }
         cancelTwoStep();
       } else {
         currentTool = tool; currentUnit = unit;
-        // For two-step tools show hint
         if (tool === 'line' || tool === 'arrow') {
           showHint('Klick: 1. Punkt setzen, dann 2. Punkt');
           pendingTwoStep = { type: tool };
@@ -1532,7 +768,6 @@ to { opacity: 1; transform: translate(-50%, 0); }
     $multiBtn.classList.toggle('active', multiMode);
   });
 
-  /* ═══════════════ MAP CLICK HANDLING ═══════════════ */
   function clickPos(e) {
     const rect = $mapInner.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width;
@@ -1544,7 +779,6 @@ to { opacity: 1; transform: translate(-50%, 0); }
     if (!currentTool || !me) return;
     if (e.target.closest('.marker') && currentTool !== 'direction') return;
     if (e.target.closest('.draw-line')) return;
-
     const pos = clickPos(e);
     if (!pos.inside) return;
     const { x, y } = pos;
@@ -1556,16 +790,8 @@ to { opacity: 1; transform: translate(-50%, 0); }
       finishToolUse();
       return;
     }
-
-    if (currentTool === 'line' || currentTool === 'arrow') {
-      handleDrawClick(x, y);
-      return;
-    }
-
-    if (currentTool === 'direction') {
-      handleDirectionClickOnMap(x, y);
-      return;
-    }
+    if (currentTool === 'line' || currentTool === 'arrow') { handleDrawClick(x, y); return; }
+    if (currentTool === 'direction') { handleDirectionClickOnMap(x, y); return; }
 
     let text = null;
     if (currentTool === 'note') {
@@ -1609,8 +835,7 @@ to { opacity: 1; transform: translate(-50%, 0); }
       const id = lref.key;
       const data = {
         type: pendingTwoStep.type,
-        x1: pendingTwoStep.firstPoint.x,
-        y1: pendingTwoStep.firstPoint.y,
+        x1: pendingTwoStep.firstPoint.x, y1: pendingTwoStep.firstPoint.y,
         x2: x, y2: y,
         color: me.color,
         authorId: me.id,
@@ -1620,11 +845,8 @@ to { opacity: 1; transform: translate(-50%, 0); }
       set(lref, data);
       pushUndo({ type: 'create-line', data: { id } });
       pendingTwoStep.firstPoint = null;
-      if (multiMode) {
-        showHint('Multi-Mode: 1. Punkt setzen für nächste Linie');
-      } else {
-        finishToolUse();
-      }
+      if (multiMode) showHint('Multi-Mode: 1. Punkt setzen für nächste Linie');
+      else finishToolUse();
     }
   }
 
@@ -1633,8 +855,7 @@ to { opacity: 1; transform: translate(-50%, 0); }
     if (!pendingTwoStep) pendingTwoStep = { type: 'direction' };
     pendingTwoStep.targetMarkerId = markerId;
     pendingTwoStep.targetMarker = marker;
-    showHint(`Marker ausgewählt — jetzt auf Karte klicken für Richtung (oder hier nochmal klicken für 'Richtung entfernen')`);
-    // If user clicks the same marker twice without choosing direction, remove direction
+    showHint(`Marker ausgewählt — jetzt auf Karte klicken für Richtung`);
     if (pendingTwoStep.lastMarkerId === markerId) {
       update(ref(db, `rooms/${ROOM}/markers/${markerId}`), { direction: null });
       pushUndo({ type: 'set-direction', data: { id: markerId, prev: marker.direction ?? null } });
@@ -1652,7 +873,6 @@ to { opacity: 1; transform: translate(-50%, 0); }
       return;
     }
     const m = pendingTwoStep.targetMarker;
-    // angle in degrees from marker to click point
     const dx = x - m.x;
     const dy = y - m.y;
     const angle = Math.atan2(dy, dx) * 180 / Math.PI;
@@ -1664,11 +884,8 @@ to { opacity: 1; transform: translate(-50%, 0); }
     finishToolUse();
   }
 
-  function cancelTwoStep() {
-    pendingTwoStep = null;
-  }
+  function cancelTwoStep() { pendingTwoStep = null; }
 
-  // ESC cancels two-step
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
       cancelTwoStep();
@@ -1676,14 +893,12 @@ to { opacity: 1; transform: translate(-50%, 0); }
       document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
       clearHint();
     }
-    // Ctrl+Z / Cmd+Z for undo
     if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.target.matches('input,textarea')) {
       e.preventDefault();
       doUndo();
     }
   });
 
-  /* ═══════════════ MOUSE TRACK ═══════════════ */
   let lastCursorSent = 0;
   $map.addEventListener('mousemove', e => {
     if (!me) return;
@@ -1693,16 +908,10 @@ to { opacity: 1; transform: translate(-50%, 0); }
     const pos = clickPos(e);
     if (!pos.inside) return;
     set(ref(db, `rooms/${ROOM}/cursors/${me.id}`), { x: pos.x, y: pos.y, t: now });
-    document.querySelector('.map-coords').textContent =
-      `GRID ${(pos.x*100).toFixed(2)} // ${(pos.y*100).toFixed(2)}`;
+    document.querySelector('.map-coords').textContent = `GRID ${(pos.x*100).toFixed(2)} // ${(pos.y*100).toFixed(2)}`;
   });
+  $map.addEventListener('mouseleave', () => { if (me) remove(ref(db, `rooms/${ROOM}/cursors/${me.id}`)); });
 
-  $map.addEventListener('mouseleave', () => {
-    if (!me) return;
-    remove(ref(db, `rooms/${ROOM}/cursors/${me.id}`));
-  });
-
-  /* ═══════════════ PING ═══════════════ */
   function spawnPing(x, y) {
     const el = document.createElement('div');
     el.className = 'ping';
@@ -1712,7 +921,6 @@ to { opacity: 1; transform: translate(-50%, 0); }
     setTimeout(() => el.remove(), 1600);
   }
 
-  /* ═══════════════ HINT BANNER ═══════════════ */
   let $hint = null;
   function showHint(text) {
     clearHint();
@@ -1727,58 +935,37 @@ to { opacity: 1; transform: translate(-50%, 0); }
       clearHint();
     });
   }
-  function clearHint() {
-    if ($hint) { $hint.remove(); $hint = null; }
-  }
+  function clearHint() { if ($hint) { $hint.remove(); $hint = null; } }
 
-  /* ═══════════════ UNDO ═══════════════ */
   function pushUndo(action) {
     undoStack.push(action);
     if (undoStack.length > UNDO_LIMIT) undoStack.shift();
     updateUndoBtn();
   }
-
   function updateUndoBtn() {
     $undoBtn.disabled = undoStack.length === 0;
     $undoBtn.textContent = `↶ UNDO (${undoStack.length})`;
   }
-
   async function doUndo() {
     const action = undoStack.pop();
     updateUndoBtn();
     if (!action) return;
-
-    if (action.type === 'create-marker') {
-      remove(ref(db, `rooms/${ROOM}/markers/${action.data.id}`));
-    } else if (action.type === 'create-line') {
-      remove(ref(db, `rooms/${ROOM}/lines/${action.data.id}`));
-    } else if (action.type === 'delete-marker') {
-      // Restore the marker
-      await set(ref(db, `rooms/${ROOM}/markers/${action.data.id}`), action.data.marker);
-    } else if (action.type === 'delete-line') {
-      await set(ref(db, `rooms/${ROOM}/lines/${action.data.id}`), action.data.line);
-    } else if (action.type === 'set-direction') {
-      // Restore previous direction
-      await update(ref(db, `rooms/${ROOM}/markers/${action.data.id}`), { direction: action.data.prev });
-    }
+    if (action.type === 'create-marker') remove(ref(db, `rooms/${ROOM}/markers/${action.data.id}`));
+    else if (action.type === 'create-line') remove(ref(db, `rooms/${ROOM}/lines/${action.data.id}`));
+    else if (action.type === 'delete-marker') await set(ref(db, `rooms/${ROOM}/markers/${action.data.id}`), action.data.marker);
+    else if (action.type === 'delete-line') await set(ref(db, `rooms/${ROOM}/lines/${action.data.id}`), action.data.line);
+    else if (action.type === 'set-direction') await update(ref(db, `rooms/${ROOM}/markers/${action.data.id}`), { direction: action.data.prev });
   }
-
   $undoBtn.addEventListener('click', doUndo);
   updateUndoBtn();
 
-  /* ═══════════════ CLEAR ═══════════════ */
   document.getElementById('clear-mine').addEventListener('click', () => {
     if (!confirm('Alle DEINE Marker und Linien löschen?')) return;
-    Object.entries(markers).forEach(([id, m]) => {
-      if (m.authorId === me?.id) remove(ref(db, `rooms/${ROOM}/markers/${id}`));
-    });
-    Object.entries(lines).forEach(([id, l]) => {
-      if (l.authorId === me?.id) remove(ref(db, `rooms/${ROOM}/lines/${id}`));
-    });
+    Object.entries(markers).forEach(([id, m]) => { if (m.authorId === me?.id) remove(ref(db, `rooms/${ROOM}/markers/${id}`)); });
+    Object.entries(lines).forEach(([id, l]) => { if (l.authorId === me?.id) remove(ref(db, `rooms/${ROOM}/lines/${id}`)); });
     undoStack = [];
     updateUndoBtn();
   });
-
   document.getElementById('clear-all').addEventListener('click', () => {
     if (!confirm('ALLE Marker und Linien löschen (auch von anderen)?')) return;
     set(ref(db, `rooms/${ROOM}/markers`), null);
@@ -1787,7 +974,6 @@ to { opacity: 1; transform: translate(-50%, 0); }
     updateUndoBtn();
   });
 
-  /* ═══════════════ INIT ═══════════════ */
   get(ref(db, `rooms/${ROOM}/players`))
     .then(() => showNameModal())
     .catch(err => {
@@ -1795,11 +981,7 @@ to { opacity: 1; transform: translate(-50%, 0); }
       $loading.querySelector('.lbl').textContent = 'CONNECTION FAILED // CHECK CONSOLE';
     });
 
-  // Re-render lines when window resizes (svg viewBox handles scale automatically but just in case)
-  window.addEventListener('resize', () => {
-    renderLines();
-  });
-
+  window.addEventListener('resize', () => { renderLines(); });
   window.addEventListener('beforeunload', () => {
     if (me) {
       remove(ref(db, `rooms/${ROOM}/players/${me.id}`));
@@ -1807,6 +989,5 @@ to { opacity: 1; transform: translate(-50%, 0); }
     }
   });
 </script>
-
 </body>
 </html>
