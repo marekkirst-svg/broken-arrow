@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BROKEN ARROW // TACTICAL OVERLAY</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Oswald:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg:           #0d0f0c;
+    --bg-grid:      #11140f;
+    --panel:        #161a14;
+    --panel-2:      #1c2118;
+    --border:       #2a3324;
+    --border-bright:#3d4a32;
+    --accent:       #4a5d38;
+    --olive:        #5a7042;
+    --olive-bright: #7a9456;
+    --text:         #b8c4a8;
+    --text-dim:     #6a7860;
+    --text-bright:  #d4e0c4;
+    --warn:         #d4a017;
+
+    --c-enemy:        #c8302a;
+    --c-enemy-s:      #8a3a2e;
+    --c-supply:       #b87a3a;
+    --c-supply-s:     #6a4820;
+    --c-note:         #5a8fb8;
+    --c-ping:         #ff3eb5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  body::after {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,0,0.008) 2px, rgba(0,255,0,0.008) 4px);
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9998;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
+  }
+
+  /* ═══════════════ HEADER ═══════════════ */
+  header {
+    flex-shrink: 0;
+    background: linear-gradient(180deg, var(--panel-2) 0%, var(--panel) 100%);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  header::before {
+    content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--olive), transparent);
+  }
+
+  .header-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 16px; gap: 16px;
+  }
+
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-mark {
+    width: 30px; height: 30px;
+    border: 1px solid var(--olive);
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px;
+    color: var(--olive-bright); position: relative;
+  }
+  .brand-mark::before, .brand-mark::after {
+    content: ''; position: absolute; width: 5px; height: 5px; border: 1px solid var(--olive);
+  }
+  .brand-mark::before { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+  .brand-mark::after { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+  .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+  .brand-title {
+    font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 14px;
+    letter-spacing: 3px; color: var(--text-bright);
+  }
+  .brand-sub { font-size: 9px; letter-spacing: 2px; color: var(--text-dim); }
+
+  .header-status {
+    display: flex; gap: 14px; align-items: center; font-size: 10px; letter-spacing: 1.5px;
+  }
+  .stat-pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 4px 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  .stat-pill .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--olive-bright);
+    box-shadow: 0 0 6px var(--olive-bright);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .stat-pill.offline .dot { background: var(--c-enemy); box-shadow: 0 0 6px var(--c-enemy); animation: none; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; } 50% { opacity: 0.4; }
+  }
+
+  .roster { display: flex; gap: 4px; }
+  .roster-slot {
+    width: 28px; height: 28px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+    color: var(--text-dim);
+    position: relative;
+    cursor: default;
+  }
+  .roster-slot.active {
+    border-color: var(--player-color, var(--olive));
+    color: var(--player-color, var(--olive-bright));
+    background: rgba(0,0,0,0.4);
+  }
+  .roster-slot.me::after {
+    content: ''; position: absolute; bottom: -3px; left: 50%; transform: translateX(-50%);
+    width: 4px; height: 4px; background: var(--player-color, var(--olive-bright));
+    border-radius: 50%;
+  }
+
+  /* ═══════════════ TOOLBAR ═══════════════ */
+  .toolbar {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 6px 12px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .tool-group {
+    display: flex; gap: 2px; align-items: center;
+    padding: 0 8px;
+    border-right: 1px solid var(--border);
+  }
+  .tool-group:last-child { border-right: none; }
+
+  .tool-label {
+    font-size: 8px; letter-spacing: 2px; color: var(--text-dim);
+    margin-right: 6px;
+  }
+
+  .tool-btn {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 5px 9px;
+    cursor: pointer;
+    transition: all 0.12s;
+    display: inline-flex; align-items: center; gap: 5px;
+    position: relative;
+    text-transform: uppercase;
+  }
+  .tool-btn:hover {
+    border-color: var(--border-bright);
+    background: var(--panel-2);
+    color: var(--text-bright);
+  }
+  .tool-btn.active {
+    border-color: var(--olive-bright);
+    background: rgba(122,148,86,0.15);
+    color: var(--olive-bright);
+  }
+  .tool-btn.active::before {
+    content: ''; position: absolute; top: 1px; left: 1px;
+    width: 4px; height: 4px; background: var(--olive-bright);
+  }
+  .tool-btn .swatch {
+    width: 8px; height: 8px; display: inline-block;
+    border: 1px solid rgba(0,0,0,0.5);
+  }
+  .tool-btn.danger:hover {
+    border-color: var(--c-enemy);
+    color: var(--c-enemy);
+  }
+
+  /* ═══════════════ MAIN MAP AREA ═══════════════ */
+  main { flex: 1; display: flex; overflow: hidden; position: relative; }
+
+  .map-frame {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background:
+      linear-gradient(var(--bg-grid) 1px, transparent 1px) 0 0 / 40px 40px,
+      linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px) 0 0 / 40px 40px,
+      radial-gradient(ellipse at center, #131611 0%, #0a0c08 100%);
+    cursor: crosshair;
+  }
+
+  .corner {
+    position: absolute;
+    width: 18px; height: 18px;
+    border: 1px solid var(--olive);
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0.5;
+  }
+  .corner.tl { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+  .corner.tr { top: 8px; right: 8px; border-left: none; border-bottom: none; }
+  .corner.bl { bottom: 8px; left: 8px; border-right: none; border-top: none; }
+  .corner.br { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+
+  .map-coords {
+    position: absolute;
+    top: 12px; left: 36px;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .map-coords-r {
+    position: absolute;
+    bottom: 12px; right: 36px;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    pointer-events: none;
+    z-index: 5;
+    text-align: right;
+  }
+
+  .map-bg {
+    position: absolute; inset: 0;
+    background-size: contain; background-repeat: no-repeat; background-position: center;
+    pointer-events: none;
+    opacity: 0.95;
+  }
+
+  .map-empty {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-dim);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-align: center;
+    pointer-events: none;
+    flex-direction: column;
+  }
+  .map-empty span { display: block; margin-top: 6px; font-size: 9px; opacity: 0.7; }
+
+  /* ═══════════════ MARKERS ═══════════════ */
+  .marker {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    user-select: none;
+    z-index: 10;
+    transition: transform 0.1s;
+  }
+  .marker:hover { transform: translate(-50%, -50%) scale(1.4); z-index: 20; }
+  .marker:hover .marker-meta { opacity: 1; }
+
+  .nato {
+    width: 26px; height: 18px;
+    border: 1.5px solid;
+    background: rgba(0,0,0,0.55);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .marker.enemy .nato, .marker.enemy-s .nato {
+    transform: rotate(45deg);
+    width: 20px; height: 20px;
+  }
+  .marker.enemy .nato { border-color: var(--c-enemy); color: var(--c-enemy); box-shadow: 0 0 6px rgba(200,48,42,0.5); }
+  .marker.enemy-s .nato { border-color: var(--c-enemy-s); color: var(--c-enemy-s); border-style: dashed; }
+
+  .marker.enemy .nato-inner, .marker.enemy-s .nato-inner { transform: rotate(-45deg); }
+
+  .marker.supply .nato { border-color: var(--c-supply); color: var(--c-supply); box-shadow: 0 0 5px rgba(184,122,58,0.4); }
+  .marker.supply-s .nato { border-color: var(--c-supply-s); color: var(--c-supply-s); border-style: dashed; }
+
+  .nato-inner {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .nato svg { width: 100%; height: 100%; }
+
+  .marker.note .nato {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border-color: var(--c-note);
+    color: var(--c-note);
+  }
+
+  /* Author dot */
+  .marker-author {
+    position: absolute;
+    top: -3px; right: -3px;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.7);
+    z-index: 2;
+  }
+
+  /* Tooltip */
+  .marker-meta {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    background: rgba(0,0,0,0.92);
+    border: 1px solid var(--border-bright);
+    color: var(--text-bright);
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    opacity: 0;
+    transition: opacity 0.15s;
+    pointer-events: none;
+    z-index: 30;
+  }
+  .marker-meta .author-tag {
+    color: var(--text-dim);
+    margin-left: 6px;
+    padding-left: 6px;
+    border-left: 1px solid var(--border);
+  }
+
+  /* PING */
+  .ping {
+    position: absolute;
+    width: 40px; height: 40px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 15;
+  }
+  .ping::before, .ping::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 2px solid var(--c-ping);
+    border-radius: 50%;
+    animation: pingExpand 1.5s ease-out forwards;
+  }
+  .ping::after { animation-delay: 0.3s; }
+  @keyframes pingExpand {
+    0% { transform: scale(0.2); opacity: 1; }
+    100% { transform: scale(2.4); opacity: 0; }
+  }
+
+  /* CURSORS */
+  .cursor {
+    position: absolute;
+    pointer-events: none;
+    z-index: 100;
+    transition: left 0.06s linear, top 0.06s linear;
+  }
+  .cursor svg { display: block; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.7)); }
+  .cursor-label {
+    position: absolute;
+    top: 16px; left: 14px;
+    color: #0a0a0a;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 2px 6px;
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+
+  /* MODAL */
+  .modal-bg {
+    position: fixed; inset: 0;
+    background: rgba(5,7,5,0.85);
+    backdrop-filter: blur(4px);
+    z-index: 9000;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal {
+    background: var(--panel);
+    border: 1px solid var(--border-bright);
+    padding: 28px 32px;
+    width: 360px;
+    position: relative;
+    box-shadow: 0 0 40px rgba(0,0,0,0.8);
+  }
+  .modal::before {
+    content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--olive-bright), transparent);
+  }
+  .modal-corners > div {
+    position: absolute; width: 8px; height: 8px; border: 1px solid var(--olive);
+  }
+  .modal-corners .tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+  .modal-corners .tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
+  .modal-corners .bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+  .modal-corners .br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+  .modal-title {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 4px;
+    color: var(--text-bright);
+    margin-bottom: 4px;
+  }
+  .modal-sub {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+  }
+  .modal-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text-bright);
+    font-family: inherit;
+    font-size: 12px;
+    letter-spacing: 2px;
+    padding: 10px 12px;
+    text-transform: uppercase;
+    outline: none;
+  }
+  .modal-input:focus { border-color: var(--olive-bright); }
+  .modal-btn {
+    width: 100%;
+    margin-top: 14px;
+    background: var(--accent);
+    border: 1px solid var(--olive-bright);
+    color: var(--text-bright);
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 4px;
+    padding: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+  .modal-btn:hover { background: var(--olive); color: #0a0a0a; }
+  .modal-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .modal-error {
+    margin-top: 10px;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--c-enemy);
+    min-height: 12px;
+  }
+
+  #file-input { display: none; }
+
+  .loading-overlay {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg);
+    z-index: 10000;
+    flex-direction: column; gap: 12px;
+  }
+  .loading-overlay .lbl {
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 4px;
+    color: var(--text-dim);
+    font-size: 11px;
+  }
+  .spinner {
+    width: 24px; height: 24px;
+    border: 1.5px solid var(--border);
+    border-top-color: var(--olive-bright);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div class="lbl">CONNECTING TO COMMAND</div>
+</div>
+
+<div class="modal-bg" id="name-modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-corners">
+      <div class="tl"></div><div class="tr"></div><div class="bl"></div><div class="br"></div>
+    </div>
+    <div class="modal-title">IDENTIFY</div>
+    <div class="modal-sub">// CALL SIGN REQUIRED</div>
+    <input type="text" id="name-input" class="modal-input" maxlength="12" placeholder="ALPHA-1" autocomplete="off">
+    <button class="modal-btn" id="name-submit">DEPLOY</button>
+    <div class="modal-error" id="name-error"></div>
+  </div>
+</div>
+
+<header>
+  <div class="header-row">
+    <div class="brand">
+      <div class="brand-mark">BA</div>
+      <div class="brand-text">
+        <div class="brand-title">BROKEN ARROW</div>
+        <div class="brand-sub">TACTICAL OVERLAY // CMD</div>
+      </div>
+    </div>
+    <div class="header-status">
+      <div class="stat-pill" id="conn-pill">
+        <div class="dot"></div>
+        <span id="conn-text">SYNC</span>
+      </div>
+      <div class="roster" id="roster"></div>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+
+  <div class="tool-group">
+    <span class="tool-label">HOSTILE</span>
+    <button class="tool-btn" data-tool="enemy" data-unit="INF"><span class="swatch" style="background:var(--c-enemy)"></span>INF</button>
+    <button class="tool-btn" data-tool="enemy" data-unit="ARM"><span class="swatch" style="background:var(--c-enemy)"></span>ARM</button>
+    <button class="tool-btn" data-tool="enemy" data-unit="ART"><span class="swatch" style="background:var(--c-enemy)"></span>ART</button>
+    <button class="tool-btn" data-tool="enemy" data-unit="AT"><span class="swatch" style="background:var(--c-enemy)"></span>AT</button>
+    <button class="tool-btn" data-tool="enemy" data-unit="AA"><span class="swatch" style="background:var(--c-enemy)"></span>AA</button>
+    <button class="tool-btn" data-tool="enemy" data-unit="AAINF"><span class="swatch" style="background:var(--c-enemy)"></span>AA-INF</button>
+    <button class="tool-btn" data-tool="enemy" data-unit="FLAK"><span class="swatch" style="background:var(--c-enemy)"></span>FLAK</button>
+  </div>
+
+  <div class="tool-group">
+    <span class="tool-label">SUSPECT</span>
+    <button class="tool-btn" data-tool="enemy-s" data-unit="INF"><span class="swatch" style="background:var(--c-enemy-s)"></span>INF?</button>
+    <button class="tool-btn" data-tool="enemy-s" data-unit="ARM"><span class="swatch" style="background:var(--c-enemy-s)"></span>ARM?</button>
+    <button class="tool-btn" data-tool="enemy-s" data-unit="ART"><span class="swatch" style="background:var(--c-enemy-s)"></span>ART?</button>
+    <button class="tool-btn" data-tool="enemy-s" data-unit="AT"><span class="swatch" style="background:var(--c-enemy-s)"></span>AT?</button>
+    <button class="tool-btn" data-tool="enemy-s" data-unit="AA"><span class="swatch" style="background:var(--c-enemy-s)"></span>AA?</button>
+  </div>
+
+  <div class="tool-group">
+    <span class="tool-label">SUPPLY</span>
+    <button class="tool-btn" data-tool="supply" data-unit="SUP"><span class="swatch" style="background:var(--c-supply)"></span>SUPPLY</button>
+    <button class="tool-btn" data-tool="supply-s" data-unit="SUP"><span class="swatch" style="background:var(--c-supply-s)"></span>SUPPLY?</button>
+  </div>
+
+  <div class="tool-group">
+    <span class="tool-label">OTHER</span>
+    <button class="tool-btn" data-tool="note" data-unit="N"><span class="swatch" style="background:var(--c-note)"></span>NOTE</button>
+    <button class="tool-btn" data-tool="ping"><span class="swatch" style="background:var(--c-ping)"></span>PING</button>
+    <button class="tool-btn" id="multi-btn">MULTI: OFF</button>
+  </div>
+
+  <div class="tool-group" style="margin-left:auto">
+    <button class="tool-btn" id="upload-btn">⤴ MAP IMG</button>
+    <button class="tool-btn danger" id="clear-mine">CLEAR MINE</button>
+    <button class="tool-btn danger" id="clear-all">CLEAR ALL</button>
+  </div>
+
+  <input type="file" id="file-input" accept="image/*">
+</div>
+
+<main>
+  <div class="map-frame" id="map">
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+    <div class="map-coords">GRID 00.00 // 00.00</div>
+    <div class="map-coords-r">SECTOR ALPHA<br>BROKEN ARROW</div>
+    <div class="map-bg" id="map-bg"></div>
+    <div class="map-empty" id="map-empty">
+      // NO MAP LOADED //
+      <span>CLICK "MAP IMG" TO UPLOAD A SCREENSHOT</span>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getDatabase, ref, set, push, onValue, remove, onDisconnect,
+    get, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA-F2I1Tn8t09g60jcgQMt-7oAlrNzOwWk",
+    authDomain: "ba-taktikkarte.firebaseapp.com",
+    databaseURL: "https://ba-taktikkarte-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "ba-taktikkarte",
+    storageBucket: "ba-taktikkarte.firebasestorage.app",
+    messagingSenderId: "144626376350",
+    appId: "1:144626376350:web:4c32e9e726e4e01a0b658f"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  const ROOM = "main";
+  const MAX_PLAYERS = 5;
+  const PLAYER_COLORS = ['#5aaa5a','#5a8fb8','#d4a017','#b87acc','#e8872a'];
+
+  const NATO_SYMBOLS = {
+    INF: `<svg viewBox="0 0 26 18"><line x1="3" y1="3" x2="23" y2="15" stroke="currentColor" stroke-width="1.5"/><line x1="23" y1="3" x2="3" y2="15" stroke="currentColor" stroke-width="1.5"/></svg>`,
+    ARM: `<svg viewBox="0 0 26 18"><ellipse cx="13" cy="9" rx="8" ry="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`,
+    ART: `<svg viewBox="0 0 26 18"><circle cx="13" cy="9" r="3" fill="currentColor"/></svg>`,
+    AT: `<svg viewBox="0 0 26 18"><line x1="3" y1="3" x2="23" y2="15" stroke="currentColor" stroke-width="1.5"/><line x1="23" y1="3" x2="3" y2="15" stroke="currentColor" stroke-width="1.5"/><polygon points="13,3 17,9 13,15 9,9" fill="currentColor"/></svg>`,
+    AA: `<svg viewBox="0 0 26 18"><path d="M 6 14 Q 13 2 20 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`,
+    AAINF: `<svg viewBox="0 0 26 18"><line x1="3" y1="3" x2="23" y2="15" stroke="currentColor" stroke-width="1.2"/><line x1="23" y1="3" x2="3" y2="15" stroke="currentColor" stroke-width="1.2"/><path d="M 6 14 Q 13 4 20 14" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>`,
+    FLAK: `<svg viewBox="0 0 26 18"><path d="M 6 15 Q 13 1 20 15" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="13" cy="13" r="2" fill="currentColor"/></svg>`,
+    SUP: `<svg viewBox="0 0 26 18"><rect x="8" y="4" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="9" x2="18" y2="9" stroke="currentColor" stroke-width="1"/></svg>`,
+    N: `<svg viewBox="0 0 22 22"><text x="11" y="16" text-anchor="middle" fill="currentColor" font-family="Oswald, sans-serif" font-size="13" font-weight="700">i</text></svg>`
+  };
+
+  let me = null;
+  let players = {};
+  let markers = {};
+  let currentTool = null;
+  let currentUnit = null;
+  let multiMode = false;
+
+  const $loading = document.getElementById('loading');
+  const $nameModal = document.getElementById('name-modal');
+  const $nameInput = document.getElementById('name-input');
+  const $nameSubmit = document.getElementById('name-submit');
+  const $nameError = document.getElementById('name-error');
+  const $map = document.getElementById('map');
+  const $mapBg = document.getElementById('map-bg');
+  const $mapEmpty = document.getElementById('map-empty');
+  const $roster = document.getElementById('roster');
+  const $connPill = document.getElementById('conn-pill');
+  const $connText = document.getElementById('conn-text');
+  const $fileInput = document.getElementById('file-input');
+
+  for (let i = 0; i < MAX_PLAYERS; i++) {
+    const slot = document.createElement('div');
+    slot.className = 'roster-slot';
+    slot.dataset.slot = i;
+    slot.textContent = (i+1);
+    $roster.appendChild(slot);
+  }
+
+  function showNameModal() {
+    $loading.style.display = 'none';
+    $nameModal.style.display = 'flex';
+    setTimeout(() => $nameInput.focus(), 100);
+  }
+
+  $nameSubmit.addEventListener('click', joinSession);
+  $nameInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') joinSession();
+  });
+
+  async function joinSession() {
+    const name = $nameInput.value.trim().toUpperCase();
+    if (!name || name.length < 2) {
+      $nameError.textContent = '// CALL SIGN INVALID';
+      return;
+    }
+    $nameError.textContent = '';
+    $nameSubmit.disabled = true;
+
+    try {
+      const playersSnap = await get(ref(db, `rooms/${ROOM}/players`));
+      const current = playersSnap.val() || {};
+      const usedSlots = new Set(Object.values(current).map(p => p.slot));
+
+      if (Object.keys(current).length >= MAX_PLAYERS) {
+        $nameError.textContent = '// SESSION FULL (5/5)';
+        $nameSubmit.disabled = false;
+        return;
+      }
+
+      let slot = -1;
+      for (let i = 0; i < MAX_PLAYERS; i++) {
+        if (!usedSlots.has(i)) { slot = i; break; }
+      }
+      if (slot === -1) {
+        $nameError.textContent = '// NO SLOTS';
+        $nameSubmit.disabled = false;
+        return;
+      }
+
+      const id = 'p_' + Math.random().toString(36).slice(2, 10);
+      me = { id, name, color: PLAYER_COLORS[slot], slot };
+
+      const playerRef = ref(db, `rooms/${ROOM}/players/${id}`);
+      await set(playerRef, {
+        name, color: me.color, slot,
+        joinedAt: serverTimestamp()
+      });
+      onDisconnect(playerRef).remove();
+      onDisconnect(ref(db, `rooms/${ROOM}/cursors/${id}`)).remove();
+
+      $nameModal.style.display = 'none';
+      startListening();
+    } catch (err) {
+      console.error(err);
+      $nameError.textContent = '// CONNECTION ERROR';
+      $nameSubmit.disabled = false;
+    }
+  }
+
+  function startListening() {
+    onValue(ref(db, `rooms/${ROOM}/players`), snap => {
+      players = snap.val() || {};
+      renderRoster();
+    });
+
+    onValue(ref(db, `rooms/${ROOM}/markers`), snap => {
+      markers = snap.val() || {};
+      renderMarkers();
+    });
+
+    onValue(ref(db, `rooms/${ROOM}/mapImage`), snap => {
+      const data = snap.val();
+      if (data) {
+        $mapBg.style.backgroundImage = `url(${data})`;
+        $mapEmpty.style.display = 'none';
+      } else {
+        $mapBg.style.backgroundImage = '';
+        $mapEmpty.style.display = 'flex';
+      }
+    });
+
+    onValue(ref(db, `rooms/${ROOM}/pings`), snap => {
+      const pings = snap.val() || {};
+      Object.entries(pings).forEach(([id, p]) => {
+        if (Date.now() - p.t < 2000) {
+          spawnPing(p.x, p.y);
+          remove(ref(db, `rooms/${ROOM}/pings/${id}`));
+        }
+      });
+    });
+
+    onValue(ref(db, `rooms/${ROOM}/cursors`), snap => {
+      renderCursors(snap.val() || {});
+    });
+
+    $connPill.classList.remove('offline');
+    $connText.textContent = 'LIVE';
+  }
+
+  function renderRoster() {
+    const slots = $roster.querySelectorAll('.roster-slot');
+    slots.forEach(s => {
+      s.classList.remove('active', 'me');
+      s.style.removeProperty('--player-color');
+      s.textContent = parseInt(s.dataset.slot) + 1;
+      s.title = '';
+    });
+
+    Object.entries(players).forEach(([id, p]) => {
+      const slot = slots[p.slot];
+      if (!slot) return;
+      slot.classList.add('active');
+      if (id === me?.id) slot.classList.add('me');
+      slot.style.setProperty('--player-color', p.color);
+      slot.textContent = p.name.slice(0, 2);
+      slot.title = p.name;
+    });
+  }
+
+  function renderMarkers() {
+    $map.querySelectorAll('.marker').forEach(el => el.remove());
+
+    Object.entries(markers).forEach(([id, m]) => {
+      const el = document.createElement('div');
+      el.className = `marker ${m.tool}`;
+      el.style.left = (m.x * 100) + '%';
+      el.style.top = (m.y * 100) + '%';
+      el.dataset.id = id;
+
+      const nato = document.createElement('div');
+      nato.className = 'nato';
+
+      const inner = document.createElement('div');
+      inner.className = 'nato-inner';
+      inner.innerHTML = NATO_SYMBOLS[m.unit] || '';
+      nato.appendChild(inner);
+
+      el.appendChild(nato);
+
+      const author = document.createElement('div');
+      author.className = 'marker-author';
+      author.style.background = m.authorColor || '#888';
+      el.appendChild(author);
+
+      const meta = document.createElement('div');
+      meta.className = 'marker-meta';
+      const labels = {
+        'enemy':'HOSTILE','enemy-s':'HOSTILE (SUSP)','supply':'SUPPLY','supply-s':'SUPPLY (SUSP)','note':'NOTE'
+      };
+      const unitLabels = {INF:'INFANTRY',ARM:'ARMOR',ART:'ARTILLERY',AT:'ANTI-TANK',AA:'ANTI-AIR',AAINF:'AA INF',FLAK:'FLAK',SUP:'SUPPLY',N:'NOTE'};
+      const label = m.text || `${labels[m.tool]||''} ${unitLabels[m.unit]||''}`.trim();
+      meta.innerHTML = `${label}<span class="author-tag">${m.authorName||''}</span>`;
+      el.appendChild(meta);
+
+      el.addEventListener('contextmenu', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        remove(ref(db, `rooms/${ROOM}/markers/${id}`));
+      });
+
+      $map.appendChild(el);
+    });
+  }
+
+  const cursorEls = {};
+  function renderCursors(cursors) {
+    const seen = new Set();
+    Object.entries(cursors).forEach(([id, c]) => {
+      if (id === me?.id) return;
+      const player = players[id];
+      if (!player) return;
+      seen.add(id);
+      let el = cursorEls[id];
+      if (!el) {
+        el = document.createElement('div');
+        el.className = 'cursor';
+        el.innerHTML = `
+          <svg width="16" height="18" viewBox="0 0 16 18">
+            <path d="M1 1 L1 14 L5 11 L7 16 L9 15 L7 10 L13 10 Z"
+              fill="${player.color}" stroke="#000" stroke-width="0.8"/>
+          </svg>
+          <div class="cursor-label" style="background:${player.color}">${player.name}</div>
+        `;
+        $map.appendChild(el);
+        cursorEls[id] = el;
+      }
+      const rect = $map.getBoundingClientRect();
+      el.style.left = (c.x * rect.width) + 'px';
+      el.style.top = (c.y * rect.height) + 'px';
+    });
+    Object.keys(cursorEls).forEach(id => {
+      if (!seen.has(id)) {
+        cursorEls[id].remove();
+        delete cursorEls[id];
+      }
+    });
+  }
+
+  document.querySelectorAll('.tool-btn[data-tool]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tool = btn.dataset.tool;
+      const unit = btn.dataset.unit;
+      if (currentTool === tool && currentUnit === unit) {
+        currentTool = null; currentUnit = null;
+      } else {
+        currentTool = tool; currentUnit = unit;
+      }
+      document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+      if (currentTool) btn.classList.add('active');
+      if (multiMode) document.getElementById('multi-btn').classList.add('active');
+    });
+  });
+
+  const $multiBtn = document.getElementById('multi-btn');
+  $multiBtn.addEventListener('click', () => {
+    multiMode = !multiMode;
+    $multiBtn.textContent = `MULTI: ${multiMode?'ON':'OFF'}`;
+    $multiBtn.classList.toggle('active', multiMode);
+  });
+
+  $map.addEventListener('click', e => {
+    if (!currentTool || !me) return;
+    if (e.target.closest('.marker')) return;
+    const rect = $map.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+
+    if (currentTool === 'ping') {
+      const pingRef = push(ref(db, `rooms/${ROOM}/pings`));
+      set(pingRef, { x, y, t: Date.now(), authorName: me.name });
+      spawnPing(x, y);
+      if (!multiMode) {
+        currentTool = null; currentUnit = null;
+        document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+      }
+      return;
+    }
+
+    let text = null;
+    if (currentTool === 'note') {
+      text = prompt('Notiz eingeben:');
+      if (!text) return;
+    }
+
+    const mref = push(ref(db, `rooms/${ROOM}/markers`));
+    set(mref, {
+      tool: currentTool,
+      unit: currentUnit,
+      x, y,
+      text: text || null,
+      authorId: me.id,
+      authorName: me.name,
+      authorColor: me.color,
+      createdAt: serverTimestamp()
+    });
+
+    if (!multiMode) {
+      currentTool = null; currentUnit = null;
+      document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+    }
+  });
+
+  let lastCursorSent = 0;
+  $map.addEventListener('mousemove', e => {
+    if (!me) return;
+    const now = Date.now();
+    if (now - lastCursorSent < 60) return;
+    lastCursorSent = now;
+    const rect = $map.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    if (x < 0 || x > 1 || y < 0 || y > 1) return;
+    set(ref(db, `rooms/${ROOM}/cursors/${me.id}`), { x, y, t: now });
+
+    document.querySelector('.map-coords').textContent =
+      `GRID ${(x*100).toFixed(2)} // ${(y*100).toFixed(2)}`;
+  });
+
+  $map.addEventListener('mouseleave', () => {
+    if (!me) return;
+    remove(ref(db, `rooms/${ROOM}/cursors/${me.id}`));
+  });
+
+  function spawnPing(x, y) {
+    const el = document.createElement('div');
+    el.className = 'ping';
+    el.style.left = (x * 100) + '%';
+    el.style.top = (y * 100) + '%';
+    $map.appendChild(el);
+    setTimeout(() => el.remove(), 1600);
+  }
+
+  document.getElementById('upload-btn').addEventListener('click', () => $fileInput.click());
+  $fileInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 1.5 * 1024 * 1024) {
+      alert('Bild ist zu groß (max ~1.5 MB). Bitte komprimieren oder verkleinern.');
+      $fileInput.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = ev => {
+      set(ref(db, `rooms/${ROOM}/mapImage`), ev.target.result);
+    };
+    reader.readAsDataURL(file);
+    $fileInput.value = '';
+  });
+
+  document.getElementById('clear-mine').addEventListener('click', () => {
+    if (!confirm('Alle DEINE Marker löschen?')) return;
+    Object.entries(markers).forEach(([id, m]) => {
+      if (m.authorId === me?.id) {
+        remove(ref(db, `rooms/${ROOM}/markers/${id}`));
+      }
+    });
+  });
+
+  document.getElementById('clear-all').addEventListener('click', () => {
+    if (!confirm('ALLE Marker auf der Karte löschen (auch von anderen)?')) return;
+    set(ref(db, `rooms/${ROOM}/markers`), null);
+  });
+
+  get(ref(db, `rooms/${ROOM}/players`))
+    .then(() => showNameModal())
+    .catch(err => {
+      console.error('Firebase error:', err);
+      $loading.querySelector('.lbl').textContent = 'CONNECTION FAILED // CHECK CONSOLE';
+    });
+
+  window.addEventListener('beforeunload', () => {
+    if (me) {
+      remove(ref(db, `rooms/${ROOM}/players/${me.id}`));
+      remove(ref(db, `rooms/${ROOM}/cursors/${me.id}`));
+    }
+  });
+</script>
+</body>
+</html>
