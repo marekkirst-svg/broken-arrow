@@ -272,7 +272,8 @@ transition: transform 0.1s;
 .modal-sub { font-size: 11px; letter-spacing: 1.5px; color: var(–text-dim); margin-bottom: 20px; font-weight: 600; text-transform: uppercase; }
 .modal-input { width: 100%; background: #fff; border: 1.5px solid var(–border-strong); color: var(–text-strong); font-family: var(–font-ui); font-size: 14px; letter-spacing: 1px; padding: 10px 12px; text-transform: uppercase; outline: none; border-radius: 3px; font-weight: 600; }
 .modal-input:focus { border-color: var(–header-accent); }
-.modal-btn { width: 100%; margin-top: 14px; background: var(–header-bg); border: 1px solid var(–header-accent); color: #fff; font-family: var(–font-display); font-weight: 700; font-size: 14px; letter-spacing: 4px; padding: 12px; cursor: pointer; text-transform: uppercase; transition: all 0.15s; border-radius: 3px; }
+.modal-btn { width: 100%; margin-top: 14px; background: var(–header-bg); border: 1px solid var(–header-accent); color: #fff; font-family: var(–font-display); font-weight: 700; font-size: 14px; letter-spacing: 4px; padding: 12px; cursor: pointer; text-transform: uppercase; transition: all 0.15s; border-radius: 3px; pointer-events: auto; user-select: none; -webkit-tap-highlight-color: rgba(122,148,86,0.3); }
+.modal-btn:active { background: var(–header-accent); }
 .modal-btn:hover { background: var(–header-accent); color: #fff; }
 .modal-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .modal-btn.secondary { background: #fff; border: 1.5px solid var(–border-strong); color: var(–text); }
@@ -731,6 +732,7 @@ $nameModal.style.display = ‘flex’;
 // Try to focus input (might fail on iPad without user gesture)
 setTimeout(() => { try { $nameInput.focus(); } catch(e){} }, 100);
 $nameSubmit.addEventListener(‘click’, joinSession);
+$nameSubmit.addEventListener(‘touchend’, e => { e.preventDefault(); joinSession(); });
 $nameInput.addEventListener(‘keydown’, e => { if (e.key === ‘Enter’) joinSession(); });
 
 async function joinSession() {
