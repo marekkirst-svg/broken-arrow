@@ -278,7 +278,7 @@ transition: transform 0.1s;
 .modal-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .modal-btn.secondary { background: #fff; border: 1.5px solid var(–border-strong); color: var(–text); }
 .modal-btn.secondary:hover { border-color: var(–text-strong); background: #f0f0e8; color: var(–text-strong); }
-.modal-error { margin-top: 10px; font-size: 11px; letter-spacing: 1px; color: var(–hostile-dark); min-height: 12px; font-weight: 600; }
+.modal-error { margin-top: 10px; font-size: 12px; letter-spacing: 0.5px; color: #a8201a; min-height: 18px; font-weight: 600; word-break: break-word; line-height: 1.4; }
 .modal-close { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; background: transparent; border: 1px solid var(–border); color: var(–text-dim); cursor: pointer; font-size: 16px; line-height: 1; border-radius: 3px; }
 .modal-close:hover { color: var(–text-strong); border-color: var(–text-strong); background: #f0f0e8; }
 .map-list { margin-top: 12px; border: 1px solid var(–border); background: #fafaf5; max-height: 280px; overflow-y: auto; border-radius: 3px; }
@@ -738,41 +738,66 @@ $nameSubmit.removeAttribute(‘disabled’);
 $nameSubmit.addEventListener(‘click’, joinSession);
 $nameInput.addEventListener(‘keydown’, e => { if (e.key === ‘Enter’) joinSession(); });
 
+function showDebug(msg) {
+$nameError.textContent = msg;
+$nameError.style.color = ‘#a8201a’;
+console.log(’[BA]’, msg);
+}
+
 let joining = false;
 async function joinSession() {
-if (joining) return;
+showDebug(’// Klick erkannt — verarbeite…’);
+if (joining) { showDebug(’// Bereits am Verbinden — bitte warten’); return; }
 const name = $nameInput.value.trim().toUpperCase();
-if (!name || name.length < 2) { $nameError.textContent = ‘// CALL SIGN INVALID’; return; }
-$nameError.textContent = ‘’;
+if (!name || name.length < 2) { showDebug(’// CALL SIGN ZU KURZ (min. 2 Zeichen)’); return; }
 joining = true;
 $nameSubmit.textContent = ‘CONNECTING…’;
+showDebug(’// Lese Spieler-Liste von Firebase…’);
 try {
 const playersSnap = await get(ref(db, `rooms/${ROOM}/players`));
 const current = playersSnap.val() || {};
+const playerCount = Object.keys(current).length;
+showDebug(`// ${playerCount} Spieler aktuell online — suche freien Slot`);
 const usedSlots = new Set(Object.values(current).map(p => p.slot));
-if (Object.keys(current).length >= MAX_PLAYERS) {
-$nameError.textContent = ‘// SESSION FULL (5/5)’;
+if (playerCount >= MAX_PLAYERS) {
+showDebug(`// SESSION VOLL (${playerCount}/5) — räume alte Sessions...`);
+// Auto-cleanup: remove players older than 30 min (probably stuck/disconnected)
+const cutoff = Date.now() - 30 * 60 * 1000;
+let cleaned = 0;
+for (const [pid, p] of Object.entries(current)) {
+if (!p.joinedAt || p.joinedAt < cutoff) {
+await remove(ref(db, `rooms/${ROOM}/players/${pid}`));
+cleaned++;
+}
+}
+if (cleaned > 0) {
+showDebug(`// ${cleaned} alte Sessions entfernt — bitte erneut DEPLOY drücken`);
+} else {
+showDebug(’// SESSION VOLL — keine alten Sessions zum entfernen’);
+}
 joining = false; $nameSubmit.textContent = ‘DEPLOY’;
 return;
 }
 let slot = -1;
 for (let i = 0; i < MAX_PLAYERS; i++) { if (!usedSlots.has(i)) { slot = i; break; } }
 if (slot === -1) {
-$nameError.textContent = ‘// NO SLOTS’;
+showDebug(’// KEIN SLOT FREI’);
 joining = false; $nameSubmit.textContent = ‘DEPLOY’;
 return;
 }
+showDebug(`// Slot ${slot+1} reserviert — schreibe in Datenbank...`);
 const id = ‘p_’ + Math.random().toString(36).slice(2, 10);
 me = { id, name, color: PLAYER_COLORS[slot], slot };
 const playerRef = ref(db, `rooms/${ROOM}/players/${id}`);
-await set(playerRef, { name, color: me.color, slot, joinedAt: serverTimestamp() });
+await set(playerRef, { name, color: me.color, slot, joinedAt: Date.now() });
 onDisconnect(playerRef).remove();
 onDisconnect(ref(db, `rooms/${ROOM}/cursors/${id}`)).remove();
+showDebug(’// Eingeloggt — öffne Karte’);
 $nameModal.style.display = ‘none’;
 startListening();
 } catch (err) {
 console.error(err);
-$nameError.textContent = ’// VERBINDUNGSFEHLER: ’ + (err.message || ‘unbekannt’);
+showDebug(’// FEHLER: ’ + (err.message || err.code || ‘unbekannt’));
 joining = false;
 $nameSubmit.textContent = ‘DEPLOY’;
 }
