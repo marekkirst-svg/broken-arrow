@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -130,95 +131,180 @@
   .tool-btn.danger:hover { background: #fde8e6; border-color: var(--hostile); }
   .tool-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   main { flex: 1; display: flex; overflow: hidden; position: relative; }
-  .map-frame { flex: 1; position: relative; overflow: hidden; background: #4a5a44; cursor: crosshair; }
+  .map-frame { flex: 1; position: relative; overflow: hidden; background: #4a5a44; cursor: crosshair; touch-action: none; }
+  .map-frame.panning { cursor: grabbing; }
   .map-coords { position: absolute; top: 10px; left: 14px; font-size: 11px; color: #fff; background: rgba(0,0,0,0.75); letter-spacing: 1.5px; pointer-events: none; z-index: 5; padding: 4px 10px; font-family: var(--font-display); font-weight: 700; border-radius: 2px; }
   .map-coords-r { position: absolute; bottom: 10px; right: 14px; font-size: 11px; color: #fff; background: rgba(0,0,0,0.75); letter-spacing: 1.5px; pointer-events: none; z-index: 5; padding: 4px 10px; font-family: var(--font-display); font-weight: 700; text-align: right; border-radius: 2px; }
-  .map-inner { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; pointer-events: none; }
-  .map-inner.has-image { width: auto; height: auto; max-width: 100%; max-height: 100%; }
-  .map-img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; pointer-events: none; user-select: none; }
-  .map-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.7); font-size: 13px; letter-spacing: 3px; text-align: center; pointer-events: none; flex-direction: column; font-family: var(--font-display); font-weight: 700; }
-  .map-empty span { display: block; margin-top: 8px; font-size: 10px; opacity: 0.7; letter-spacing: 2px; }
-  .map-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
-  .marker { position: absolute; transform: translate(-50%, -50%); cursor: pointer; user-select: none; z-index: 10; pointer-events: auto; }
-  .marker:hover { z-index: 20; }
-  .marker:hover .marker-meta { opacity: 1; }
-  .marker:hover .marker-delete { opacity: 1; }
-  .nato-shape {
-    width: 44px; height: 28px;
-    border: 2.5px solid;
-    background: rgba(255,255,255,0.92);
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-    box-shadow: 0 0 0 1px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.5);
-    transition: transform 0.1s;
-  }
-  .marker:hover .nato-shape { transform: scale(1.18); }
-  .marker.friend .nato-shape { border-color: var(--friend-dark); background: var(--friend-fill); }
-  .marker.friend-s .nato-shape { border-color: var(--friend-dark); border-style: dashed; background: rgba(176,212,240,0.5); }
-  .marker.hostile .nato-shape, .marker.hostile-s .nato-shape { width: 32px; height: 32px; transform: rotate(45deg); }
-  .marker:hover.hostile .nato-shape, .marker:hover.hostile-s .nato-shape { transform: rotate(45deg) scale(1.18); }
-  .marker.hostile .nato-shape { border-color: var(--hostile-dark); background: var(--hostile-fill); }
-  .marker.hostile-s .nato-shape { border-color: var(--hostile-dark); border-style: dashed; background: rgba(244,160,152,0.5); }
-  .marker.hostile .nato-inner, .marker.hostile-s .nato-inner { transform: rotate(-45deg); }
-  .marker.supply .nato-shape { border-color: var(--supply-dark); background: #f8e0b0; }
-  .marker.supply-s .nato-shape { border-color: var(--supply-dark); border-style: dashed; background: rgba(248,224,176,0.6); }
-  .nato-inner { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-  .nato-inner svg { width: 90%; height: 90%; }
-  .marker.note .nato-shape { width: 28px; height: 28px; border-radius: 50%; border-color: var(--note); background: rgba(255,255,255,0.95); }
-  .marker-author { position: absolute; bottom: -3px; right: -3px; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #fff; z-index: 2; box-shadow: 0 0 0 1px rgba(0,0,0,0.5); }
-  .marker-direction { position: absolute; top: 50%; left: 50%; width: 0; height: 0; transform-origin: 0 0; pointer-events: none; z-index: 1; }
-  .marker-direction svg { position: absolute; width: 36px; height: 14px; top: -7px; left: 8px; overflow: visible; }
-  .marker-delete { position: absolute; top: -10px; left: -10px; width: 18px; height: 18px; background: var(--hostile); color: white; border: 2px solid #fff; border-radius: 50%; font-size: 12px; line-height: 14px; text-align: center; cursor: pointer; opacity: 0; transition: opacity 0.15s; z-index: 25; font-family: sans-serif; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
-  .marker-delete:hover { background: #ff5040; transform: scale(1.15); }
-  .marker-meta { position: absolute; top: calc(100% + 12px); left: 50%; transform: translateX(-50%); white-space: nowrap; background: rgba(20,20,20,0.95); border: 1px solid #555; color: #fff; font-size: 10px; letter-spacing: 1px; padding: 4px 8px; opacity: 0; transition: opacity 0.15s; pointer-events: none; z-index: 30; border-radius: 2px; font-family: var(--font-display); font-weight: 600; }
-  .marker-meta .author-tag { color: #aaa; margin-left: 8px; padding-left: 8px; border-left: 1px solid #555; }
-  .ping { position: absolute; width: 50px; height: 50px; transform: translate(-50%, -50%); pointer-events: none; z-index: 15; }
-  .ping::before, .ping::after { content: ''; position: absolute; inset: 0; border: 3px solid var(--ping); border-radius: 50%; animation: pingExpand 1.5s ease-out forwards; }
-  .ping::after { animation-delay: 0.3s; }
-  @keyframes pingExpand { 0% { transform: scale(0.2); opacity: 1; } 100% { transform: scale(2.4); opacity: 0; } }
-  .cursor { position: absolute; pointer-events: none; z-index: 100; transition: left 0.06s linear, top 0.06s linear; }
-  .cursor svg { display: block; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.7)); }
-  .cursor-label { position: absolute; top: 18px; left: 14px; color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 3px 7px; white-space: nowrap; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
-  .draw-line { cursor: pointer; pointer-events: stroke; stroke-width: 3; transition: stroke-width 0.1s; }
-  .draw-line:hover { stroke-width: 5; }
-  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 9000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-  .modal { background: #fff; border: 1px solid #888; padding: 28px 32px; width: 100%; max-width: 480px; max-height: 80vh; overflow-y: auto; position: relative; box-shadow: 0 8px 40px rgba(0,0,0,0.5); border-radius: 4px; }
-  .modal-title { font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: 3px; color: var(--text-strong); margin-bottom: 4px; }
-  .modal-sub { font-size: 11px; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 20px; font-weight: 600; text-transform: uppercase; }
-  .modal-input { width: 100%; background: #fff; border: 1.5px solid var(--border-strong); color: var(--text-strong); font-family: var(--font-ui); font-size: 14px; letter-spacing: 1px; padding: 10px 12px; text-transform: uppercase; outline: none; border-radius: 3px; font-weight: 600; }
-  .modal-input:focus { border-color: var(--header-accent); }
-  .modal-btn { width: 100%; margin-top: 14px; background: var(--header-bg); border: 1px solid var(--header-accent); color: #fff; font-family: var(--font-display); font-weight: 700; font-size: 14px; letter-spacing: 4px; padding: 12px; cursor: pointer; text-transform: uppercase; transition: all 0.15s; border-radius: 3px; }
-  .modal-btn:hover { background: var(--header-accent); color: #fff; }
-  .modal-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-  .modal-btn.secondary { background: #fff; border: 1.5px solid var(--border-strong); color: var(--text); }
-  .modal-btn.secondary:hover { border-color: var(--text-strong); background: #f0f0e8; color: var(--text-strong); }
-  .modal-error { margin-top: 10px; font-size: 11px; letter-spacing: 1px; color: var(--hostile-dark); min-height: 12px; font-weight: 600; }
-  .modal-close { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; background: transparent; border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; font-size: 16px; line-height: 1; border-radius: 3px; }
-  .modal-close:hover { color: var(--text-strong); border-color: var(--text-strong); background: #f0f0e8; }
-  .map-list { margin-top: 12px; border: 1px solid var(--border); background: #fafaf5; max-height: 280px; overflow-y: auto; border-radius: 3px; }
-  .map-list-empty { padding: 24px; text-align: center; color: var(--text-dim); font-size: 11px; letter-spacing: 2px; font-weight: 600; }
-  .map-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-bottom: 1px solid var(--border); }
-  .map-item:last-child { border-bottom: none; }
-  .map-item.active { background: #fff8e0; border-left: 3px solid var(--header-accent); }
-  .map-item-thumb { width: 56px; height: 36px; background-size: cover; background-position: center; border: 1px solid var(--border-strong); flex-shrink: 0; background-color: #f0f0e8; }
-  .map-item-name { flex: 1; font-size: 12px; color: var(--text-strong); letter-spacing: 1px; text-transform: uppercase; background: transparent; border: 1px solid transparent; font-family: var(--font-ui); padding: 4px 6px; outline: none; min-width: 0; font-weight: 600; }
-  .map-item-name:focus, .map-item-name:hover { border-color: var(--border); background: #fff; }
-  .map-item-btn { background: #fff; border: 1px solid var(--border-strong); color: var(--text); font-family: var(--font-ui); font-size: 10px; letter-spacing: 1px; padding: 5px 9px; cursor: pointer; text-transform: uppercase; border-radius: 2px; font-weight: 600; }
-  .map-item-btn:hover { border-color: var(--text-strong); }
-  .map-item-btn.danger:hover { border-color: var(--hostile); color: var(--hostile-dark); }
-  .map-item-btn.active { background: var(--header-bg); color: #fff; border-color: var(--header-accent); }
-  .upload-area { margin-top: 14px; padding: 16px; border: 1.5px dashed var(--border-strong); text-align: center; background: #fafaf5; border-radius: 3px; }
-  .upload-area-label { font-size: 11px; letter-spacing: 1.5px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
-  #file-input { display: none; }
-  .loading-overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: var(--bg-app); z-index: 10000; flex-direction: column; gap: 14px; }
-  .loading-overlay .lbl { font-family: var(--font-display); letter-spacing: 4px; color: rgba(255,255,255,0.7); font-size: 12px; }
-  .spinner { width: 28px; height: 28px; border: 2px solid rgba(255,255,255,0.2); border-top-color: var(--header-accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .hint-banner { position: fixed; top: 110px; left: 50%; transform: translateX(-50%); background: rgba(20,20,20,0.95); border: 1px solid var(--header-accent); color: #fff; padding: 10px 18px; font-size: 11px; letter-spacing: 1.5px; z-index: 500; text-transform: uppercase; animation: hintIn 0.2s ease-out; border-radius: 3px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-  @keyframes hintIn { from { opacity: 0; transform: translate(-50%, -8px); } to { opacity: 1; transform: translate(-50%, 0); } }
-  .hint-banner .x { color: #aaa; margin-left: 12px; cursor: pointer; }
-  .hint-banner .x:hover { color: var(--hostile); }
+
+/* Zoom controls overlay */
+.zoom-ctrl {
+position: absolute;
+bottom: 14px; left: 14px;
+display: flex; flex-direction: column;
+gap: 4px;
+z-index: 10;
+}
+.zoom-btn {
+width: 36px; height: 36px;
+background: rgba(255,255,255,0.95);
+border: 1.5px solid #555;
+color: #1a1a1a;
+font-family: var(–font-display);
+font-size: 18px;
+font-weight: 700;
+cursor: pointer;
+border-radius: 3px;
+box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+display: flex; align-items: center; justify-content: center;
+user-select: none;
+transition: background 0.1s;
+}
+.zoom-btn:hover { background: #fff; }
+.zoom-btn:active { background: #ddd; }
+.zoom-info {
+background: rgba(0,0,0,0.75); color: #fff;
+font-family: var(–font-display);
+font-size: 11px; font-weight: 700;
+letter-spacing: 1px;
+text-align: center;
+padding: 3px 0;
+border-radius: 2px;
+min-width: 36px;
+}
+
+/* Zoom container - this is what scales/translates */
+.map-zoom {
+position: absolute;
+inset: 0;
+transform-origin: 0 0;
+transform: translate(var(–pan-x, 0px), var(–pan-y, 0px)) scale(var(–zoom, 1));
+transition: transform 0.05s linear;
+pointer-events: none;
+}
+.map-zoom.no-anim { transition: none; }
+
+.map-inner {
+position: absolute;
+top: 50%; left: 50%;
+transform: translate(-50%, -50%);
+width: 100%; height: 100%;
+pointer-events: none;
+}
+.map-inner.has-image { width: auto; height: auto; max-width: 100%; max-height: 100%; }
+.map-img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; pointer-events: none; user-select: none; }
+.map-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.7); font-size: 13px; letter-spacing: 3px; text-align: center; pointer-events: none; flex-direction: column; font-family: var(–font-display); font-weight: 700; }
+.map-empty span { display: block; margin-top: 8px; font-size: 10px; opacity: 0.7; letter-spacing: 2px; }
+.map-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+
+/* Size slider */
+#size-slider {
+-webkit-appearance: none;
+appearance: none;
+height: 4px;
+background: #ccc;
+border-radius: 2px;
+outline: none;
+margin: 0 6px;
+}
+#size-slider::-webkit-slider-thumb {
+-webkit-appearance: none;
+appearance: none;
+width: 16px; height: 16px;
+background: var(–header-accent);
+border: 2px solid #fff;
+border-radius: 50%;
+cursor: pointer;
+box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+#size-slider::-moz-range-thumb {
+width: 16px; height: 16px;
+background: var(–header-accent);
+border: 2px solid #fff;
+border-radius: 50%;
+cursor: pointer;
+box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+.marker { position: absolute; transform: translate(-50%, -50%) scale(calc(var(–marker-size, 1) / var(–zoom, 1))); cursor: pointer; user-select: none; z-index: 10; pointer-events: auto; transform-origin: center; }
+.marker:hover { z-index: 20; }
+.marker:hover .marker-meta { opacity: 1; }
+.marker:hover .marker-delete { opacity: 1; }
+.nato-shape {
+width: 44px; height: 28px;
+border: 2.5px solid;
+background: rgba(255,255,255,0.92);
+display: flex; align-items: center; justify-content: center;
+position: relative;
+box-shadow: 0 0 0 1px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.5);
+transition: transform 0.1s;
+}
+.marker:hover .nato-shape { transform: scale(1.18); }
+.marker.friend .nato-shape { border-color: var(–friend-dark); background: var(–friend-fill); }
+.marker.friend-s .nato-shape { border-color: var(–friend-dark); border-style: dashed; background: rgba(176,212,240,0.5); }
+.marker.hostile .nato-shape, .marker.hostile-s .nato-shape { width: 32px; height: 32px; transform: rotate(45deg); }
+.marker:hover.hostile .nato-shape, .marker:hover.hostile-s .nato-shape { transform: rotate(45deg) scale(1.18); }
+.marker.hostile .nato-shape { border-color: var(–hostile-dark); background: var(–hostile-fill); }
+.marker.hostile-s .nato-shape { border-color: var(–hostile-dark); border-style: dashed; background: rgba(244,160,152,0.5); }
+.marker.hostile .nato-inner, .marker.hostile-s .nato-inner { transform: rotate(-45deg); }
+.marker.supply .nato-shape { border-color: var(–supply-dark); background: #f8e0b0; }
+.marker.supply-s .nato-shape { border-color: var(–supply-dark); border-style: dashed; background: rgba(248,224,176,0.6); }
+.nato-inner { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.nato-inner svg { width: 90%; height: 90%; }
+.marker.note .nato-shape { width: 28px; height: 28px; border-radius: 50%; border-color: var(–note); background: rgba(255,255,255,0.95); }
+.marker-author { position: absolute; bottom: -3px; right: -3px; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #fff; z-index: 2; box-shadow: 0 0 0 1px rgba(0,0,0,0.5); }
+.marker-direction { position: absolute; top: 50%; left: 50%; width: 0; height: 0; transform-origin: 0 0; pointer-events: none; z-index: 1; }
+.marker-direction svg { position: absolute; width: 36px; height: 14px; top: -7px; left: 8px; overflow: visible; }
+.marker-delete { position: absolute; top: -10px; left: -10px; width: 18px; height: 18px; background: var(–hostile); color: white; border: 2px solid #fff; border-radius: 50%; font-size: 12px; line-height: 14px; text-align: center; cursor: pointer; opacity: 0; transition: opacity 0.15s; z-index: 25; font-family: sans-serif; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+.marker-delete:hover { background: #ff5040; transform: scale(1.15); }
+.marker-meta { position: absolute; top: calc(100% + 12px); left: 50%; transform: translateX(-50%); white-space: nowrap; background: rgba(20,20,20,0.95); border: 1px solid #555; color: #fff; font-size: 10px; letter-spacing: 1px; padding: 4px 8px; opacity: 0; transition: opacity 0.15s; pointer-events: none; z-index: 30; border-radius: 2px; font-family: var(–font-display); font-weight: 600; }
+.marker-meta .author-tag { color: #aaa; margin-left: 8px; padding-left: 8px; border-left: 1px solid #555; }
+.ping { position: absolute; width: 50px; height: 50px; transform: translate(-50%, -50%) scale(calc(1 / var(–zoom, 1))); pointer-events: none; z-index: 15; }
+.ping::before, .ping::after { content: ‘’; position: absolute; inset: 0; border: 3px solid var(–ping); border-radius: 50%; animation: pingExpand 1.5s ease-out forwards; }
+.ping::after { animation-delay: 0.3s; }
+@keyframes pingExpand { 0% { transform: scale(0.2); opacity: 1; } 100% { transform: scale(2.4); opacity: 0; } }
+.cursor { position: absolute; pointer-events: none; z-index: 100; transition: left 0.06s linear, top 0.06s linear; transform: scale(calc(1 / var(–zoom, 1))); transform-origin: 0 0; }
+.cursor svg { display: block; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.7)); }
+.cursor-label { position: absolute; top: 18px; left: 14px; color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 3px 7px; white-space: nowrap; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+.draw-line { cursor: pointer; pointer-events: stroke; stroke-width: 3; transition: stroke-width 0.1s; }
+.draw-line:hover { stroke-width: 5; }
+.modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 9000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.modal { background: #fff; border: 1px solid #888; padding: 28px 32px; width: 100%; max-width: 480px; max-height: 80vh; overflow-y: auto; position: relative; box-shadow: 0 8px 40px rgba(0,0,0,0.5); border-radius: 4px; }
+.modal-title { font-family: var(–font-display); font-weight: 700; font-size: 20px; letter-spacing: 3px; color: var(–text-strong); margin-bottom: 4px; }
+.modal-sub { font-size: 11px; letter-spacing: 1.5px; color: var(–text-dim); margin-bottom: 20px; font-weight: 600; text-transform: uppercase; }
+.modal-input { width: 100%; background: #fff; border: 1.5px solid var(–border-strong); color: var(–text-strong); font-family: var(–font-ui); font-size: 14px; letter-spacing: 1px; padding: 10px 12px; text-transform: uppercase; outline: none; border-radius: 3px; font-weight: 600; }
+.modal-input:focus { border-color: var(–header-accent); }
+.modal-btn { width: 100%; margin-top: 14px; background: var(–header-bg); border: 1px solid var(–header-accent); color: #fff; font-family: var(–font-display); font-weight: 700; font-size: 14px; letter-spacing: 4px; padding: 12px; cursor: pointer; text-transform: uppercase; transition: all 0.15s; border-radius: 3px; }
+.modal-btn:hover { background: var(–header-accent); color: #fff; }
+.modal-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.modal-btn.secondary { background: #fff; border: 1.5px solid var(–border-strong); color: var(–text); }
+.modal-btn.secondary:hover { border-color: var(–text-strong); background: #f0f0e8; color: var(–text-strong); }
+.modal-error { margin-top: 10px; font-size: 11px; letter-spacing: 1px; color: var(–hostile-dark); min-height: 12px; font-weight: 600; }
+.modal-close { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; background: transparent; border: 1px solid var(–border); color: var(–text-dim); cursor: pointer; font-size: 16px; line-height: 1; border-radius: 3px; }
+.modal-close:hover { color: var(–text-strong); border-color: var(–text-strong); background: #f0f0e8; }
+.map-list { margin-top: 12px; border: 1px solid var(–border); background: #fafaf5; max-height: 280px; overflow-y: auto; border-radius: 3px; }
+.map-list-empty { padding: 24px; text-align: center; color: var(–text-dim); font-size: 11px; letter-spacing: 2px; font-weight: 600; }
+.map-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-bottom: 1px solid var(–border); }
+.map-item:last-child { border-bottom: none; }
+.map-item.active { background: #fff8e0; border-left: 3px solid var(–header-accent); }
+.map-item-thumb { width: 56px; height: 36px; background-size: cover; background-position: center; border: 1px solid var(–border-strong); flex-shrink: 0; background-color: #f0f0e8; }
+.map-item-name { flex: 1; font-size: 12px; color: var(–text-strong); letter-spacing: 1px; text-transform: uppercase; background: transparent; border: 1px solid transparent; font-family: var(–font-ui); padding: 4px 6px; outline: none; min-width: 0; font-weight: 600; }
+.map-item-name:focus, .map-item-name:hover { border-color: var(–border); background: #fff; }
+.map-item-btn { background: #fff; border: 1px solid var(–border-strong); color: var(–text); font-family: var(–font-ui); font-size: 10px; letter-spacing: 1px; padding: 5px 9px; cursor: pointer; text-transform: uppercase; border-radius: 2px; font-weight: 600; }
+.map-item-btn:hover { border-color: var(–text-strong); }
+.map-item-btn.danger:hover { border-color: var(–hostile); color: var(–hostile-dark); }
+.map-item-btn.active { background: var(–header-bg); color: #fff; border-color: var(–header-accent); }
+.upload-area { margin-top: 14px; padding: 16px; border: 1.5px dashed var(–border-strong); text-align: center; background: #fafaf5; border-radius: 3px; }
+.upload-area-label { font-size: 11px; letter-spacing: 1.5px; color: var(–text-dim); text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
+#file-input { display: none; }
+.loading-overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: var(–bg-app); z-index: 10000; flex-direction: column; gap: 14px; }
+.loading-overlay .lbl { font-family: var(–font-display); letter-spacing: 4px; color: rgba(255,255,255,0.7); font-size: 12px; }
+.spinner { width: 28px; height: 28px; border: 2px solid rgba(255,255,255,0.2); border-top-color: var(–header-accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.hint-banner { position: fixed; top: 110px; left: 50%; transform: translateX(-50%); background: rgba(20,20,20,0.95); border: 1px solid var(–header-accent); color: #fff; padding: 10px 18px; font-size: 11px; letter-spacing: 1.5px; z-index: 500; text-transform: uppercase; animation: hintIn 0.2s ease-out; border-radius: 3px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+@keyframes hintIn { from { opacity: 0; transform: translate(-50%, -8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+.hint-banner .x { color: #aaa; margin-left: 12px; cursor: pointer; }
+.hint-banner .x:hover { color: var(–hostile); }
 </style>
+
 </head>
 <body>
 
@@ -332,6 +418,12 @@
     <button class="tool-btn" id="multi-btn">MULTI: OFF</button>
   </div>
 
+  <div class="tool-group">
+    <span class="tool-label">SIZE</span>
+    <input type="range" id="size-slider" min="50" max="150" value="100" step="5" style="width:90px;">
+    <span id="size-value" style="font-family:var(--font-display); font-size:11px; font-weight:700; color:var(--text-dim); min-width:38px; text-align:right;">100%</span>
+  </div>
+
   <div class="tool-group" style="margin-left:auto">
     <button class="tool-btn" id="undo-btn" disabled>↶ UNDO</button>
     <button class="tool-btn" id="maps-btn">🗺 MAPS</button>
@@ -346,15 +438,23 @@
   <div class="map-frame" id="map">
     <div class="map-coords">GRID 00.00 // 00.00</div>
     <div class="map-coords-r">SECTOR ALPHA<br>BROKEN ARROW</div>
-    <div class="map-inner" id="map-inner">
-      <img class="map-img" id="map-img" style="display:none" alt="">
-      <svg class="map-svg" id="map-svg" preserveAspectRatio="none" viewBox="0 0 1000 1000">
-        <defs>
-          <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
-          </marker>
-        </defs>
-      </svg>
+    <div class="map-zoom" id="map-zoom">
+      <div class="map-inner" id="map-inner">
+        <img class="map-img" id="map-img" style="display:none" alt="">
+        <svg class="map-svg" id="map-svg" preserveAspectRatio="none" viewBox="0 0 1000 1000">
+          <defs>
+            <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+            </marker>
+          </defs>
+        </svg>
+      </div>
+    </div>
+    <div class="zoom-ctrl">
+      <button class="zoom-btn" id="zoom-in" title="Hereinzoomen">+</button>
+      <div class="zoom-info" id="zoom-info">100%</div>
+      <button class="zoom-btn" id="zoom-out" title="Herauszoomen">−</button>
+      <button class="zoom-btn" id="zoom-reset" title="Zoom zurücksetzen" style="font-size:11px;">⟲</button>
     </div>
     <div class="map-empty" id="map-empty">
       // NO MAP LOADED //
@@ -369,625 +469,810 @@
     get, serverTimestamp, update
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyA-F2I1Tn8t09g60jcgQMt-7oAlrNzOwWk",
-    authDomain: "ba-taktikkarte.firebaseapp.com",
-    databaseURL: "https://ba-taktikkarte-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "ba-taktikkarte",
-    storageBucket: "ba-taktikkarte.firebasestorage.app",
-    messagingSenderId: "144626376350",
-    appId: "1:144626376350:web:4c32e9e726e4e01a0b658f"
-  };
+const firebaseConfig = {
+apiKey: “AIzaSyA-F2I1Tn8t09g60jcgQMt-7oAlrNzOwWk”,
+authDomain: “ba-taktikkarte.firebaseapp.com”,
+databaseURL: “https://ba-taktikkarte-default-rtdb.europe-west1.firebasedatabase.app”,
+projectId: “ba-taktikkarte”,
+storageBucket: “ba-taktikkarte.firebasestorage.app”,
+messagingSenderId: “144626376350”,
+appId: “1:144626376350:web:4c32e9e726e4e01a0b658f”
+};
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-  const ROOM = "main";
-  const MAX_PLAYERS = 5;
-  const PLAYER_COLORS = ['#5aaa5a','#5a8fb8','#d4a017','#b87acc','#e8872a'];
-  const UNDO_LIMIT = 10;
+const ROOM = “main”;
+const MAX_PLAYERS = 5;
+const PLAYER_COLORS = [’#5aaa5a’,’#5a8fb8’,’#d4a017’,’#b87acc’,’#e8872a’];
+const UNDO_LIMIT = 10;
 
-  const NATO_SYMBOLS = {
-    INF:   `<svg viewBox="0 0 44 28"><line x1="4" y1="4" x2="40" y2="24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="4" x2="4" y2="24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`,
-    ARM:   `<svg viewBox="0 0 44 28"><ellipse cx="22" cy="14" rx="14" ry="7" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>`,
-    ART:   `<svg viewBox="0 0 44 28"><circle cx="22" cy="14" r="5" fill="currentColor"/></svg>`,
-    AT:    `<svg viewBox="0 0 44 28"><line x1="4" y1="4" x2="40" y2="24" stroke="currentColor" stroke-width="2.2"/><line x1="40" y1="4" x2="4" y2="24" stroke="currentColor" stroke-width="2.2"/><polygon points="22,4 30,14 22,24 14,14" fill="currentColor"/></svg>`,
-    AA:    `<svg viewBox="0 0 44 28"><path d="M 8 22 Q 22 2 36 22" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>`,
-    AAINF: `<svg viewBox="0 0 44 28"><line x1="4" y1="4" x2="40" y2="24" stroke="currentColor" stroke-width="2"/><line x1="40" y1="4" x2="4" y2="24" stroke="currentColor" stroke-width="2"/><path d="M 10 22 Q 22 6 34 22" fill="none" stroke="currentColor" stroke-width="2"/></svg>`,
-    FLAK:  `<svg viewBox="0 0 44 28"><path d="M 8 24 Q 22 -2 36 24" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="22" cy="22" r="3" fill="currentColor"/></svg>`,
-    SUP:   `<svg viewBox="0 0 44 28"><rect x="14" y="6" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="14" y1="14" x2="30" y2="14" stroke="currentColor" stroke-width="1.8"/></svg>`,
-    N:     `<svg viewBox="0 0 28 28"><text x="14" y="20" text-anchor="middle" fill="currentColor" font-family="Impact, sans-serif" font-size="18" font-weight="700">i</text></svg>`,
-    REC:   `<svg viewBox="0 0 44 28"><path d="M 6 22 L 22 6 L 38 22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>`,
-    HELI:  `<svg viewBox="0 0 44 28"><line x1="6" y1="9" x2="38" y2="9" stroke="currentColor" stroke-width="2.5"/><line x1="22" y1="9" x2="22" y2="22" stroke="currentColor" stroke-width="2.5"/><circle cx="22" cy="22" r="2.5" fill="currentColor"/></svg>`,
-    MG:    `<svg viewBox="0 0 44 28"><line x1="22" y1="4" x2="22" y2="24" stroke="currentColor" stroke-width="3"/><line x1="14" y1="9" x2="30" y2="9" stroke="currentColor" stroke-width="2"/><line x1="14" y1="14" x2="30" y2="14" stroke="currentColor" stroke-width="2"/><line x1="14" y1="19" x2="30" y2="19" stroke="currentColor" stroke-width="2"/></svg>`,
-    SOF:   `<svg viewBox="0 0 44 28"><line x1="4" y1="4" x2="40" y2="24" stroke="currentColor" stroke-width="2.5"/><line x1="40" y1="4" x2="4" y2="24" stroke="currentColor" stroke-width="2.5"/><circle cx="22" cy="14" r="5" fill="none" stroke="currentColor" stroke-width="2"/></svg>`
-  };
+const NATO_SYMBOLS = {
+INF:   `<svg viewBox="0 0 44 28"><line x1="4" y1="4" x2="40" y2="24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="4" x2="4" y2="24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+ARM:   `<svg viewBox="0 0 44 28"><ellipse cx="22" cy="14" rx="14" ry="7" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>`,
+ART:   `<svg viewBox="0 0 44 28"><circle cx="22" cy="14" r="5" fill="currentColor"/></svg>`,
+AT:    `<svg viewBox="0 0 44 28"><line x1="4" y1="4" x2="40" y2="24" stroke="currentColor" stroke-width="2.2"/><line x1="40" y1="4" x2="4" y2="24" stroke="currentColor" stroke-width="2.2"/><polygon points="22,4 30,14 22,24 14,14" fill="currentColor"/></svg>`,
+AA:    `<svg viewBox="0 0 44 28"><path d="M 8 22 Q 22 2 36 22" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>`,
+AAINF: `<svg viewBox="0 0 44 28"><line x1="4" y1="4" x2="40" y2="24" stroke="currentColor" stroke-width="2"/><line x1="40" y1="4" x2="4" y2="24" stroke="currentColor" stroke-width="2"/><path d="M 10 22 Q 22 6 34 22" fill="none" stroke="currentColor" stroke-width="2"/></svg>`,
+FLAK:  `<svg viewBox="0 0 44 28"><path d="M 8 24 Q 22 -2 36 24" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="22" cy="22" r="3" fill="currentColor"/></svg>`,
+SUP:   `<svg viewBox="0 0 44 28"><rect x="14" y="6" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="14" y1="14" x2="30" y2="14" stroke="currentColor" stroke-width="1.8"/></svg>`,
+N:     `<svg viewBox="0 0 28 28"><text x="14" y="20" text-anchor="middle" fill="currentColor" font-family="Impact, sans-serif" font-size="18" font-weight="700">i</text></svg>`,
+REC:   `<svg viewBox="0 0 44 28"><path d="M 6 22 L 22 6 L 38 22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>`,
+HELI:  `<svg viewBox="0 0 44 28"><line x1="6" y1="9" x2="38" y2="9" stroke="currentColor" stroke-width="2.5"/><line x1="22" y1="9" x2="22" y2="22" stroke="currentColor" stroke-width="2.5"/><circle cx="22" cy="22" r="2.5" fill="currentColor"/></svg>`,
+MG:    `<svg viewBox="0 0 44 28"><line x1="22" y1="4" x2="22" y2="24" stroke="currentColor" stroke-width="3"/><line x1="14" y1="9" x2="30" y2="9" stroke="currentColor" stroke-width="2"/><line x1="14" y1="14" x2="30" y2="14" stroke="currentColor" stroke-width="2"/><line x1="14" y1="19" x2="30" y2="19" stroke="currentColor" stroke-width="2"/></svg>`,
+SOF:   `<svg viewBox="0 0 44 28"><line x1="4" y1="4" x2="40" y2="24" stroke="currentColor" stroke-width="2.5"/><line x1="40" y1="4" x2="4" y2="24" stroke="currentColor" stroke-width="2.5"/><circle cx="22" cy="14" r="5" fill="none" stroke="currentColor" stroke-width="2"/></svg>`
+};
 
-  const UNIT_LABELS = {
-    INF:'INFANTRY',ARM:'ARMOR',ART:'ARTILLERY',AT:'ANTI-TANK',AA:'ANTI-AIR',
-    AAINF:'AA INF',FLAK:'FLAK',SUP:'SUPPLY',N:'NOTE',
-    REC:'RECON',HELI:'HELICOPTER',MG:'MG NEST',SOF:'SPECIAL OPS'
-  };
+const UNIT_LABELS = {
+INF:‘INFANTRY’,ARM:‘ARMOR’,ART:‘ARTILLERY’,AT:‘ANTI-TANK’,AA:‘ANTI-AIR’,
+AAINF:‘AA INF’,FLAK:‘FLAK’,SUP:‘SUPPLY’,N:‘NOTE’,
+REC:‘RECON’,HELI:‘HELICOPTER’,MG:‘MG NEST’,SOF:‘SPECIAL OPS’
+};
 
-  const TOOL_LABELS = {
-    'friend':'FRIENDLY','friend-s':'FRIENDLY (SUSP)',
-    'hostile':'HOSTILE','hostile-s':'HOSTILE (SUSP)',
-    'supply':'SUPPLY','supply-s':'SUPPLY (SUSP)',
-    'note':'NOTE'
-  };
+const TOOL_LABELS = {
+‘friend’:‘FRIENDLY’,‘friend-s’:‘FRIENDLY (SUSP)’,
+‘hostile’:‘HOSTILE’,‘hostile-s’:‘HOSTILE (SUSP)’,
+‘supply’:‘SUPPLY’,‘supply-s’:‘SUPPLY (SUSP)’,
+‘note’:‘NOTE’
+};
 
-  let me = null;
-  let players = {};
-  let markers = {};
-  let lines = {};
-  let maps = {};
-  let activeMapId = null;
-  let currentTool = null;
-  let currentUnit = null;
-  let multiMode = false;
-  let undoStack = [];
-  let pendingTwoStep = null;
+let me = null;
+let players = {};
+let markers = {};
+let lines = {};
+let maps = {};
+let activeMapId = null;
+let currentTool = null;
+let currentUnit = null;
+let multiMode = false;
+let undoStack = [];
+let pendingTwoStep = null;
 
-  const $loading = document.getElementById('loading');
-  const $nameModal = document.getElementById('name-modal');
-  const $nameInput = document.getElementById('name-input');
-  const $nameSubmit = document.getElementById('name-submit');
-  const $nameError = document.getElementById('name-error');
-  const $map = document.getElementById('map');
-  const $mapInner = document.getElementById('map-inner');
-  const $mapImg = document.getElementById('map-img');
-  const $mapEmpty = document.getElementById('map-empty');
-  const $mapSvg = document.getElementById('map-svg');
-  const $roster = document.getElementById('roster');
-  const $connPill = document.getElementById('conn-pill');
-  const $connText = document.getElementById('conn-text');
-  const $fileInput = document.getElementById('file-input');
-  const $undoBtn = document.getElementById('undo-btn');
-  const $mapsModal = document.getElementById('maps-modal');
-  const $mapList = document.getElementById('map-list');
+const $loading = document.getElementById(‘loading’);
+const $nameModal = document.getElementById(‘name-modal’);
+const $nameInput = document.getElementById(‘name-input’);
+const $nameSubmit = document.getElementById(‘name-submit’);
+const $nameError = document.getElementById(‘name-error’);
+const $map = document.getElementById(‘map’);
+const $mapInner = document.getElementById(‘map-inner’);
+const $mapImg = document.getElementById(‘map-img’);
+const $mapEmpty = document.getElementById(‘map-empty’);
+const $mapSvg = document.getElementById(‘map-svg’);
+const $roster = document.getElementById(‘roster’);
+const $connPill = document.getElementById(‘conn-pill’);
+const $connText = document.getElementById(‘conn-text’);
+const $fileInput = document.getElementById(‘file-input’);
+const $undoBtn = document.getElementById(‘undo-btn’);
+const $mapsModal = document.getElementById(‘maps-modal’);
+const $mapList = document.getElementById(‘map-list’);
+const $mapZoom = document.getElementById(‘map-zoom’);
+const $zoomInfo = document.getElementById(‘zoom-info’);
+const $sizeSlider = document.getElementById(‘size-slider’);
+const $sizeValue = document.getElementById(‘size-value’);
 
-  for (let i = 0; i < MAX_PLAYERS; i++) {
-    const slot = document.createElement('div');
-    slot.className = 'roster-slot';
-    slot.dataset.slot = i;
-    slot.textContent = (i+1);
-    $roster.appendChild(slot);
+/* ═══════════════ ZOOM & PAN SYSTEM ═══════════════ */
+// Coordinates are stored relative to the map (0..1).
+// The map-zoom container is scaled+translated; markers compensate via 1/zoom.
+let zoom = 1;
+let panX = 0, panY = 0;
+const ZOOM_MIN = 0.5;
+const ZOOM_MAX = 5;
+
+function applyZoom(animate = false) {
+// Clamp pan so map can’t be dragged completely off-screen
+const frame = $map.getBoundingClientRect();
+const maxPan = Math.max(frame.width, frame.height) * (zoom - 1) + 100;
+panX = Math.max(-maxPan, Math.min(maxPan, panX));
+panY = Math.max(-maxPan, Math.min(maxPan, panY));
+if (animate) $mapZoom.classList.remove(‘no-anim’);
+else $mapZoom.classList.add(‘no-anim’);
+$map.style.setProperty(’–zoom’, zoom);
+$map.style.setProperty(’–pan-x’, panX + ‘px’);
+$map.style.setProperty(’–pan-y’, panY + ‘px’);
+$zoomInfo.textContent = Math.round(zoom * 100) + ‘%’;
+}
+
+function zoomAt(clientX, clientY, factor) {
+// Zoom around the cursor/touch point
+const rect = $map.getBoundingClientRect();
+const cx = clientX - rect.left;
+const cy = clientY - rect.top;
+// Pre-zoom position of cursor in map-zoom coordinate space
+const oldZoom = zoom;
+const newZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, oldZoom * factor));
+if (newZoom === oldZoom) return;
+// Adjust pan so the point under cursor stays under cursor
+panX = cx - (cx - panX) * (newZoom / oldZoom);
+panY = cy - (cy - panY) * (newZoom / oldZoom);
+zoom = newZoom;
+applyZoom();
+}
+
+// Mouse wheel zoom
+$map.addEventListener(‘wheel’, e => {
+e.preventDefault();
+const factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+zoomAt(e.clientX, e.clientY, factor);
+}, { passive: false });
+
+// Zoom buttons
+document.getElementById(‘zoom-in’).addEventListener(‘click’, () => {
+const r = $map.getBoundingClientRect();
+zoomAt(r.left + r.width / 2, r.top + r.height / 2, 1.25);
+});
+document.getElementById(‘zoom-out’).addEventListener(‘click’, () => {
+const r = $map.getBoundingClientRect();
+zoomAt(r.left + r.width / 2, r.top + r.height / 2, 1 / 1.25);
+});
+document.getElementById(‘zoom-reset’).addEventListener(‘click’, () => {
+zoom = 1; panX = 0; panY = 0;
+$mapZoom.classList.remove(‘no-anim’);
+applyZoom(true);
+});
+
+// Pan with mouse drag (middle button or with no tool selected)
+let isPanning = false;
+let panStartX = 0, panStartY = 0, panStartPanX = 0, panStartPanY = 0;
+let mouseDownPos = null;
+$map.addEventListener(‘mousedown’, e => {
+// Pan if middle-button OR if shift held OR if no tool selected and not on a marker/line
+const isMiddle = e.button === 1;
+const isShift = e.shiftKey;
+const onElement = e.target.closest(’.marker, .draw-line, .zoom-btn, .zoom-info’);
+if (isMiddle || isShift || (!currentTool && !onElement)) {
+e.preventDefault();
+isPanning = true;
+panStartX = e.clientX; panStartY = e.clientY;
+panStartPanX = panX; panStartPanY = panY;
+$map.classList.add(‘panning’);
+mouseDownPos = null;
+} else {
+mouseDownPos = { x: e.clientX, y: e.clientY };
+}
+});
+window.addEventListener(‘mousemove’, e => {
+if (isPanning) {
+panX = panStartPanX + (e.clientX - panStartX);
+panY = panStartPanY + (e.clientY - panStartY);
+applyZoom();
+}
+});
+window.addEventListener(‘mouseup’, () => {
+if (isPanning) {
+isPanning = false;
+$map.classList.remove(‘panning’);
+}
+});
+
+// Touch: pinch-zoom + drag-pan
+let touchState = null;
+$map.addEventListener(‘touchstart’, e => {
+if (e.touches.length === 2) {
+e.preventDefault();
+const t1 = e.touches[0], t2 = e.touches[1];
+const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+touchState = {
+mode: ‘pinch’,
+startDist: dist,
+startZoom: zoom,
+centerX: (t1.clientX + t2.clientX) / 2,
+centerY: (t1.clientY + t2.clientY) / 2,
+startPanX: panX,
+startPanY: panY
+};
+} else if (e.touches.length === 1 && !e.target.closest(’.marker, .draw-line, .zoom-btn’)) {
+// Single-touch pan only if no tool active OR tool placement won’t fire
+if (!currentTool) {
+const t = e.touches[0];
+touchState = { mode: ‘pan’, startX: t.clientX, startY: t.clientY, startPanX: panX, startPanY: panY };
+}
+}
+}, { passive: false });
+
+$map.addEventListener(‘touchmove’, e => {
+if (!touchState) return;
+if (touchState.mode === ‘pinch’ && e.touches.length === 2) {
+e.preventDefault();
+const t1 = e.touches[0], t2 = e.touches[1];
+const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+const factor = dist / touchState.startDist;
+const newZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, touchState.startZoom * factor));
+// Zoom around the pinch center
+const rect = $map.getBoundingClientRect();
+const cx = touchState.centerX - rect.left;
+const cy = touchState.centerY - rect.top;
+const ratio = newZoom / touchState.startZoom;
+panX = cx - (cx - touchState.startPanX) * ratio;
+panY = cy - (cy - touchState.startPanY) * ratio;
+zoom = newZoom;
+applyZoom();
+} else if (touchState.mode === ‘pan’ && e.touches.length === 1) {
+e.preventDefault();
+const t = e.touches[0];
+panX = touchState.startPanX + (t.clientX - touchState.startX);
+panY = touchState.startPanY + (t.clientY - touchState.startY);
+applyZoom();
+}
+}, { passive: false });
+
+$map.addEventListener(‘touchend’, e => {
+if (e.touches.length === 0) touchState = null;
+});
+
+applyZoom();
+
+/* ═══════════════ MARKER SIZE SLIDER ═══════════════ */
+function applyMarkerSize() {
+const v = $sizeSlider.value;
+$map.style.setProperty(’–marker-size’, v / 100);
+$sizeValue.textContent = v + ‘%’;
+try { localStorage.setItem(‘ba-marker-size’, v); } catch(e){}
+}
+$sizeSlider.addEventListener(‘input’, applyMarkerSize);
+// Restore saved size
+try {
+const saved = localStorage.getItem(‘ba-marker-size’);
+if (saved) $sizeSlider.value = saved;
+} catch(e){}
+applyMarkerSize();
+
+for (let i = 0; i < MAX_PLAYERS; i++) {
+const slot = document.createElement(‘div’);
+slot.className = ‘roster-slot’;
+slot.dataset.slot = i;
+slot.textContent = (i+1);
+$roster.appendChild(slot);
+}
+
+function showNameModal() {
+$loading.style.display = ‘none’;
+$nameModal.style.display = ‘flex’;
+setTimeout(() => $nameInput.focus(), 100);
+}
+$nameSubmit.addEventListener(‘click’, joinSession);
+$nameInput.addEventListener(‘keydown’, e => { if (e.key === ‘Enter’) joinSession(); });
+
+async function joinSession() {
+const name = $nameInput.value.trim().toUpperCase();
+if (!name || name.length < 2) { $nameError.textContent = ‘// CALL SIGN INVALID’; return; }
+$nameError.textContent = ‘’;
+$nameSubmit.disabled = true;
+try {
+const playersSnap = await get(ref(db, `rooms/${ROOM}/players`));
+const current = playersSnap.val() || {};
+const usedSlots = new Set(Object.values(current).map(p => p.slot));
+if (Object.keys(current).length >= MAX_PLAYERS) {
+$nameError.textContent = ‘// SESSION FULL (5/5)’; $nameSubmit.disabled = false; return;
+}
+let slot = -1;
+for (let i = 0; i < MAX_PLAYERS; i++) { if (!usedSlots.has(i)) { slot = i; break; } }
+if (slot === -1) { $nameError.textContent = ‘// NO SLOTS’; $nameSubmit.disabled = false; return; }
+const id = ‘p_’ + Math.random().toString(36).slice(2, 10);
+me = { id, name, color: PLAYER_COLORS[slot], slot };
+const playerRef = ref(db, `rooms/${ROOM}/players/${id}`);
+await set(playerRef, { name, color: me.color, slot, joinedAt: serverTimestamp() });
+onDisconnect(playerRef).remove();
+onDisconnect(ref(db, `rooms/${ROOM}/cursors/${id}`)).remove();
+$nameModal.style.display = ‘none’;
+startListening();
+} catch (err) {
+console.error(err);
+$nameError.textContent = ‘// CONNECTION ERROR’;
+$nameSubmit.disabled = false;
+}
+}
+
+function startListening() {
+onValue(ref(db, `rooms/${ROOM}/players`), snap => { players = snap.val() || {}; renderRoster(); });
+onValue(ref(db, `rooms/${ROOM}/markers`), snap => { markers = snap.val() || {}; renderMarkers(); });
+onValue(ref(db, `rooms/${ROOM}/lines`), snap => { lines = snap.val() || {}; renderLines(); });
+onValue(ref(db, `rooms/${ROOM}/maps`), snap => { maps = snap.val() || {}; renderMapList(); renderActiveMap(); });
+onValue(ref(db, `rooms/${ROOM}/activeMapId`), snap => { activeMapId = snap.val(); renderActiveMap(); renderMapList(); });
+onValue(ref(db, `rooms/${ROOM}/pings`), snap => {
+const pings = snap.val() || {};
+Object.entries(pings).forEach(([id, p]) => {
+if (Date.now() - p.t < 2000) { spawnPing(p.x, p.y); remove(ref(db, `rooms/${ROOM}/pings/${id}`)); }
+});
+});
+onValue(ref(db, `rooms/${ROOM}/cursors`), snap => { renderCursors(snap.val() || {}); });
+$connPill.classList.remove(‘offline’);
+$connText.textContent = ‘LIVE’;
+}
+
+function renderRoster() {
+const slots = $roster.querySelectorAll(’.roster-slot’);
+slots.forEach(s => {
+s.classList.remove(‘active’, ‘me’);
+s.style.removeProperty(’–player-color’);
+s.textContent = parseInt(s.dataset.slot) + 1;
+s.title = ‘’;
+});
+Object.entries(players).forEach(([id, p]) => {
+const slot = slots[p.slot];
+if (!slot) return;
+slot.classList.add(‘active’);
+if (id === me?.id) slot.classList.add(‘me’);
+slot.style.setProperty(’–player-color’, p.color);
+slot.textContent = p.name.slice(0, 2);
+slot.title = p.name;
+});
+}
+
+function renderActiveMap() {
+if (activeMapId && maps[activeMapId]) {
+const m = maps[activeMapId];
+$mapImg.src = m.data;
+$mapImg.style.display = ‘block’;
+$mapImg.onload = () => {
+$mapInner.classList.add(‘has-image’);
+renderMarkers();
+renderLines();
+};
+$mapEmpty.style.display = ‘none’;
+} else {
+$mapImg.src = ‘’;
+$mapImg.style.display = ‘none’;
+$mapInner.classList.remove(‘has-image’);
+$mapEmpty.style.display = ‘flex’;
+}
+}
+function renderMapList() {
+$mapList.innerHTML = ‘’;
+const entries = Object.entries(maps);
+if (entries.length === 0) { $mapList.innerHTML = ‘<div class="map-list-empty">// NO MAPS YET</div>’; return; }
+entries.sort((a,b) => (a[1].addedAt||0) - (b[1].addedAt||0));
+entries.forEach(([id, m]) => {
+const item = document.createElement(‘div’);
+item.className = ‘map-item’ + (id === activeMapId ? ’ active’ : ‘’);
+const thumb = document.createElement(‘div’);
+thumb.className = ‘map-item-thumb’;
+thumb.style.backgroundImage = `url(${m.data})`;
+item.appendChild(thumb);
+const nameInput = document.createElement(‘input’);
+nameInput.className = ‘map-item-name’;
+nameInput.value = m.name || ‘UNNAMED’;
+nameInput.maxLength = 30;
+nameInput.addEventListener(‘blur’, () => {
+const newName = nameInput.value.trim() || ‘UNNAMED’;
+if (newName !== m.name) update(ref(db, `rooms/${ROOM}/maps/${id}`), { name: newName });
+});
+nameInput.addEventListener(‘keydown’, e => { if (e.key === ‘Enter’) nameInput.blur(); });
+item.appendChild(nameInput);
+const useBtn = document.createElement(‘button’);
+useBtn.className = ‘map-item-btn’ + (id === activeMapId ? ’ active’ : ‘’);
+useBtn.textContent = id === activeMapId ? ‘ACTIVE’ : ‘USE’;
+useBtn.addEventListener(‘click’, () => set(ref(db, `rooms/${ROOM}/activeMapId`), id));
+item.appendChild(useBtn);
+const delBtn = document.createElement(‘button’);
+delBtn.className = ‘map-item-btn danger’;
+delBtn.textContent = ‘DEL’;
+delBtn.addEventListener(‘click’, () => {
+if (!confirm(`Karte "${m.name}" löschen?`)) return;
+remove(ref(db, `rooms/${ROOM}/maps/${id}`));
+if (id === activeMapId) set(ref(db, `rooms/${ROOM}/activeMapId`), null);
+});
+item.appendChild(delBtn);
+$mapList.appendChild(item);
+});
+}
+
+document.getElementById(‘maps-btn’).addEventListener(‘click’, () => { $mapsModal.style.display = ‘flex’; });
+document.getElementById(‘maps-close’).addEventListener(‘click’, () => { $mapsModal.style.display = ‘none’; });
+$mapsModal.addEventListener(‘click’, e => { if (e.target === $mapsModal) $mapsModal.style.display = ‘none’; });
+document.getElementById(‘maps-upload’).addEventListener(‘click’, () => $fileInput.click());
+
+$fileInput.addEventListener(‘change’, e => {
+const file = e.target.files[0];
+if (!file) return;
+if (file.size > 1.5 * 1024 * 1024) {
+alert(‘Bild ist zu groß (max ~1.5 MB).’);
+$fileInput.value = ‘’;
+return;
+}
+const reader = new FileReader();
+reader.onload = ev => {
+const id = ‘m_’ + Math.random().toString(36).slice(2, 10);
+const baseName = file.name.replace(/.[^.]+$/, ‘’).slice(0, 30).toUpperCase() || ‘MAP’;
+set(ref(db, `rooms/${ROOM}/maps/${id}`), { name: baseName, data: ev.target.result, addedBy: me.name, addedAt: Date.now() });
+if (!activeMapId) set(ref(db, `rooms/${ROOM}/activeMapId`), id);
+};
+reader.readAsDataURL(file);
+$fileInput.value = ‘’;
+});
+
+function renderMarkers() {
+$mapInner.querySelectorAll(’.marker’).forEach(el => el.remove());
+Object.entries(markers).forEach(([id, m]) => {
+const el = document.createElement(‘div’);
+el.className = `marker ${m.tool}`;
+el.style.left = (m.x * 100) + ‘%’;
+el.style.top = (m.y * 100) + ‘%’;
+el.dataset.id = id;
+
+```
+  const shape = document.createElement('div');
+  shape.className = 'nato-shape';
+  const inner = document.createElement('div');
+  inner.className = 'nato-inner';
+  inner.innerHTML = NATO_SYMBOLS[m.unit] || '';
+  shape.appendChild(inner);
+  el.appendChild(shape);
+
+  if (typeof m.direction === 'number') {
+    const dir = document.createElement('div');
+    dir.className = 'marker-direction';
+    dir.style.transform = `rotate(${m.direction}deg)`;
+    const color = m.tool === 'hostile' ? 'var(--hostile-dark)' :
+                  m.tool === 'hostile-s' ? 'var(--hostile-dark)' :
+                  m.tool === 'friend' ? 'var(--friend-dark)' :
+                  m.tool === 'friend-s' ? 'var(--friend-dark)' :
+                  m.tool === 'supply' ? 'var(--supply-dark)' :
+                  m.tool === 'supply-s' ? 'var(--supply-dark)' : 'var(--note)';
+    dir.innerHTML = `<svg viewBox="0 0 36 14"><line x1="0" y1="7" x2="28" y2="7" stroke="${color}" stroke-width="3"/><polygon points="28,2 36,7 28,12" fill="${color}"/></svg>`;
+    el.appendChild(dir);
   }
 
-  function showNameModal() {
-    $loading.style.display = 'none';
-    $nameModal.style.display = 'flex';
-    setTimeout(() => $nameInput.focus(), 100);
-  }
-  $nameSubmit.addEventListener('click', joinSession);
-  $nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') joinSession(); });
+  const author = document.createElement('div');
+  author.className = 'marker-author';
+  author.style.background = m.authorColor || '#888';
+  el.appendChild(author);
 
-  async function joinSession() {
-    const name = $nameInput.value.trim().toUpperCase();
-    if (!name || name.length < 2) { $nameError.textContent = '// CALL SIGN INVALID'; return; }
-    $nameError.textContent = '';
-    $nameSubmit.disabled = true;
-    try {
-      const playersSnap = await get(ref(db, `rooms/${ROOM}/players`));
-      const current = playersSnap.val() || {};
-      const usedSlots = new Set(Object.values(current).map(p => p.slot));
-      if (Object.keys(current).length >= MAX_PLAYERS) {
-        $nameError.textContent = '// SESSION FULL (5/5)'; $nameSubmit.disabled = false; return;
-      }
-      let slot = -1;
-      for (let i = 0; i < MAX_PLAYERS; i++) { if (!usedSlots.has(i)) { slot = i; break; } }
-      if (slot === -1) { $nameError.textContent = '// NO SLOTS'; $nameSubmit.disabled = false; return; }
-      const id = 'p_' + Math.random().toString(36).slice(2, 10);
-      me = { id, name, color: PLAYER_COLORS[slot], slot };
-      const playerRef = ref(db, `rooms/${ROOM}/players/${id}`);
-      await set(playerRef, { name, color: me.color, slot, joinedAt: serverTimestamp() });
-      onDisconnect(playerRef).remove();
-      onDisconnect(ref(db, `rooms/${ROOM}/cursors/${id}`)).remove();
-      $nameModal.style.display = 'none';
-      startListening();
-    } catch (err) {
-      console.error(err);
-      $nameError.textContent = '// CONNECTION ERROR';
-      $nameSubmit.disabled = false;
-    }
-  }
+  const del = document.createElement('div');
+  del.className = 'marker-delete';
+  del.textContent = '×';
+  del.title = 'Marker löschen';
+  del.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); deleteMarker(id, m); });
+  el.appendChild(del);
 
-  function startListening() {
-    onValue(ref(db, `rooms/${ROOM}/players`), snap => { players = snap.val() || {}; renderRoster(); });
-    onValue(ref(db, `rooms/${ROOM}/markers`), snap => { markers = snap.val() || {}; renderMarkers(); });
-    onValue(ref(db, `rooms/${ROOM}/lines`), snap => { lines = snap.val() || {}; renderLines(); });
-    onValue(ref(db, `rooms/${ROOM}/maps`), snap => { maps = snap.val() || {}; renderMapList(); renderActiveMap(); });
-    onValue(ref(db, `rooms/${ROOM}/activeMapId`), snap => { activeMapId = snap.val(); renderActiveMap(); renderMapList(); });
-    onValue(ref(db, `rooms/${ROOM}/pings`), snap => {
-      const pings = snap.val() || {};
-      Object.entries(pings).forEach(([id, p]) => {
-        if (Date.now() - p.t < 2000) { spawnPing(p.x, p.y); remove(ref(db, `rooms/${ROOM}/pings/${id}`)); }
-      });
-    });
-    onValue(ref(db, `rooms/${ROOM}/cursors`), snap => { renderCursors(snap.val() || {}); });
-    $connPill.classList.remove('offline');
-    $connText.textContent = 'LIVE';
-  }
+  const meta = document.createElement('div');
+  meta.className = 'marker-meta';
+  const label = m.text || `${TOOL_LABELS[m.tool]||''} ${UNIT_LABELS[m.unit]||''}`.trim();
+  meta.innerHTML = `${label}<span class="author-tag">${m.authorName||''}</span>`;
+  el.appendChild(meta);
 
-  function renderRoster() {
-    const slots = $roster.querySelectorAll('.roster-slot');
-    slots.forEach(s => {
-      s.classList.remove('active', 'me');
-      s.style.removeProperty('--player-color');
-      s.textContent = parseInt(s.dataset.slot) + 1;
-      s.title = '';
-    });
-    Object.entries(players).forEach(([id, p]) => {
-      const slot = slots[p.slot];
-      if (!slot) return;
-      slot.classList.add('active');
-      if (id === me?.id) slot.classList.add('me');
-      slot.style.setProperty('--player-color', p.color);
-      slot.textContent = p.name.slice(0, 2);
-      slot.title = p.name;
-    });
-  }
-
-  function renderActiveMap() {
-    if (activeMapId && maps[activeMapId]) {
-      const m = maps[activeMapId];
-      $mapImg.src = m.data;
-      $mapImg.style.display = 'block';
-      $mapImg.onload = () => {
-        $mapInner.classList.add('has-image');
-        renderMarkers();
-        renderLines();
-      };
-      $mapEmpty.style.display = 'none';
-    } else {
-      $mapImg.src = '';
-      $mapImg.style.display = 'none';
-      $mapInner.classList.remove('has-image');
-      $mapEmpty.style.display = 'flex';
-    }
-  }
-  function renderMapList() {
-    $mapList.innerHTML = '';
-    const entries = Object.entries(maps);
-    if (entries.length === 0) { $mapList.innerHTML = '<div class="map-list-empty">// NO MAPS YET</div>'; return; }
-    entries.sort((a,b) => (a[1].addedAt||0) - (b[1].addedAt||0));
-    entries.forEach(([id, m]) => {
-      const item = document.createElement('div');
-      item.className = 'map-item' + (id === activeMapId ? ' active' : '');
-      const thumb = document.createElement('div');
-      thumb.className = 'map-item-thumb';
-      thumb.style.backgroundImage = `url(${m.data})`;
-      item.appendChild(thumb);
-      const nameInput = document.createElement('input');
-      nameInput.className = 'map-item-name';
-      nameInput.value = m.name || 'UNNAMED';
-      nameInput.maxLength = 30;
-      nameInput.addEventListener('blur', () => {
-        const newName = nameInput.value.trim() || 'UNNAMED';
-        if (newName !== m.name) update(ref(db, `rooms/${ROOM}/maps/${id}`), { name: newName });
-      });
-      nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') nameInput.blur(); });
-      item.appendChild(nameInput);
-      const useBtn = document.createElement('button');
-      useBtn.className = 'map-item-btn' + (id === activeMapId ? ' active' : '');
-      useBtn.textContent = id === activeMapId ? 'ACTIVE' : 'USE';
-      useBtn.addEventListener('click', () => set(ref(db, `rooms/${ROOM}/activeMapId`), id));
-      item.appendChild(useBtn);
-      const delBtn = document.createElement('button');
-      delBtn.className = 'map-item-btn danger';
-      delBtn.textContent = 'DEL';
-      delBtn.addEventListener('click', () => {
-        if (!confirm(`Karte "${m.name}" löschen?`)) return;
-        remove(ref(db, `rooms/${ROOM}/maps/${id}`));
-        if (id === activeMapId) set(ref(db, `rooms/${ROOM}/activeMapId`), null);
-      });
-      item.appendChild(delBtn);
-      $mapList.appendChild(item);
-    });
-  }
-
-  document.getElementById('maps-btn').addEventListener('click', () => { $mapsModal.style.display = 'flex'; });
-  document.getElementById('maps-close').addEventListener('click', () => { $mapsModal.style.display = 'none'; });
-  $mapsModal.addEventListener('click', e => { if (e.target === $mapsModal) $mapsModal.style.display = 'none'; });
-  document.getElementById('maps-upload').addEventListener('click', () => $fileInput.click());
-
-  $fileInput.addEventListener('change', e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (file.size > 1.5 * 1024 * 1024) {
-      alert('Bild ist zu groß (max ~1.5 MB).');
-      $fileInput.value = '';
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = ev => {
-      const id = 'm_' + Math.random().toString(36).slice(2, 10);
-      const baseName = file.name.replace(/\.[^.]+$/, '').slice(0, 30).toUpperCase() || 'MAP';
-      set(ref(db, `rooms/${ROOM}/maps/${id}`), { name: baseName, data: ev.target.result, addedBy: me.name, addedAt: Date.now() });
-      if (!activeMapId) set(ref(db, `rooms/${ROOM}/activeMapId`), id);
-    };
-    reader.readAsDataURL(file);
-    $fileInput.value = '';
+  el.addEventListener('contextmenu', e => { e.preventDefault(); e.stopPropagation(); deleteMarker(id, m); });
+  el.addEventListener('click', e => {
+    if (currentTool === 'direction') { e.preventDefault(); e.stopPropagation(); handleDirectionClickOnMarker(id, m); }
   });
 
-  function renderMarkers() {
-    $mapInner.querySelectorAll('.marker').forEach(el => el.remove());
-    Object.entries(markers).forEach(([id, m]) => {
-      const el = document.createElement('div');
-      el.className = `marker ${m.tool}`;
-      el.style.left = (m.x * 100) + '%';
-      el.style.top = (m.y * 100) + '%';
-      el.dataset.id = id;
+  $mapInner.appendChild(el);
+});
+```
 
-      const shape = document.createElement('div');
-      shape.className = 'nato-shape';
-      const inner = document.createElement('div');
-      inner.className = 'nato-inner';
-      inner.innerHTML = NATO_SYMBOLS[m.unit] || '';
-      shape.appendChild(inner);
-      el.appendChild(shape);
+}
 
-      if (typeof m.direction === 'number') {
-        const dir = document.createElement('div');
-        dir.className = 'marker-direction';
-        dir.style.transform = `rotate(${m.direction}deg)`;
-        const color = m.tool === 'hostile' ? 'var(--hostile-dark)' :
-                      m.tool === 'hostile-s' ? 'var(--hostile-dark)' :
-                      m.tool === 'friend' ? 'var(--friend-dark)' :
-                      m.tool === 'friend-s' ? 'var(--friend-dark)' :
-                      m.tool === 'supply' ? 'var(--supply-dark)' :
-                      m.tool === 'supply-s' ? 'var(--supply-dark)' : 'var(--note)';
-        dir.innerHTML = `<svg viewBox="0 0 36 14"><line x1="0" y1="7" x2="28" y2="7" stroke="${color}" stroke-width="3"/><polygon points="28,2 36,7 28,12" fill="${color}"/></svg>`;
-        el.appendChild(dir);
-      }
+function deleteMarker(id, m) {
+if (m.authorId === me?.id) {
+pushUndo({ type: ‘delete-marker’, data: { id, marker: { …m } } });
+}
+remove(ref(db, `rooms/${ROOM}/markers/${id}`));
+}
 
-      const author = document.createElement('div');
-      author.className = 'marker-author';
-      author.style.background = m.authorColor || '#888';
-      el.appendChild(author);
+function renderLines() {
+$mapSvg.querySelectorAll(’.draw-line’).forEach(el => el.remove());
+const rect = $mapInner.getBoundingClientRect();
+if (rect.width === 0) return;
+Object.entries(lines).forEach(([id, l]) => {
+const ns = ‘http://www.w3.org/2000/svg’;
+const line = document.createElementNS(ns, ‘line’);
+line.setAttribute(‘class’, ‘draw-line’);
+line.setAttribute(‘x1’, l.x1 * 1000);
+line.setAttribute(‘y1’, l.y1 * 1000);
+line.setAttribute(‘x2’, l.x2 * 1000);
+line.setAttribute(‘y2’, l.y2 * 1000);
+line.setAttribute(‘stroke’, l.color || ‘#2a2a2a’);
+line.style.color = l.color || ‘#2a2a2a’;
+if (l.type === ‘arrow’) line.setAttribute(‘marker-end’, ‘url(#arrowhead)’);
+line.dataset.id = id;
+line.style.pointerEvents = ‘stroke’;
+line.addEventListener(‘click’, e => {
+e.stopPropagation();
+if (l.authorId === me?.id || confirm(‘Linie eines anderen Spielers löschen?’)) {
+if (l.authorId === me?.id) pushUndo({ type: ‘delete-line’, data: { id, line: { …l } } });
+remove(ref(db, `rooms/${ROOM}/lines/${id}`));
+}
+});
+line.addEventListener(‘contextmenu’, e => {
+e.preventDefault(); e.stopPropagation();
+if (l.authorId === me?.id) pushUndo({ type: ‘delete-line’, data: { id, line: { …l } } });
+remove(ref(db, `rooms/${ROOM}/lines/${id}`));
+});
+$mapSvg.appendChild(line);
+});
+}
 
-      const del = document.createElement('div');
-      del.className = 'marker-delete';
-      del.textContent = '×';
-      del.title = 'Marker löschen';
-      del.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); deleteMarker(id, m); });
-      el.appendChild(del);
+$mapSvg.setAttribute(‘viewBox’, ‘0 0 1000 1000’);
+$mapSvg.setAttribute(‘preserveAspectRatio’, ‘none’);
+const cursorEls = {};
+function renderCursors(cursors) {
+const seen = new Set();
+Object.entries(cursors).forEach(([id, c]) => {
+if (id === me?.id) return;
+const player = players[id];
+if (!player) return;
+seen.add(id);
+let el = cursorEls[id];
+if (!el) {
+el = document.createElement(‘div’);
+el.className = ‘cursor’;
+el.innerHTML = `<svg width="16" height="18" viewBox="0 0 16 18"><path d="M1 1 L1 14 L5 11 L7 16 L9 15 L7 10 L13 10 Z" fill="${player.color}" stroke="#000" stroke-width="0.8"/></svg><div class="cursor-label" style="background:${player.color}">${player.name}</div>`;
+$mapInner.appendChild(el);
+cursorEls[id] = el;
+}
+el.style.left = (c.x * 100) + ‘%’;
+el.style.top = (c.y * 100) + ‘%’;
+});
+Object.keys(cursorEls).forEach(id => {
+if (!seen.has(id)) { cursorEls[id].remove(); delete cursorEls[id]; }
+});
+}
 
-      const meta = document.createElement('div');
-      meta.className = 'marker-meta';
-      const label = m.text || `${TOOL_LABELS[m.tool]||''} ${UNIT_LABELS[m.unit]||''}`.trim();
-      meta.innerHTML = `${label}<span class="author-tag">${m.authorName||''}</span>`;
-      el.appendChild(meta);
+document.querySelectorAll(’.tool-btn[data-tool]’).forEach(btn => {
+btn.addEventListener(‘click’, () => {
+const tool = btn.dataset.tool;
+const unit = btn.dataset.unit;
+if (currentTool === tool && currentUnit === unit) {
+currentTool = null; currentUnit = null;
+clearHint();
+cancelTwoStep();
+} else {
+currentTool = tool; currentUnit = unit;
+if (tool === ‘line’ || tool === ‘arrow’) {
+showHint(‘Klick: 1. Punkt setzen, dann 2. Punkt’);
+pendingTwoStep = { type: tool };
+} else if (tool === ‘direction’) {
+showHint(‘Klick auf einen Marker, dann auf Karte für Richtung’);
+pendingTwoStep = { type: ‘direction’ };
+} else {
+clearHint();
+pendingTwoStep = null;
+}
+}
+document.querySelectorAll(’.tool-btn’).forEach(b => b.classList.remove(‘active’));
+if (currentTool) btn.classList.add(‘active’);
+if (multiMode) document.getElementById(‘multi-btn’).classList.add(‘active’);
+});
+});
 
-      el.addEventListener('contextmenu', e => { e.preventDefault(); e.stopPropagation(); deleteMarker(id, m); });
-      el.addEventListener('click', e => {
-        if (currentTool === 'direction') { e.preventDefault(); e.stopPropagation(); handleDirectionClickOnMarker(id, m); }
-      });
+const $multiBtn = document.getElementById(‘multi-btn’);
+$multiBtn.addEventListener(‘click’, () => {
+multiMode = !multiMode;
+$multiBtn.textContent = `MULTI: ${multiMode?'ON':'OFF'}`;
+$multiBtn.classList.toggle(‘active’, multiMode);
+});
 
-      $mapInner.appendChild(el);
-    });
-  }
+function clickPos(e) {
+const rect = $mapInner.getBoundingClientRect();
+const x = (e.clientX - rect.left) / rect.width;
+const y = (e.clientY - rect.top) / rect.height;
+return { x, y, inside: x >= 0 && x <= 1 && y >= 0 && y <= 1 };
+}
 
-  function deleteMarker(id, m) {
-    if (m.authorId === me?.id) {
-      pushUndo({ type: 'delete-marker', data: { id, marker: { ...m } } });
-    }
-    remove(ref(db, `rooms/${ROOM}/markers/${id}`));
-  }
+$map.addEventListener(‘click’, e => {
+if (!currentTool || !me) return;
+if (e.target.closest(’.marker’) && currentTool !== ‘direction’) return;
+if (e.target.closest(’.draw-line’)) return;
+if (e.target.closest(’.zoom-btn, .zoom-info’)) return;
+// If the user just finished panning, suppress the resulting click
+if (mouseDownPos) {
+const dx = e.clientX - mouseDownPos.x;
+const dy = e.clientY - mouseDownPos.y;
+mouseDownPos = null;
+if (Math.hypot(dx, dy) > 5) return;
+}
+const pos = clickPos(e);
+if (!pos.inside) return;
+const { x, y } = pos;
 
-  function renderLines() {
-    $mapSvg.querySelectorAll('.draw-line').forEach(el => el.remove());
-    const rect = $mapInner.getBoundingClientRect();
-    if (rect.width === 0) return;
-    Object.entries(lines).forEach(([id, l]) => {
-      const ns = 'http://www.w3.org/2000/svg';
-      const line = document.createElementNS(ns, 'line');
-      line.setAttribute('class', 'draw-line');
-      line.setAttribute('x1', l.x1 * 1000);
-      line.setAttribute('y1', l.y1 * 1000);
-      line.setAttribute('x2', l.x2 * 1000);
-      line.setAttribute('y2', l.y2 * 1000);
-      line.setAttribute('stroke', l.color || '#2a2a2a');
-      line.style.color = l.color || '#2a2a2a';
-      if (l.type === 'arrow') line.setAttribute('marker-end', 'url(#arrowhead)');
-      line.dataset.id = id;
-      line.style.pointerEvents = 'stroke';
-      line.addEventListener('click', e => {
-        e.stopPropagation();
-        if (l.authorId === me?.id || confirm('Linie eines anderen Spielers löschen?')) {
-          if (l.authorId === me?.id) pushUndo({ type: 'delete-line', data: { id, line: { ...l } } });
-          remove(ref(db, `rooms/${ROOM}/lines/${id}`));
-        }
-      });
-      line.addEventListener('contextmenu', e => {
-        e.preventDefault(); e.stopPropagation();
-        if (l.authorId === me?.id) pushUndo({ type: 'delete-line', data: { id, line: { ...l } } });
-        remove(ref(db, `rooms/${ROOM}/lines/${id}`));
-      });
-      $mapSvg.appendChild(line);
-    });
-  }
+```
+if (currentTool === 'ping') {
+  const pingRef = push(ref(db, `rooms/${ROOM}/pings`));
+  set(pingRef, { x, y, t: Date.now(), authorName: me.name });
+  spawnPing(x, y);
+  finishToolUse();
+  return;
+}
+if (currentTool === 'line' || currentTool === 'arrow') { handleDrawClick(x, y); return; }
+if (currentTool === 'direction') { handleDirectionClickOnMap(x, y); return; }
 
-  $mapSvg.setAttribute('viewBox', '0 0 1000 1000');
-  $mapSvg.setAttribute('preserveAspectRatio', 'none');
-  const cursorEls = {};
-  function renderCursors(cursors) {
-    const seen = new Set();
-    Object.entries(cursors).forEach(([id, c]) => {
-      if (id === me?.id) return;
-      const player = players[id];
-      if (!player) return;
-      seen.add(id);
-      let el = cursorEls[id];
-      if (!el) {
-        el = document.createElement('div');
-        el.className = 'cursor';
-        el.innerHTML = `<svg width="16" height="18" viewBox="0 0 16 18"><path d="M1 1 L1 14 L5 11 L7 16 L9 15 L7 10 L13 10 Z" fill="${player.color}" stroke="#000" stroke-width="0.8"/></svg><div class="cursor-label" style="background:${player.color}">${player.name}</div>`;
-        $mapInner.appendChild(el);
-        cursorEls[id] = el;
-      }
-      el.style.left = (c.x * 100) + '%';
-      el.style.top = (c.y * 100) + '%';
-    });
-    Object.keys(cursorEls).forEach(id => {
-      if (!seen.has(id)) { cursorEls[id].remove(); delete cursorEls[id]; }
-    });
-  }
+let text = null;
+if (currentTool === 'note') {
+  text = prompt('Notiz eingeben:');
+  if (!text) return;
+}
 
-  document.querySelectorAll('.tool-btn[data-tool]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const tool = btn.dataset.tool;
-      const unit = btn.dataset.unit;
-      if (currentTool === tool && currentUnit === unit) {
-        currentTool = null; currentUnit = null;
-        clearHint();
-        cancelTwoStep();
-      } else {
-        currentTool = tool; currentUnit = unit;
-        if (tool === 'line' || tool === 'arrow') {
-          showHint('Klick: 1. Punkt setzen, dann 2. Punkt');
-          pendingTwoStep = { type: tool };
-        } else if (tool === 'direction') {
-          showHint('Klick auf einen Marker, dann auf Karte für Richtung');
-          pendingTwoStep = { type: 'direction' };
-        } else {
-          clearHint();
-          pendingTwoStep = null;
-        }
-      }
-      document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-      if (currentTool) btn.classList.add('active');
-      if (multiMode) document.getElementById('multi-btn').classList.add('active');
-    });
-  });
+const mref = push(ref(db, `rooms/${ROOM}/markers`));
+const id = mref.key;
+const data = {
+  tool: currentTool,
+  unit: currentUnit,
+  x, y,
+  text: text || null,
+  authorId: me.id,
+  authorName: me.name,
+  authorColor: me.color,
+  createdAt: serverTimestamp()
+};
+set(mref, data);
+pushUndo({ type: 'create-marker', data: { id } });
+finishToolUse();
+```
 
-  const $multiBtn = document.getElementById('multi-btn');
-  $multiBtn.addEventListener('click', () => {
-    multiMode = !multiMode;
-    $multiBtn.textContent = `MULTI: ${multiMode?'ON':'OFF'}`;
-    $multiBtn.classList.toggle('active', multiMode);
-  });
+});
 
-  function clickPos(e) {
-    const rect = $mapInner.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = (e.clientY - rect.top) / rect.height;
-    return { x, y, inside: x >= 0 && x <= 1 && y >= 0 && y <= 1 };
-  }
+function finishToolUse() {
+if (!multiMode) {
+currentTool = null; currentUnit = null;
+pendingTwoStep = null;
+clearHint();
+document.querySelectorAll(’.tool-btn’).forEach(b => b.classList.remove(‘active’));
+}
+}
 
-  $map.addEventListener('click', e => {
-    if (!currentTool || !me) return;
-    if (e.target.closest('.marker') && currentTool !== 'direction') return;
-    if (e.target.closest('.draw-line')) return;
-    const pos = clickPos(e);
-    if (!pos.inside) return;
-    const { x, y } = pos;
+function handleDrawClick(x, y) {
+if (!pendingTwoStep) pendingTwoStep = { type: currentTool };
+if (!pendingTwoStep.firstPoint) {
+pendingTwoStep.firstPoint = { x, y };
+showHint(‘OK — jetzt 2. Punkt setzen (ESC zum Abbrechen)’);
+} else {
+const lref = push(ref(db, `rooms/${ROOM}/lines`));
+const id = lref.key;
+const data = {
+type: pendingTwoStep.type,
+x1: pendingTwoStep.firstPoint.x, y1: pendingTwoStep.firstPoint.y,
+x2: x, y2: y,
+color: me.color,
+authorId: me.id,
+authorName: me.name,
+createdAt: serverTimestamp()
+};
+set(lref, data);
+pushUndo({ type: ‘create-line’, data: { id } });
+pendingTwoStep.firstPoint = null;
+if (multiMode) showHint(‘Multi-Mode: 1. Punkt setzen für nächste Linie’);
+else finishToolUse();
+}
+}
 
-    if (currentTool === 'ping') {
-      const pingRef = push(ref(db, `rooms/${ROOM}/pings`));
-      set(pingRef, { x, y, t: Date.now(), authorName: me.name });
-      spawnPing(x, y);
-      finishToolUse();
-      return;
-    }
-    if (currentTool === 'line' || currentTool === 'arrow') { handleDrawClick(x, y); return; }
-    if (currentTool === 'direction') { handleDirectionClickOnMap(x, y); return; }
+function handleDirectionClickOnMarker(markerId, marker) {
+if (currentTool !== ‘direction’) return;
+if (!pendingTwoStep) pendingTwoStep = { type: ‘direction’ };
+pendingTwoStep.targetMarkerId = markerId;
+pendingTwoStep.targetMarker = marker;
+showHint(`Marker ausgewählt — jetzt auf Karte klicken für Richtung`);
+if (pendingTwoStep.lastMarkerId === markerId) {
+update(ref(db, `rooms/${ROOM}/markers/${markerId}`), { direction: null });
+pushUndo({ type: ‘set-direction’, data: { id: markerId, prev: marker.direction ?? null } });
+pendingTwoStep.lastMarkerId = null;
+pendingTwoStep.targetMarkerId = null;
+finishToolUse();
+return;
+}
+pendingTwoStep.lastMarkerId = markerId;
+}
 
-    let text = null;
-    if (currentTool === 'note') {
-      text = prompt('Notiz eingeben:');
-      if (!text) return;
-    }
+function handleDirectionClickOnMap(x, y) {
+if (!pendingTwoStep || !pendingTwoStep.targetMarkerId) {
+showHint(‘Erst auf einen Marker klicken!’);
+return;
+}
+const m = pendingTwoStep.targetMarker;
+const dx = x - m.x;
+const dy = y - m.y;
+const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+const prev = m.direction ?? null;
+update(ref(db, `rooms/${ROOM}/markers/${pendingTwoStep.targetMarkerId}`), { direction: angle });
+pushUndo({ type: ‘set-direction’, data: { id: pendingTwoStep.targetMarkerId, prev } });
+pendingTwoStep.targetMarkerId = null;
+pendingTwoStep.lastMarkerId = null;
+finishToolUse();
+}
 
-    const mref = push(ref(db, `rooms/${ROOM}/markers`));
-    const id = mref.key;
-    const data = {
-      tool: currentTool,
-      unit: currentUnit,
-      x, y,
-      text: text || null,
-      authorId: me.id,
-      authorName: me.name,
-      authorColor: me.color,
-      createdAt: serverTimestamp()
-    };
-    set(mref, data);
-    pushUndo({ type: 'create-marker', data: { id } });
-    finishToolUse();
-  });
+function cancelTwoStep() { pendingTwoStep = null; }
 
-  function finishToolUse() {
-    if (!multiMode) {
-      currentTool = null; currentUnit = null;
-      pendingTwoStep = null;
-      clearHint();
-      document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-    }
-  }
+document.addEventListener(‘keydown’, e => {
+if (e.key === ‘Escape’) {
+cancelTwoStep();
+currentTool = null; currentUnit = null;
+document.querySelectorAll(’.tool-btn’).forEach(b => b.classList.remove(‘active’));
+clearHint();
+}
+if ((e.ctrlKey || e.metaKey) && e.key === ‘z’ && !e.target.matches(‘input,textarea’)) {
+e.preventDefault();
+doUndo();
+}
+});
 
-  function handleDrawClick(x, y) {
-    if (!pendingTwoStep) pendingTwoStep = { type: currentTool };
-    if (!pendingTwoStep.firstPoint) {
-      pendingTwoStep.firstPoint = { x, y };
-      showHint('OK — jetzt 2. Punkt setzen (ESC zum Abbrechen)');
-    } else {
-      const lref = push(ref(db, `rooms/${ROOM}/lines`));
-      const id = lref.key;
-      const data = {
-        type: pendingTwoStep.type,
-        x1: pendingTwoStep.firstPoint.x, y1: pendingTwoStep.firstPoint.y,
-        x2: x, y2: y,
-        color: me.color,
-        authorId: me.id,
-        authorName: me.name,
-        createdAt: serverTimestamp()
-      };
-      set(lref, data);
-      pushUndo({ type: 'create-line', data: { id } });
-      pendingTwoStep.firstPoint = null;
-      if (multiMode) showHint('Multi-Mode: 1. Punkt setzen für nächste Linie');
-      else finishToolUse();
-    }
-  }
+let lastCursorSent = 0;
+$map.addEventListener(‘mousemove’, e => {
+if (!me) return;
+const now = Date.now();
+if (now - lastCursorSent < 60) return;
+lastCursorSent = now;
+const pos = clickPos(e);
+if (!pos.inside) return;
+set(ref(db, `rooms/${ROOM}/cursors/${me.id}`), { x: pos.x, y: pos.y, t: now });
+document.querySelector(’.map-coords’).textContent = `GRID ${(pos.x*100).toFixed(2)} // ${(pos.y*100).toFixed(2)}`;
+});
+$map.addEventListener(‘mouseleave’, () => { if (me) remove(ref(db, `rooms/${ROOM}/cursors/${me.id}`)); });
 
-  function handleDirectionClickOnMarker(markerId, marker) {
-    if (currentTool !== 'direction') return;
-    if (!pendingTwoStep) pendingTwoStep = { type: 'direction' };
-    pendingTwoStep.targetMarkerId = markerId;
-    pendingTwoStep.targetMarker = marker;
-    showHint(`Marker ausgewählt — jetzt auf Karte klicken für Richtung`);
-    if (pendingTwoStep.lastMarkerId === markerId) {
-      update(ref(db, `rooms/${ROOM}/markers/${markerId}`), { direction: null });
-      pushUndo({ type: 'set-direction', data: { id: markerId, prev: marker.direction ?? null } });
-      pendingTwoStep.lastMarkerId = null;
-      pendingTwoStep.targetMarkerId = null;
-      finishToolUse();
-      return;
-    }
-    pendingTwoStep.lastMarkerId = markerId;
-  }
+function spawnPing(x, y) {
+const el = document.createElement(‘div’);
+el.className = ‘ping’;
+el.style.left = (x * 100) + ‘%’;
+el.style.top = (y * 100) + ‘%’;
+$mapInner.appendChild(el);
+setTimeout(() => el.remove(), 1600);
+}
 
-  function handleDirectionClickOnMap(x, y) {
-    if (!pendingTwoStep || !pendingTwoStep.targetMarkerId) {
-      showHint('Erst auf einen Marker klicken!');
-      return;
-    }
-    const m = pendingTwoStep.targetMarker;
-    const dx = x - m.x;
-    const dy = y - m.y;
-    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-    const prev = m.direction ?? null;
-    update(ref(db, `rooms/${ROOM}/markers/${pendingTwoStep.targetMarkerId}`), { direction: angle });
-    pushUndo({ type: 'set-direction', data: { id: pendingTwoStep.targetMarkerId, prev } });
-    pendingTwoStep.targetMarkerId = null;
-    pendingTwoStep.lastMarkerId = null;
-    finishToolUse();
-  }
+let $hint = null;
+function showHint(text) {
+clearHint();
+$hint = document.createElement(‘div’);
+$hint.className = ‘hint-banner’;
+$hint.innerHTML = `${text} <span class="x" id="hint-x">×</span>`;
+document.body.appendChild($hint);
+$hint.querySelector(’#hint-x’).addEventListener(‘click’, () => {
+cancelTwoStep();
+currentTool = null; currentUnit = null;
+document.querySelectorAll(’.tool-btn’).forEach(b => b.classList.remove(‘active’));
+clearHint();
+});
+}
+function clearHint() { if ($hint) { $hint.remove(); $hint = null; } }
 
-  function cancelTwoStep() { pendingTwoStep = null; }
+function pushUndo(action) {
+undoStack.push(action);
+if (undoStack.length > UNDO_LIMIT) undoStack.shift();
+updateUndoBtn();
+}
+function updateUndoBtn() {
+$undoBtn.disabled = undoStack.length === 0;
+$undoBtn.textContent = `↶ UNDO (${undoStack.length})`;
+}
+async function doUndo() {
+const action = undoStack.pop();
+updateUndoBtn();
+if (!action) return;
+if (action.type === ‘create-marker’) remove(ref(db, `rooms/${ROOM}/markers/${action.data.id}`));
+else if (action.type === ‘create-line’) remove(ref(db, `rooms/${ROOM}/lines/${action.data.id}`));
+else if (action.type === ‘delete-marker’) await set(ref(db, `rooms/${ROOM}/markers/${action.data.id}`), action.data.marker);
+else if (action.type === ‘delete-line’) await set(ref(db, `rooms/${ROOM}/lines/${action.data.id}`), action.data.line);
+else if (action.type === ‘set-direction’) await update(ref(db, `rooms/${ROOM}/markers/${action.data.id}`), { direction: action.data.prev });
+}
+$undoBtn.addEventListener(‘click’, doUndo);
+updateUndoBtn();
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-      cancelTwoStep();
-      currentTool = null; currentUnit = null;
-      document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-      clearHint();
-    }
-    if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.target.matches('input,textarea')) {
-      e.preventDefault();
-      doUndo();
-    }
-  });
+document.getElementById(‘clear-mine’).addEventListener(‘click’, () => {
+if (!confirm(‘Alle DEINE Marker und Linien löschen?’)) return;
+Object.entries(markers).forEach(([id, m]) => { if (m.authorId === me?.id) remove(ref(db, `rooms/${ROOM}/markers/${id}`)); });
+Object.entries(lines).forEach(([id, l]) => { if (l.authorId === me?.id) remove(ref(db, `rooms/${ROOM}/lines/${id}`)); });
+undoStack = [];
+updateUndoBtn();
+});
+document.getElementById(‘clear-all’).addEventListener(‘click’, () => {
+if (!confirm(‘ALLE Marker und Linien löschen (auch von anderen)?’)) return;
+set(ref(db, `rooms/${ROOM}/markers`), null);
+set(ref(db, `rooms/${ROOM}/lines`), null);
+undoStack = [];
+updateUndoBtn();
+});
 
-  let lastCursorSent = 0;
-  $map.addEventListener('mousemove', e => {
-    if (!me) return;
-    const now = Date.now();
-    if (now - lastCursorSent < 60) return;
-    lastCursorSent = now;
-    const pos = clickPos(e);
-    if (!pos.inside) return;
-    set(ref(db, `rooms/${ROOM}/cursors/${me.id}`), { x: pos.x, y: pos.y, t: now });
-    document.querySelector('.map-coords').textContent = `GRID ${(pos.x*100).toFixed(2)} // ${(pos.y*100).toFixed(2)}`;
-  });
-  $map.addEventListener('mouseleave', () => { if (me) remove(ref(db, `rooms/${ROOM}/cursors/${me.id}`)); });
+get(ref(db, `rooms/${ROOM}/players`))
+.then(() => showNameModal())
+.catch(err => {
+console.error(‘Firebase error:’, err);
+$loading.querySelector(’.lbl’).textContent = ‘CONNECTION FAILED // CHECK CONSOLE’;
+});
 
-  function spawnPing(x, y) {
-    const el = document.createElement('div');
-    el.className = 'ping';
-    el.style.left = (x * 100) + '%';
-    el.style.top = (y * 100) + '%';
-    $mapInner.appendChild(el);
-    setTimeout(() => el.remove(), 1600);
-  }
-
-  let $hint = null;
-  function showHint(text) {
-    clearHint();
-    $hint = document.createElement('div');
-    $hint.className = 'hint-banner';
-    $hint.innerHTML = `${text} <span class="x" id="hint-x">×</span>`;
-    document.body.appendChild($hint);
-    $hint.querySelector('#hint-x').addEventListener('click', () => {
-      cancelTwoStep();
-      currentTool = null; currentUnit = null;
-      document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-      clearHint();
-    });
-  }
-  function clearHint() { if ($hint) { $hint.remove(); $hint = null; } }
-
-  function pushUndo(action) {
-    undoStack.push(action);
-    if (undoStack.length > UNDO_LIMIT) undoStack.shift();
-    updateUndoBtn();
-  }
-  function updateUndoBtn() {
-    $undoBtn.disabled = undoStack.length === 0;
-    $undoBtn.textContent = `↶ UNDO (${undoStack.length})`;
-  }
-  async function doUndo() {
-    const action = undoStack.pop();
-    updateUndoBtn();
-    if (!action) return;
-    if (action.type === 'create-marker') remove(ref(db, `rooms/${ROOM}/markers/${action.data.id}`));
-    else if (action.type === 'create-line') remove(ref(db, `rooms/${ROOM}/lines/${action.data.id}`));
-    else if (action.type === 'delete-marker') await set(ref(db, `rooms/${ROOM}/markers/${action.data.id}`), action.data.marker);
-    else if (action.type === 'delete-line') await set(ref(db, `rooms/${ROOM}/lines/${action.data.id}`), action.data.line);
-    else if (action.type === 'set-direction') await update(ref(db, `rooms/${ROOM}/markers/${action.data.id}`), { direction: action.data.prev });
-  }
-  $undoBtn.addEventListener('click', doUndo);
-  updateUndoBtn();
-
-  document.getElementById('clear-mine').addEventListener('click', () => {
-    if (!confirm('Alle DEINE Marker und Linien löschen?')) return;
-    Object.entries(markers).forEach(([id, m]) => { if (m.authorId === me?.id) remove(ref(db, `rooms/${ROOM}/markers/${id}`)); });
-    Object.entries(lines).forEach(([id, l]) => { if (l.authorId === me?.id) remove(ref(db, `rooms/${ROOM}/lines/${id}`)); });
-    undoStack = [];
-    updateUndoBtn();
-  });
-  document.getElementById('clear-all').addEventListener('click', () => {
-    if (!confirm('ALLE Marker und Linien löschen (auch von anderen)?')) return;
-    set(ref(db, `rooms/${ROOM}/markers`), null);
-    set(ref(db, `rooms/${ROOM}/lines`), null);
-    undoStack = [];
-    updateUndoBtn();
-  });
-
-  get(ref(db, `rooms/${ROOM}/players`))
-    .then(() => showNameModal())
-    .catch(err => {
-      console.error('Firebase error:', err);
-      $loading.querySelector('.lbl').textContent = 'CONNECTION FAILED // CHECK CONSOLE';
-    });
-
-  window.addEventListener('resize', () => { renderLines(); });
-  window.addEventListener('beforeunload', () => {
-    if (me) {
-      remove(ref(db, `rooms/${ROOM}/players/${me.id}`));
-      remove(ref(db, `rooms/${ROOM}/cursors/${me.id}`));
-    }
-  });
+window.addEventListener(‘resize’, () => { renderLines(); });
+window.addEventListener(‘beforeunload’, () => {
+if (me) {
+remove(ref(db, `rooms/${ROOM}/players/${me.id}`));
+remove(ref(db, `rooms/${ROOM}/cursors/${me.id}`));
+}
+});
 </script>
+
 </body>
 </html>
