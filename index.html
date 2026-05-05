@@ -131,7 +131,7 @@
   .tool-btn.danger:hover { background: #fde8e6; border-color: var(--hostile); }
   .tool-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   main { flex: 1; display: flex; overflow: hidden; position: relative; }
-  .map-frame { flex: 1; position: relative; overflow: hidden; background: #4a5a44; cursor: crosshair; touch-action: none; }
+  .map-frame { flex: 1; position: relative; overflow: hidden; background: #4a5a44; cursor: crosshair; }
   .map-frame.panning { cursor: grabbing; }
   .map-coords { position: absolute; top: 10px; left: 14px; font-size: 11px; color: #fff; background: rgba(0,0,0,0.75); letter-spacing: 1.5px; pointer-events: none; z-index: 5; padding: 4px 10px; font-family: var(--font-display); font-weight: 700; border-radius: 2px; }
   .map-coords-r { position: absolute; bottom: 10px; right: 14px; font-size: 11px; color: #fff; background: rgba(0,0,0,0.75); letter-spacing: 1.5px; pointer-events: none; z-index: 5; padding: 4px 10px; font-family: var(--font-display); font-weight: 700; text-align: right; border-radius: 2px; }
@@ -308,12 +308,12 @@ transition: transform 0.1s;
 </head>
 <body>
 
-<div class="loading-overlay" id="loading">
+<div class="loading-overlay" id="loading" style="display:none;">
   <div class="spinner"></div>
   <div class="lbl">CONNECTING TO COMMAND</div>
 </div>
 
-<div class="modal-bg" id="name-modal" style="display:none;">
+<div class="modal-bg" id="name-modal">
   <div class="modal" style="max-width:380px">
     <div class="modal-title">IDENTIFY</div>
     <div class="modal-sub">Call Sign Required</div>
@@ -727,8 +727,9 @@ $roster.appendChild(slot);
 function showNameModal() {
 $loading.style.display = ‘none’;
 $nameModal.style.display = ‘flex’;
-setTimeout(() => $nameInput.focus(), 100);
 }
+// Try to focus input (might fail on iPad without user gesture)
+setTimeout(() => { try { $nameInput.focus(); } catch(e){} }, 100);
 $nameSubmit.addEventListener(‘click’, joinSession);
 $nameInput.addEventListener(‘keydown’, e => { if (e.key === ‘Enter’) joinSession(); });
 
