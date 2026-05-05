@@ -309,6 +309,39 @@ transition: transform 0.1s;
 </head>
 <body>
 
+<!-- Early debug script - runs immediately, catches errors -->
+
+<script>
+window.__BA_DEBUG = [];
+window.__BA_LOG = function(msg) {
+  window.__BA_DEBUG.push(msg);
+  var err = document.getElementById('name-error');
+  if (err) err.textContent = msg;
+  console.log('[BA-EARLY]', msg);
+};
+window.addEventListener('error', function(e) {
+  window.__BA_LOG('// JS-FEHLER: ' + (e.message || e.error || 'unbekannt') + ' Z.' + e.lineno);
+});
+window.addEventListener('unhandledrejection', function(e) {
+  window.__BA_LOG('// PROMISE-FEHLER: ' + (e.reason && e.reason.message ? e.reason.message : e.reason));
+});
+// Attach an emergency click handler so user always gets feedback
+document.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('name-submit');
+  if (btn) {
+    btn.addEventListener('click', function() {
+      // If main script hasn't replaced this handler, show a message
+      setTimeout(function() {
+        var err = document.getElementById('name-error');
+        if (err && err.textContent === '') {
+          err.textContent = '// Hauptskript nicht geladen. Erste Fehler: ' + (window.__BA_DEBUG.join(' | ') || 'keine');
+        }
+      }, 500);
+    });
+  }
+});
+</script>
+
 <div class="loading-overlay" id="loading" style="display:none;">
   <div class="spinner"></div>
   <div class="lbl">CONNECTING TO COMMAND</div>
