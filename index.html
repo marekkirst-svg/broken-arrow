@@ -1258,12 +1258,30 @@ undoStack = [];
 updateUndoBtn();
 });
 
+// Show name modal as soon as Firebase responds OR after 4s timeout
+let initialized = false;
+function initApp() {
+if (initialized) return;
+initialized = true;
+showNameModal();
+}
+
 get(ref(db, `rooms/${ROOM}/players`))
-.then(() => showNameModal())
+.then(() => initApp())
 .catch(err => {
 console.error(‘Firebase error:’, err);
-$loading.querySelector(’.lbl’).textContent = ‘CONNECTION FAILED // CHECK CONSOLE’;
+// Still show the modal — user can try to deploy and see actual errors then
+initApp();
+$nameError.textContent = ‘// Verbindungsproblem — versuch es trotzdem’;
 });
+
+// Hard fallback: after 4 seconds, show the modal regardless
+setTimeout(() => {
+if (!initialized) {
+console.warn(‘Firebase init timeout — showing modal anyway’);
+initApp();
+}
+}, 4000);
 
 window.addEventListener(‘resize’, () => { renderLines(); });
 window.addEventListener(‘beforeunload’, () => {
