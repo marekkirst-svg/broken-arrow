@@ -1258,30 +1258,15 @@ undoStack = [];
 updateUndoBtn();
 });
 
-// Show name modal as soon as Firebase responds OR after 4s timeout
-let initialized = false;
-function initApp() {
-if (initialized) return;
-initialized = true;
+// Show name modal IMMEDIATELY — don’t wait for Firebase
+// The connection check happens when user clicks DEPLOY anyway
 showNameModal();
-}
-
+// Quick Firebase ping in background so we know if there’s a problem early
 get(ref(db, `rooms/${ROOM}/players`))
-.then(() => initApp())
 .catch(err => {
-console.error(‘Firebase error:’, err);
-// Still show the modal — user can try to deploy and see actual errors then
-initApp();
-$nameError.textContent = ‘// Verbindungsproblem — versuch es trotzdem’;
+console.error(‘Firebase ping error:’, err);
+$nameError.textContent = ‘// VERBINDUNGSPROBLEM — TROTZDEM VERSUCHEN’;
 });
-
-// Hard fallback: after 4 seconds, show the modal regardless
-setTimeout(() => {
-if (!initialized) {
-console.warn(‘Firebase init timeout — showing modal anyway’);
-initApp();
-}
-}, 4000);
 
 window.addEventListener(‘resize’, () => { renderLines(); });
 window.addEventListener(‘beforeunload’, () => {
