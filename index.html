@@ -319,7 +319,7 @@ transition: transform 0.1s;
     <div class="modal-title">IDENTIFY</div>
     <div class="modal-sub">Call Sign Required</div>
     <input type="text" id="name-input" class="modal-input" maxlength="12" placeholder="ALPHA-1" autocomplete="off">
-    <button class="modal-btn" id="name-submit">DEPLOY</button>
+    <button class="modal-btn" id="name-submit" style="background:#1a2014; color:#fff; opacity:1; cursor:pointer;">DEPLOY</button>
     <div class="modal-error" id="name-error"></div>
   </div>
 </div>
@@ -731,11 +731,10 @@ $nameModal.style.display = ‘flex’;
 }
 // Try to focus input (might fail on iPad without user gesture)
 setTimeout(() => { try { $nameInput.focus(); } catch(e){} }, 100);
-// Make sure button is enabled (in case browser kept it disabled from a prior attempt)
+// Make sure button is enabled and visible
 $nameSubmit.disabled = false;
+$nameSubmit.removeAttribute(‘disabled’);
 
-// Single click handler. iOS sends both click and touchend, so we use only click
-// (which fires reliably on iOS for buttons after a tap).
 $nameSubmit.addEventListener(‘click’, joinSession);
 $nameInput.addEventListener(‘keydown’, e => { if (e.key === ‘Enter’) joinSession(); });
 
@@ -746,7 +745,6 @@ const name = $nameInput.value.trim().toUpperCase();
 if (!name || name.length < 2) { $nameError.textContent = ‘// CALL SIGN INVALID’; return; }
 $nameError.textContent = ‘’;
 joining = true;
-$nameSubmit.disabled = true;
 $nameSubmit.textContent = ‘CONNECTING…’;
 try {
 const playersSnap = await get(ref(db, `rooms/${ROOM}/players`));
@@ -754,14 +752,14 @@ const current = playersSnap.val() || {};
 const usedSlots = new Set(Object.values(current).map(p => p.slot));
 if (Object.keys(current).length >= MAX_PLAYERS) {
 $nameError.textContent = ‘// SESSION FULL (5/5)’;
-joining = false; $nameSubmit.disabled = false; $nameSubmit.textContent = ‘DEPLOY’;
+joining = false; $nameSubmit.textContent = ‘DEPLOY’;
 return;
 }
 let slot = -1;
 for (let i = 0; i < MAX_PLAYERS; i++) { if (!usedSlots.has(i)) { slot = i; break; } }
 if (slot === -1) {
 $nameError.textContent = ‘// NO SLOTS’;
-joining = false; $nameSubmit.disabled = false; $nameSubmit.textContent = ‘DEPLOY’;
+joining = false; $nameSubmit.textContent = ‘DEPLOY’;
 return;
 }
 const id = ‘p_’ + Math.random().toString(36).slice(2, 10);
@@ -776,7 +774,6 @@ startListening();
 console.error(err);
 $nameError.textContent = ’// VERBINDUNGSFEHLER: ’ + (err.message || ‘unbekannt’);
 joining = false;
-$nameSubmit.disabled = false;
 $nameSubmit.textContent = ‘DEPLOY’;
 }
 }
